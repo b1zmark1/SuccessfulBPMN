@@ -1,0 +1,42 @@
+[
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Regress_704a8615921f45399fb1ed8e6d0393c8.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\Regress_704a8615921f45399fb1ed8e6d0393c8_0040.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\Regress_704a8615921f45399fb1ed8e6d0393c8_0040.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Regress_d57d9fc240e841bd816ca2e522bb3b1f.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\Regress_d57d9fc240e841bd816ca2e522bb3b1f_0041.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\Regress_d57d9fc240e841bd816ca2e522bb3b1f_0041.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6_0042.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6_0042.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf_0043.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf_0043.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34_0044.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34_0044.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720_0045.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720_0045.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\ueb_3_2aa01db67fcb490bbcf30506401a3520.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\ueb_3_2aa01db67fcb490bbcf30506401a3520_0046.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\ueb_3_2aa01db67fcb490bbcf30506401a3520_0046.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\03-Solution\\recourse.bpmn",
+    "outputSvg": "datasets\\bpmn_mvp\\tmp\\recourse_0047.svg",
+    "outputMeta": "datasets\\bpmn_mvp\\tmp\\recourse_0047.json"
+  }
+]

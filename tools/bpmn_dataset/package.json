@@ -1,0 +1,11 @@
+{
+  "name": "bpmn-dataset-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "bpmn-js": "^11.5.0",
+    "jsdom": "^24.0.0",
+    "puppeteer": "^24.0.0"
+  }
+}

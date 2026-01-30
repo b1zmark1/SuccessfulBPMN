@@ -1,0 +1,17 @@
+path: E:\Projects\MegaSchool\SuccessfulBPMN\datasets\bpmn_full
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: start_event
+  1: intermediate_event
+  2: end_event
+  3: task
+  4: gateway_exclusive
+  5: gateway_parallel
+  6: gateway_inclusive
+  7: subprocess
+  8: pool
+  9: lane
+  10: data_object
+  11: text_annotation

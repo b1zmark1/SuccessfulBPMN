@@ -1,0 +1,12 @@
+start_event
+intermediate_event
+end_event
+task
+gateway_exclusive
+gateway_parallel
+gateway_inclusive
+subprocess
+pool
+lane
+data_object
+text_annotation

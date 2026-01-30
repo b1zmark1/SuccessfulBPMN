@@ -1,0 +1,19 @@
+{
+  "viewbox": {
+    "x": 0,
+    "y": 0,
+    "width": 3000,
+    "height": 3000,
+    "scale": 1,
+    "inner": {
+      "width": 1372,
+      "height": 938,
+      "x": 39,
+      "y": 214
+    },
+    "outer": {
+      "width": 3000,
+      "height": 3000
+    }
+  }
+}
