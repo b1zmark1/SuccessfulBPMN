@@ -1,42 +1,117 @@
 [
   {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Recourse_86d1ce1b0c73424c8edb8a136099b586.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\Recourse_86d1ce1b0c73424c8edb8a136099b586_0025.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\Recourse_86d1ce1b0c73424c8edb8a136099b586_0025.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\recourse_b8a5a44bb61249d19fb9b58f46492536.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\recourse_b8a5a44bb61249d19fb9b58f46492536_0026.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\recourse_b8a5a44bb61249d19fb9b58f46492536_0026.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Recourse_d59e20f0a25a43598bbb124c8df8bd42.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\Recourse_d59e20f0a25a43598bbb124c8df8bd42_0027.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\Recourse_d59e20f0a25a43598bbb124c8df8bd42_0027.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Recourse_fb013b492cba4b8fb0fd38bdbcec65f5.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\Recourse_fb013b492cba4b8fb0fd38bdbcec65f5_0028.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\Recourse_fb013b492cba4b8fb0fd38bdbcec65f5_0028.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Recourse_Process_4ec053cbebfd4cb88665ee6916ae9ff9.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\Recourse_Process_4ec053cbebfd4cb88665ee6916ae9ff9_0029.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\Recourse_Process_4ec053cbebfd4cb88665ee6916ae9ff9_0029.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_00f46cfbf12d40259b9d3bc5f6265be6.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_00f46cfbf12d40259b9d3bc5f6265be6_0030.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_00f46cfbf12d40259b9d3bc5f6265be6_0030.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_343df7a7d3f7487abf26f786bc997b14.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_343df7a7d3f7487abf26f786bc997b14_0031.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_343df7a7d3f7487abf26f786bc997b14_0031.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_4b98a50bf0b24719a8fad81c847d3734.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_4b98a50bf0b24719a8fad81c847d3734_0032.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_4b98a50bf0b24719a8fad81c847d3734_0032.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_934d0426ada64e61ab0e9b254c4e79de.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_934d0426ada64e61ab0e9b254c4e79de_0033.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_934d0426ada64e61ab0e9b254c4e79de_0033.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_9daf7d8b9cd84b83bbbf7d43538d59b9.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_9daf7d8b9cd84b83bbbf7d43538d59b9_0034.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_9daf7d8b9cd84b83bbbf7d43538d59b9_0034.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_a48fe24df7194f07b25f42ab92a0ab0f.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_a48fe24df7194f07b25f42ab92a0ab0f_0035.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_a48fe24df7194f07b25f42ab92a0ab0f_0035.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_b9048750ab114f7489ffaa2fbd5ae7b0.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_b9048750ab114f7489ffaa2fbd5ae7b0_0036.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_b9048750ab114f7489ffaa2fbd5ae7b0_0036.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_d400a92f895a4d0c938b5c0d84220b1f.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_d400a92f895a4d0c938b5c0d84220b1f_0037.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_d400a92f895a4d0c938b5c0d84220b1f_0037.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_f28e862436f04ed9b8c4185607655706.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_f28e862436f04ed9b8c4185607655706_0038.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_f28e862436f04ed9b8c4185607655706_0038.json"
+  },
+  {
+    "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regress_-_english_fc1f3bbf2d534b528d5b9d8a2d89d993.bpmn",
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regress_-_english_fc1f3bbf2d534b528d5b9d8a2d89d993_0039.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regress_-_english_fc1f3bbf2d534b528d5b9d8a2d89d993_0039.json"
+  },
+  {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Regress_704a8615921f45399fb1ed8e6d0393c8.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\Regress_704a8615921f45399fb1ed8e6d0393c8_0040.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\Regress_704a8615921f45399fb1ed8e6d0393c8_0040.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\Regress_704a8615921f45399fb1ed8e6d0393c8_0040.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\Regress_704a8615921f45399fb1ed8e6d0393c8_0040.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\Regress_d57d9fc240e841bd816ca2e522bb3b1f.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\Regress_d57d9fc240e841bd816ca2e522bb3b1f_0041.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\Regress_d57d9fc240e841bd816ca2e522bb3b1f_0041.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\Regress_d57d9fc240e841bd816ca2e522bb3b1f_0041.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\Regress_d57d9fc240e841bd816ca2e522bb3b1f_0041.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6_0042.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6_0042.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6_0042.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_108be4bbda21469d889ec3aedb4ec7c6_0042.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf_0043.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf_0043.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf_0043.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_53f7c52ab6dd402a9f74f682293fb1cf_0043.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34_0044.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34_0044.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34_0044.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_c2c66918832340b5b437c6e1c6657b34_0044.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720_0045.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720_0045.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720_0045.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\regressnahme_-_english_f35b3f01b9974644a4ca4bcf9d34a720_0045.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\02-Results\\ueb_3_2aa01db67fcb490bbcf30506401a3520.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\ueb_3_2aa01db67fcb490bbcf30506401a3520_0046.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\ueb_3_2aa01db67fcb490bbcf30506401a3520_0046.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\ueb_3_2aa01db67fcb490bbcf30506401a3520_0046.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\ueb_3_2aa01db67fcb490bbcf30506401a3520_0046.json"
   },
   {
     "input": "DATASET\\bpmn-for-research-master\\BPMN for Research\\English\\02-Recourse\\03-Solution\\recourse.bpmn",
-    "outputSvg": "datasets\\bpmn_mvp\\tmp\\recourse_0047.svg",
-    "outputMeta": "datasets\\bpmn_mvp\\tmp\\recourse_0047.json"
+    "outputSvg": "datasets\\bpmn_full\\tmp\\recourse_0047.svg",
+    "outputMeta": "datasets\\bpmn_full\\tmp\\recourse_0047.json"
   }
 ]

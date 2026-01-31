@@ -1,4 +1,4 @@
-path: E:\Projects\MegaSchool\SuccessfulBPMN\datasets\bpmn_full
+path: datasets\bpmn_full
 train: images/train
 val: images/val
 test: images/test
@@ -15,3 +15,4 @@ names:
   9: lane
   10: data_object
   11: text_annotation
+  12: sequence_flow

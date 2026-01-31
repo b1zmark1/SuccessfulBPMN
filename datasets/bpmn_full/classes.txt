@@ -10,3 +10,4 @@ pool
 lane
 data_object
 text_annotation
+sequence_flow

@@ -37,6 +37,7 @@ MVP_CLASSES = [
     'lane',
     'data_object',
     'text_annotation',
+    'sequence_flow',
 ]
 
 CLASS_TO_ID = {name: i for i, name in enumerate(MVP_CLASSES)}
@@ -118,6 +119,9 @@ def _map_bpmn_tag_to_class(tag: str) -> Optional[str]:
     if name == 'textAnnotation':
         return 'text_annotation'
 
+    if name in ('sequenceFlow', 'messageFlow', 'association'):
+        return 'sequence_flow'
+
     return None
 
 
@@ -191,14 +195,81 @@ def parse_bpmn_labels(path: Path) -> List[ShapeLabel]:
 
         labels.append(ShapeLabel(class_name=class_name, bbox=(x, y, w, h)))
 
+    for edge in root.findall('.//bpmndi:BPMNEdge', BPMN_NS):
+        bpmn_id = edge.attrib.get('bpmnElement')
+        if not bpmn_id:
+            continue
+        element = id_map.get(bpmn_id)
+        if element is None:
+            continue
+        class_name = _map_bpmn_tag_to_class(element.tag)
+        if class_name is None:
+            continue
+        bbox = _edge_bbox_from_waypoints(edge)
+        if bbox is None:
+            continue
+        labels.append(ShapeLabel(class_name=class_name, bbox=bbox))
+
     return _filter_pool_lane_overlaps(labels)
 
 
-def _load_viewbox(meta_path: Path) -> Tuple[float, float, float, float]:
+def _edge_bbox_from_waypoints(edge: ET.Element) -> Optional[Tuple[float, float, float, float]]:
+    points: List[Tuple[float, float]] = []
+    for wp in edge.findall('di:waypoint', BPMN_NS):
+        try:
+            x = float(wp.attrib.get('x', '0'))
+            y = float(wp.attrib.get('y', '0'))
+        except ValueError:
+            continue
+        points.append((x, y))
+    if len(points) < 2:
+        return None
+
+    xs = [p[0] for p in points]
+    ys = [p[1] for p in points]
+    min_x, max_x = min(xs), max(xs)
+    min_y, max_y = min(ys), max(ys)
+
+    w = max_x - min_x
+    h = max_y - min_y
+
+    min_thickness = 6.0
+    pad = 2.0
+    pad_x = (min_thickness - w) / 2.0 if w < min_thickness else 0.0
+    pad_y = (min_thickness - h) / 2.0 if h < min_thickness else 0.0
+
+    min_x -= (pad_x + pad)
+    max_x += (pad_x + pad)
+    min_y -= (pad_y + pad)
+    max_y += (pad_y + pad)
+
+    w = max_x - min_x
+    h = max_y - min_y
+    if w <= 1 or h <= 1:
+        return None
+    return min_x, min_y, w, h
+
+
+def _load_viewbox(meta_path: Path) -> Tuple[Tuple[float, float, float, float], Tuple[float, float, float, float]]:
     with meta_path.open('r', encoding='utf-8') as f:
         data = json.load(f)
     vb = data.get('viewbox') or {}
-    return float(vb.get('x', 0)), float(vb.get('y', 0)), float(vb.get('width', 0)), float(vb.get('height', 0))
+    outer = (
+        float(vb.get('x', 0)),
+        float(vb.get('y', 0)),
+        float(vb.get('width', 0)),
+        float(vb.get('height', 0)),
+    )
+    inner = vb.get('inner') or {}
+    inner_box = (
+        float(inner.get('x', outer[0])),
+        float(inner.get('y', outer[1])),
+        float(inner.get('width', outer[2])),
+        float(inner.get('height', outer[3])),
+    )
+    if inner_box[2] <= 0 or inner_box[3] <= 0:
+        inner_box = outer
+    return outer, inner_box
 
 
 def _normalize_bbox(
@@ -343,6 +414,7 @@ def build_dataset(
     (out_root / 'tmp').mkdir(parents=True, exist_ok=True)
 
     (out_root / 'classes.txt').write_text("\n".join(MVP_CLASSES) + "\n", encoding='utf-8')
+    _write_data_yaml(out_root)
 
     manifest = {
         'classes': MVP_CLASSES,
@@ -404,9 +476,9 @@ def build_dataset(
             _render_svg_batch(node_exec, renderer_js, tasks, out_root / 'tmp')
 
             for e in chunk:
-                viewbox = _load_viewbox(Path(e['meta']))
-                _svg_to_png(Path(e['svg']), Path(e['png']), viewbox)
-                _write_yolo_labels(Path(e['label']), e['shapes'], viewbox)
+                _, inner_viewbox = _load_viewbox(Path(e['meta']))
+                _svg_to_png(Path(e['svg']), Path(e['png']), inner_viewbox)
+                _write_yolo_labels(Path(e['label']), e['shapes'], inner_viewbox)
 
                 manifest['splits'][split_name].append({
                     'bpmn': str(e['bpmn']),
@@ -419,6 +491,19 @@ def build_dataset(
 
     (out_root / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
     print(f"[build] done. manifest={out_root / 'manifest.json'}")
+
+
+def _write_data_yaml(out_root: Path) -> None:
+    lines = [
+        f"path: {out_root}",
+        "train: images/train",
+        "val: images/val",
+        "test: images/test",
+        "names:",
+    ]
+    for idx, name in enumerate(MVP_CLASSES):
+        lines.append(f"  {idx}: {name}")
+    (out_root / 'data.yaml').write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main() -> None:
