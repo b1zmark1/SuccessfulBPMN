@@ -36,12 +36,17 @@ MVP_CLASSES = [
     'pool',
     'lane',
     'data_object',
+    'text',
     'text_annotation',
     'sequence_flow',
 ]
 
 CLASS_TO_ID = {name: i for i, name in enumerate(MVP_CLASSES)}
 
+# Padding to capture label text rendered outside BPMNLabel bounds.
+TEXT_PAD_X_PCT = 0.25
+TEXT_PAD_Y_PCT = 0.75
+MIN_TEXT_PAD = 6.0
 
 @dataclass(frozen=True)
 class ShapeLabel:
@@ -250,7 +255,7 @@ def _edge_bbox_from_waypoints(edge: ET.Element) -> Optional[Tuple[float, float, 
     return min_x, min_y, w, h
 
 
-def _load_viewbox(meta_path: Path) -> Tuple[Tuple[float, float, float, float], Tuple[float, float, float, float]]:
+def _load_viewbox(meta_path: Path) -> Tuple[Tuple[float, float, float, float], Tuple[float, float, float, float], List[Tuple[float, float, float, float]]]:
     with meta_path.open('r', encoding='utf-8') as f:
         data = json.load(f)
     vb = data.get('viewbox') or {}
@@ -269,7 +274,33 @@ def _load_viewbox(meta_path: Path) -> Tuple[Tuple[float, float, float, float], T
     )
     if inner_box[2] <= 0 or inner_box[3] <= 0:
         inner_box = outer
-    return outer, inner_box
+    text_boxes_raw = data.get('textBoxes') or data.get('text_boxes') or []
+    text_boxes: List[Tuple[float, float, float, float]] = []
+    for tb in text_boxes_raw:
+        try:
+            x = float(tb.get('x', 0))
+            y = float(tb.get('y', 0))
+            w = float(tb.get('width', 0))
+            h = float(tb.get('height', 0))
+        except Exception:
+            continue
+        if w <= 1 or h <= 1:
+            continue
+        text_boxes.append((x, y, w, h))
+
+    # Filter text boxes that are completely outside the inner viewbox.
+    if text_boxes:
+        ix, iy, iw, ih = inner_box
+        margin = 2.0
+        filtered: List[Tuple[float, float, float, float]] = []
+        for x, y, w, h in text_boxes:
+            x2, y2 = x + w, y + h
+            if x2 < ix - margin or y2 < iy - margin or x > ix + iw + margin or y > iy + ih + margin:
+                continue
+            filtered.append((x, y, w, h))
+        text_boxes = filtered
+
+    return outer, inner_box, text_boxes
 
 
 def _normalize_bbox(
@@ -323,7 +354,13 @@ def _render_svg_batch(node_exec: str, renderer_js: Path, tasks: List[Dict[str, s
     cmd = [node_exec, str(renderer_js), "--batch", str(tasks_path)]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
-        raise RuntimeError(f"Batch render failed: {result.stderr.strip()}")
+        err = result.stderr.strip()
+        print(f"[render] batch failed, falling back to single renders. error={err}")
+        for t in tasks:
+            try:
+                _render_svg(node_exec, renderer_js, Path(t['input']), Path(t['outputSvg']), Path(t['outputMeta']))
+            except Exception as exc:
+                print(f"[render] failed single render for {t.get('input')}: {exc}")
 
 
 def _svg_to_png(svg_path: Path, png_path: Path, viewbox: Tuple[float, float, float, float]) -> None:
@@ -476,9 +513,12 @@ def build_dataset(
             _render_svg_batch(node_exec, renderer_js, tasks, out_root / 'tmp')
 
             for e in chunk:
-                _, inner_viewbox = _load_viewbox(Path(e['meta']))
+                _, inner_viewbox, text_boxes = _load_viewbox(Path(e['meta']))
                 _svg_to_png(Path(e['svg']), Path(e['png']), inner_viewbox)
-                _write_yolo_labels(Path(e['label']), e['shapes'], inner_viewbox)
+                shapes = list(e['shapes'])
+                for tb in text_boxes:
+                    shapes.append(ShapeLabel(class_name='text', bbox=tb))
+                _write_yolo_labels(Path(e['label']), shapes, inner_viewbox)
 
                 manifest['splits'][split_name].append({
                     'bpmn': str(e['bpmn']),

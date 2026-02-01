@@ -9,5 +9,6 @@ subprocess
 pool
 lane
 data_object
+text
 text_annotation
 sequence_flow

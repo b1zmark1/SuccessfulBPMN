@@ -14,5 +14,6 @@ names:
   8: pool
   9: lane
   10: data_object
-  11: text_annotation
-  12: sequence_flow
+  11: text
+  12: text_annotation
+  13: sequence_flow

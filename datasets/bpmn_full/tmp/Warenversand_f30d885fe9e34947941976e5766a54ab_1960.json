@@ -1,0 +1,20 @@
+{
+  "viewbox": {
+    "x": 0,
+    "y": 0,
+    "width": 3000,
+    "height": 3000,
+    "scale": 1,
+    "inner": {
+      "width": 1257,
+      "height": 512,
+      "x": -2,
+      "y": 265
+    },
+    "outer": {
+      "width": 3000,
+      "height": 3000
+    }
+  },
+  "textBoxes": []
+}

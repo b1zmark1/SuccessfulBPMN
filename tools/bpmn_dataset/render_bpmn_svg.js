@@ -40,8 +40,51 @@ async function renderOne(page, xmlString) {
       // ignore
     }
     const viewbox = canvas.viewbox();
+    const container = canvas.getContainer();
+    const svgEl = container && container.querySelector ? container.querySelector('svg') : null;
+    const textBoxes = [];
+    if (svgEl) {
+      const texts = svgEl.querySelectorAll('text');
+      texts.forEach((t) => {
+        try {
+          if (t.closest && t.closest('defs')) return;
+          const content = (t.textContent || '').trim();
+          if (!content) return;
+          const style = window.getComputedStyle(t);
+          if (!style || style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '1') === 0) {
+            return;
+          }
+          const b = t.getBBox();
+          const m = t.getCTM();
+          if (!b || b.width <= 1 || b.height <= 1 || !m) return;
+          const pts = [
+            { x: b.x, y: b.y },
+            { x: b.x + b.width, y: b.y },
+            { x: b.x, y: b.y + b.height },
+            { x: b.x + b.width, y: b.y + b.height },
+          ];
+          const tpts = pts.map((p) => ({
+            x: p.x * m.a + p.y * m.c + m.e,
+            y: p.x * m.b + p.y * m.d + m.f,
+          }));
+          const xs = tpts.map((p) => p.x);
+          const ys = tpts.map((p) => p.y);
+          const minX = Math.min.apply(null, xs);
+          const maxX = Math.max.apply(null, xs);
+          const minY = Math.min.apply(null, ys);
+          const maxY = Math.max.apply(null, ys);
+          const w = maxX - minX;
+          const h = maxY - minY;
+          if (w > 1 && h > 1) {
+            textBoxes.push({ x: minX, y: minY, width: w, height: h });
+          }
+        } catch (e) {
+          // ignore individual text nodes
+        }
+      });
+    }
     const { svg } = await viewer.saveSVG();
-    return { svg, viewbox };
+    return { svg, viewbox, textBoxes };
   }, xmlString);
 }
 
@@ -61,7 +104,11 @@ async function renderSingle(inputPath, outputSvgPath, outputMetaPath) {
 
     fs.mkdirSync(path.dirname(outputSvgPath), { recursive: true });
     fs.writeFileSync(outputSvgPath, result.svg, 'utf-8');
-    fs.writeFileSync(outputMetaPath, JSON.stringify({ viewbox: result.viewbox }, null, 2), 'utf-8');
+    fs.writeFileSync(
+      outputMetaPath,
+      JSON.stringify({ viewbox: result.viewbox, textBoxes: result.textBoxes || [] }, null, 2),
+      'utf-8'
+    );
   } finally {
     await browser.close();
   }
@@ -85,7 +132,11 @@ async function renderBatch(tasksPath) {
       const result = await renderOne(page, xml);
       fs.mkdirSync(path.dirname(t.outputSvg), { recursive: true });
       fs.writeFileSync(t.outputSvg, result.svg, 'utf-8');
-      fs.writeFileSync(t.outputMeta, JSON.stringify({ viewbox: result.viewbox }, null, 2), 'utf-8');
+      fs.writeFileSync(
+        t.outputMeta,
+        JSON.stringify({ viewbox: result.viewbox, textBoxes: result.textBoxes || [] }, null, 2),
+        'utf-8'
+      );
     }
   } finally {
     await browser.close();
