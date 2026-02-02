@@ -6,7 +6,6 @@ import os
 import sys
 import time
 
-import cv2
 import torch
 
 
@@ -57,10 +56,7 @@ class Predictor:
         self.preproc = ValTransform(legacy=legacy)
         self.postprocess = postprocess
 
-    def inference(self, img_path):
-        from yolox.utils import get_model_info  # noqa: F401
-
-        img = cv2.imread(img_path)
+    def inference(self, img):
         if img is None:
             return None, None
         h, w = img.shape[:2]
@@ -119,6 +115,7 @@ def main():
 
     from yolox.exp import get_exp
     from yolox.utils import fuse_model
+    from preprocanddetect.preprocess import preprocess, PreprocessConfig
 
     if args.device is None:
         args.device = "gpu" if torch.cuda.is_available() else "cpu"
@@ -153,8 +150,11 @@ def main():
 
     t0 = time.time()
     saved = 0
+    pre_cfg = PreprocessConfig()
     for img_path in image_list:
-        outputs, img_info = predictor.inference(img_path)
+        pre = preprocess(img_path, pre_cfg)
+        img_for_model = pre["model_bgr"]
+        outputs, img_info = predictor.inference(img_for_model)
         if img_info is None:
             continue
         vis_img = predictor.visualize(outputs[0] if outputs else None, img_info)

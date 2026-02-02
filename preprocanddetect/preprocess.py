@@ -17,6 +17,7 @@ class PreprocessConfig:
     max_side: int = 1800
     upscale_small: bool = False
     min_side_for_upscale: int = 1000
+    keep_aspect: bool = True
 
     # CLAHE: включаем только если контраст низкий (p95-p05 < threshold)
     use_clahe: bool = True
@@ -51,6 +52,14 @@ class PreprocessConfig:
     canny_sigma_low: float = 0.66
     canny_sigma_high: float = 1.33
 
+    # geometry
+    enable_deskew: bool = True
+    deskew_min_deg: float = 0.5
+    deskew_max_deg: float = 7.0
+    deskew_hough_thresh: int = 120
+    deskew_min_line_len: int = 60
+    deskew_max_line_gap: int = 10
+
 
 def preprocess(
     image: Union[str, bytes, np.ndarray],
@@ -59,8 +68,9 @@ def preprocess(
     if cfg is None:
         cfg = PreprocessConfig()
 
-    bgr = _load_as_bgr(image)
-    bgr = _resize(bgr, cfg)
+    bgr_orig = _load_as_bgr(image)
+    bgr_geom, geom_angle = _deskew_if_needed(bgr_orig, cfg)
+    bgr, resize_ratio = _resize(bgr_geom, cfg)
 
     gray = _to_gray_uint8(bgr)
     gray_eq = _apply_clahe_if_needed(gray, cfg)
@@ -77,7 +87,11 @@ def preprocess(
     edges = _edges_from_gray(denoised, cfg)
 
     return {
-        "orig_bgr": bgr,
+        "orig_bgr": bgr_orig,
+        "geom_bgr": bgr_geom,
+        "model_bgr": bgr,
+        "resize_ratio": np.array(resize_ratio, dtype=np.float32),
+        "geom_angle_deg": np.array(geom_angle, dtype=np.float32),
         "gray": gray,
         "gray_eq": gray_eq,
         "denoised": denoised,
@@ -131,7 +145,7 @@ def _drop_alpha_to_white(img: np.ndarray) -> np.ndarray:
     raise PreprocessError(f"Unexpected channel count: {ch}")
 
 
-def _resize(bgr: np.ndarray, cfg: PreprocessConfig) -> np.ndarray:
+def _resize(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarray, float]:
     h, w = bgr.shape[:2]
     long_side = max(h, w)
 
@@ -139,15 +153,15 @@ def _resize(bgr: np.ndarray, cfg: PreprocessConfig) -> np.ndarray:
         scale = cfg.max_side / float(long_side)
         new_w = max(1, int(round(w * scale)))
         new_h = max(1, int(round(h * scale)))
-        return cv2.resize(bgr, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        return cv2.resize(bgr, (new_w, new_h), interpolation=cv2.INTER_AREA), float(scale)
 
     if cfg.upscale_small and long_side < cfg.min_side_for_upscale:
         scale = cfg.min_side_for_upscale / float(long_side)
         new_w = max(1, int(round(w * scale)))
         new_h = max(1, int(round(h * scale)))
-        return cv2.resize(bgr, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
+        return cv2.resize(bgr, (new_w, new_h), interpolation=cv2.INTER_CUBIC), float(scale)
 
-    return bgr
+    return bgr, 1.0
 
 
 def _to_gray_uint8(bgr: np.ndarray) -> np.ndarray:
@@ -283,3 +297,62 @@ def _edges_from_gray(gray: np.ndarray, cfg: PreprocessConfig) -> np.ndarray:
     lower = int(max(0, cfg.canny_sigma_low * med))
     upper = int(min(255, cfg.canny_sigma_high * med))
     return cv2.Canny(gray, lower, upper)
+
+
+def _deskew_if_needed(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarray, float]:
+    if not cfg.enable_deskew:
+        return bgr, 0.0
+
+    gray = _to_gray_uint8(bgr)
+    edges = cv2.Canny(gray, 50, 150)
+    lines = cv2.HoughLinesP(
+        edges,
+        rho=1,
+        theta=np.pi / 180.0,
+        threshold=int(cfg.deskew_hough_thresh),
+        minLineLength=int(cfg.deskew_min_line_len),
+        maxLineGap=int(cfg.deskew_max_line_gap),
+    )
+    if lines is None or len(lines) == 0:
+        return bgr, 0.0
+
+    angles = []
+    for line in lines[:, 0, :]:
+        x1, y1, x2, y2 = line
+        dx = x2 - x1
+        dy = y2 - y1
+        if dx == 0 and dy == 0:
+            continue
+        angle = np.degrees(np.arctan2(dy, dx))
+        if angle < -90:
+            angle += 180
+        if angle > 90:
+            angle -= 180
+        angles.append(angle)
+
+    if not angles:
+        return bgr, 0.0
+
+    median_angle = float(np.median(angles))
+    if abs(median_angle) < cfg.deskew_min_deg:
+        return bgr, 0.0
+    if abs(median_angle) > cfg.deskew_max_deg:
+        return bgr, 0.0
+
+    h, w = bgr.shape[:2]
+    center = (w / 2.0, h / 2.0)
+    mat = cv2.getRotationMatrix2D(center, median_angle, 1.0)
+    cos = abs(mat[0, 0])
+    sin = abs(mat[0, 1])
+    new_w = int((h * sin) + (w * cos))
+    new_h = int((h * cos) + (w * sin))
+    mat[0, 2] += (new_w / 2.0) - center[0]
+    mat[1, 2] += (new_h / 2.0) - center[1]
+    rotated = cv2.warpAffine(
+        bgr,
+        mat,
+        (new_w, new_h),
+        flags=cv2.INTER_LINEAR,
+        borderValue=(255, 255, 255),
+    )
+    return rotated, median_angle
