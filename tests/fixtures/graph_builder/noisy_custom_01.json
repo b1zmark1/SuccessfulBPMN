@@ -1,0 +1,28 @@
+{
+  "image": {
+    "file_name": "noisy_custom_01.png",
+    "path": "fixtures/noisy_custom_01.png",
+    "width": 1200,
+    "height": 700,
+    "resize_ratio": 1.0,
+    "geom_angle_deg": 0.0
+  },
+  "meta": {
+    "backend": "fixture",
+    "yolox_conf": 0.4,
+    "yolox_nms": 0.65,
+    "test_size": [1024, 1024]
+  },
+  "detections": [
+    {"class_id": 99, "class_name": "mystery_box", "score": 0.77, "bbox_xyxy": [120, 210, 260, 290], "source": "yolox"},
+    {"class_id": 3, "class_name": "task", "score": 0.89, "bbox_xyxy": [320, 220, 450, 310], "source": "yolox"},
+    {"class_id": 3, "class_name": "task", "score": 0.88, "bbox_xyxy": [560, 220, 700, 310], "source": "yolox"},
+
+    {"class_id": 9, "class_name": "pool", "score": 0.52, "bbox_xyxy": [80, 180, 900, 500], "source": "yolox"},
+    {"class_id": 10, "class_name": "lane", "score": 0.48, "bbox_xyxy": [60, 160, 860, 470], "source": "yolox"},
+
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [95, 190, 240, 215], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [242, 190, 340, 215], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [330, 248, 430, 272], "source": "easyocr"}
+  ]
+}

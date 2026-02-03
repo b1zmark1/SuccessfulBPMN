@@ -1,0 +1,78 @@
+{
+  "images_root": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN",
+  "num_images": 9,
+  "preprocess_config": {
+    "max_side": 1800,
+    "upscale_small": false,
+    "min_side_for_upscale": 1000,
+    "keep_aspect": true,
+    "use_clahe": true,
+    "clahe_clip_limit": 2.0,
+    "clahe_tile_grid_size": 8,
+    "clahe_min_contrast_p95_p05": 60,
+    "use_nlm_denoise": true,
+    "denoise_h": 10,
+    "denoise_template_window_size": 7,
+    "denoise_search_window_size": 21,
+    "adaptive_block": 35,
+    "adaptive_c": 11,
+    "use_otsu_for_cv": true,
+    "geom_close_kernel": 0,
+    "geom_close_iterations": 1,
+    "force_black_on_white": true,
+    "canny_sigma_low": 0.66,
+    "canny_sigma_high": 1.33,
+    "enable_deskew": true,
+    "deskew_min_deg": 0.5,
+    "deskew_max_deg": 7.0,
+    "deskew_hough_thresh": 120,
+    "deskew_min_line_len": 60,
+    "deskew_max_line_gap": 10
+  },
+  "text_detector_config": {
+    "lang": "ru",
+    "gpu": false,
+    "download_enabled": true,
+    "model_storage_directory": null,
+    "min_size": 10,
+    "text_threshold": 0.55,
+    "low_text": 0.25,
+    "link_threshold": 0.25,
+    "canvas_size": 3840,
+    "mag_ratio": 1.2,
+    "slope_ths": 0.1,
+    "ycenter_ths": 0.3,
+    "height_ths": 0.3,
+    "width_ths": 0.12,
+    "add_margin": 0.05,
+    "max_box_height_ratio": 0.25,
+    "min_box_area": 30,
+    "nms_iou_threshold": 0.3
+  },
+  "yolox": {
+    "exp_file": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\results\\yolox_tiny_bpmn.py",
+    "test_size": [
+      1024,
+      1024
+    ],
+    "conf": 0.4,
+    "nms": 0.65,
+    "decode_output": true
+  },
+  "results": {
+    "onnxruntime": {
+      "preprocess": 826.1882500000866,
+      "object_detector": 2016.2320875006117,
+      "text_detector": 6158.354087499902,
+      "merge": 0.0018249984350404702,
+      "total": 9000.776249999035
+    },
+    "openvino": {
+      "preprocess": 790.4517124998165,
+      "object_detector": 1352.4012875013796,
+      "text_detector": 5789.089012499971,
+      "merge": 0.001999998858082108,
+      "total": 7931.944012500026
+    }
+  }
+}

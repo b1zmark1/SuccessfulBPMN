@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "graph_builder/contracts/input_ensemble.schema.json",
+  "title": "Ensemble Detection Input",
+  "type": "object",
+  "required": ["image", "detections"],
+  "properties": {
+    "image": {
+      "type": "object",
+      "required": ["file_name", "width", "height"],
+      "properties": {
+        "file_name": { "type": "string", "minLength": 1 },
+        "path": { "type": "string" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "resize_ratio": { "type": "number", "exclusiveMinimum": 0 },
+        "geom_angle_deg": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "detections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class_name", "bbox_xyxy", "source"],
+        "properties": {
+          "class_id": { "type": ["integer", "null"] },
+          "class_name": { "type": "string", "minLength": 1 },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "bbox_xyxy": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": { "type": "number" }
+          },
+          "bbox_xywh": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": { "type": "number" }
+          },
+          "source": {
+            "type": "string",
+            "enum": ["yolox", "easyocr"]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

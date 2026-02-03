@@ -1,0 +1,132 @@
+{
+  "backend": "onnxruntime",
+  "num_files_total": 9,
+  "num_files_timed": 8,
+  "warmup_files": 1,
+  "avg_ms_per_file": {
+    "preprocess": 826.1882500000866,
+    "object_detector": 2016.2320875006117,
+    "text_detector": 6158.354087499902,
+    "merge": 0.0018249984350404702,
+    "total": 9000.776249999035
+  },
+  "per_file": [
+    {
+      "file_name": "BPMN.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\BPMN.png",
+      "warmup": true,
+      "num_detections": 113,
+      "time_ms": {
+        "preprocess": 671.6893999982858,
+        "object_detector": 2073.798400000669,
+        "text_detector": 10235.9226999979,
+        "merge": 0.0031000017770566046,
+        "total": 12981.413599998632
+      }
+    },
+    {
+      "file_name": "BPMN2.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\BPMN2.png",
+      "warmup": false,
+      "num_detections": 15,
+      "time_ms": {
+        "preprocess": 1116.9526999947266,
+        "object_detector": 2336.5600000033737,
+        "text_detector": 5933.050200001162,
+        "merge": 0.0011999945854768157,
+        "total": 9386.564099993848
+      }
+    },
+    {
+      "file_name": "ISU_Diagramm_BPMN.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\ISU_Diagramm_BPMN.png",
+      "warmup": false,
+      "num_detections": 90,
+      "time_ms": {
+        "preprocess": 394.1545999987284,
+        "object_detector": 2382.8027000054135,
+        "text_detector": 4449.514799998724,
+        "merge": 0.0015999976312741637,
+        "total": 7226.473700000497
+      }
+    },
+    {
+      "file_name": "Process_Booking.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\Process_Booking.png",
+      "warmup": false,
+      "num_detections": 81,
+      "time_ms": {
+        "preprocess": 2572.798100001819,
+        "object_detector": 2284.290099996724,
+        "text_detector": 8321.65370000439,
+        "merge": 0.0016999983927235007,
+        "total": 13178.743600001326
+      }
+    },
+    {
+      "file_name": "Process_EventCreate.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\Process_EventCreate.png",
+      "warmup": false,
+      "num_detections": 84,
+      "time_ms": {
+        "preprocess": 463.5550000020885,
+        "object_detector": 1785.7292999979109,
+        "text_detector": 6486.3889000043855,
+        "merge": 0.0022999956854619086,
+        "total": 8735.67550000007
+      }
+    },
+    {
+      "file_name": "notio_diagramm.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\notio_diagramm.png",
+      "warmup": false,
+      "num_detections": 102,
+      "time_ms": {
+        "preprocess": 378.60570000339067,
+        "object_detector": 1870.4524999993737,
+        "text_detector": 3818.3152999990853,
+        "merge": 0.0022999956854619086,
+        "total": 6067.375799997535
+      }
+    },
+    {
+      "file_name": "tg_pokupka_premium_bpmn.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\tg_pokupka_premium_bpmn.png",
+      "warmup": false,
+      "num_detections": 74,
+      "time_ms": {
+        "preprocess": 590.2094999983092,
+        "object_detector": 1817.1796000024187,
+        "text_detector": 6628.394699997443,
+        "merge": 0.0018999999156221747,
+        "total": 9035.785699998087
+      }
+    },
+    {
+      "file_name": "tg_reg_bpmn.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\tg_reg_bpmn.png",
+      "warmup": false,
+      "num_detections": 61,
+      "time_ms": {
+        "preprocess": 547.0149000029778,
+        "object_detector": 1738.2159999979194,
+        "text_detector": 6967.765299996245,
+        "merge": 0.001500004145782441,
+        "total": 9252.997700001288
+      }
+    },
+    {
+      "file_name": "youtube_Process.png",
+      "path": "E:\\Projects\\MegaSchool\\SuccessfulBPMN\\DATASET\\BPMN\\youtube_Process.png",
+      "warmup": false,
+      "num_detections": 113,
+      "time_ms": {
+        "preprocess": 546.2154999986524,
+        "object_detector": 1914.6265000017593,
+        "text_detector": 6661.749799997779,
+        "merge": 0.0021000014385208488,
+        "total": 9122.593899999629
+      }
+    }
+  ]
+}

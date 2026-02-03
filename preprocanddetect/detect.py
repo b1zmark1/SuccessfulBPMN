@@ -6,6 +6,8 @@ from typing import Any, Dict, List, Optional
 import cv2
 import numpy as np
 
+_READER_CACHE: Dict[str, Any] = {}
+
 
 class DetectionError(RuntimeError):
     pass
@@ -68,15 +70,8 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
     # EasyOCR ожидает RGB массив
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
-    # detector=True, recognizer=False: только детекция
-    reader = easyocr.Reader(
-        [cfg.lang],
-        gpu=bool(cfg.gpu),
-        detector=True,
-        recognizer=False,
-        download_enabled=bool(cfg.download_enabled),
-        model_storage_directory=cfg.model_storage_directory,
-    )
+    # detector=True, recognizer=False: only text detection
+    reader = _get_or_create_reader(easyocr, cfg)
 
     det = reader.detect(
         rgb,
@@ -167,6 +162,29 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
         "config": asdict(cfg),
         "boxes": [asdict(b) for b in boxes],
     }
+
+
+def _get_or_create_reader(easyocr_module: Any, cfg: DetectionConfig):
+    key = "|".join(
+        [
+            str(cfg.lang),
+            str(bool(cfg.gpu)),
+            str(bool(cfg.download_enabled)),
+            str(cfg.model_storage_directory),
+        ]
+    )
+    if key in _READER_CACHE:
+        return _READER_CACHE[key]
+    reader = easyocr_module.Reader(
+        [cfg.lang],
+        gpu=bool(cfg.gpu),
+        detector=True,
+        recognizer=False,
+        download_enabled=bool(cfg.download_enabled),
+        model_storage_directory=cfg.model_storage_directory,
+    )
+    _READER_CACHE[key] = reader
+    return reader
 
 
 def draw_text_boxes(bgr: np.ndarray, detection: Dict[str, Any]) -> np.ndarray:

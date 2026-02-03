@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "graph_builder/contracts/output_graph.schema.json",
+  "title": "Graph Builder Output",
+  "type": "object",
+  "required": ["meta", "nodes", "edges"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["schema_version", "direction", "warnings"],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "minLength": 1,
+          "default": "graph-builder.v1"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["LR", "TB"],
+          "default": "LR"
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "source_image": { "type": "string" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "bbox",
+          "center",
+          "role",
+          "container_id",
+          "text"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": {
+            "type": "string",
+            "enum": ["shape", "container", "text", "flow"]
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": { "type": "number" }
+          },
+          "center": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "number" }
+          },
+          "role": {
+            "type": "string",
+            "enum": ["action", "decision", "start", "end", "unknown"]
+          },
+          "container_id": {
+            "type": ["string", "null"],
+            "default": null
+          },
+          "text": {
+            "type": ["string", "null"],
+            "default": null
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
+          "type": {
+            "type": "string",
+            "enum": ["sequential", "conditional", "unknown"]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

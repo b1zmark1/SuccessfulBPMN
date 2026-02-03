@@ -1,0 +1,30 @@
+{
+  "image": {
+    "file_name": "uml_like_01.png",
+    "path": "fixtures/uml_like_01.png",
+    "width": 800,
+    "height": 1000,
+    "resize_ratio": 1.0,
+    "geom_angle_deg": 0.0
+  },
+  "meta": {
+    "backend": "fixture",
+    "yolox_conf": 0.4,
+    "yolox_nms": 0.65,
+    "test_size": [1024, 1024]
+  },
+  "detections": [
+    {"class_id": 3, "class_name": "task", "score": 0.95, "bbox_xyxy": [300, 80, 500, 170], "source": "yolox"},
+    {"class_id": 3, "class_name": "task", "score": 0.94, "bbox_xyxy": [300, 310, 500, 400], "source": "yolox"},
+    {"class_id": 4, "class_name": "gateway_exclusive", "score": 0.9, "bbox_xyxy": [345, 540, 455, 650], "source": "yolox"},
+    {"class_id": 3, "class_name": "task", "score": 0.93, "bbox_xyxy": [300, 760, 500, 850], "source": "yolox"},
+
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.88, "bbox_xyxy": [392, 172, 408, 308], "source": "yolox"},
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.87, "bbox_xyxy": [392, 402, 408, 538], "source": "yolox"},
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.86, "bbox_xyxy": [392, 652, 408, 758], "source": "yolox"},
+
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [316, 108, 430, 134], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [432, 108, 492, 134], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [316, 788, 492, 816], "source": "easyocr"}
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "image": {
+    "file_name": "bpmn_like_01.png",
+    "path": "fixtures/bpmn_like_01.png",
+    "width": 1000,
+    "height": 600,
+    "resize_ratio": 1.0,
+    "geom_angle_deg": 0.0
+  },
+  "meta": {
+    "backend": "fixture",
+    "yolox_conf": 0.4,
+    "yolox_nms": 0.65,
+    "test_size": [1024, 1024]
+  },
+  "detections": [
+    {"class_id": 1, "class_name": "start_event", "score": 0.95, "bbox_xyxy": [50, 250, 90, 290], "source": "yolox"},
+    {"class_id": 3, "class_name": "task", "score": 0.98, "bbox_xyxy": [180, 235, 290, 325], "source": "yolox"},
+    {"class_id": 4, "class_name": "gateway_exclusive", "score": 0.9, "bbox_xyxy": [360, 240, 430, 310], "source": "yolox"},
+    {"class_id": 3, "class_name": "task", "score": 0.97, "bbox_xyxy": [510, 235, 620, 325], "source": "yolox"},
+    {"class_id": 2, "class_name": "end_event", "score": 0.94, "bbox_xyxy": [770, 250, 810, 290], "source": "yolox"},
+
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.91, "bbox_xyxy": [92, 266, 178, 276], "source": "yolox"},
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.9, "bbox_xyxy": [292, 266, 358, 276], "source": "yolox"},
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.9, "bbox_xyxy": [432, 266, 508, 276], "source": "yolox"},
+    {"class_id": 14, "class_name": "sequence_flow", "score": 0.89, "bbox_xyxy": [622, 266, 768, 276], "source": "yolox"},
+
+    {"class_id": 9, "class_name": "pool", "score": 0.55, "bbox_xyxy": [20, 200, 860, 350], "source": "yolox"},
+
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [186, 248, 236, 272], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [238, 248, 286, 272], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [518, 248, 560, 272], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [562, 248, 614, 272], "source": "easyocr"},
+    {"class_id": -1, "class_name": "text", "score": 1.0, "bbox_xyxy": [34, 210, 150, 234], "source": "easyocr"}
+  ]
+}
