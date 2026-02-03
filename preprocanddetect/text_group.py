@@ -120,6 +120,11 @@ def build_text_blocks(
     for i, b in enumerate(boxes_raw, start=1):
         if not isinstance(b, dict):
             continue
+
+        kind = b.get("kind", "horizontal")
+        if kind != "horizontal":
+            continue
+
         bb = b.get("bbox")
         if not (isinstance(bb, list) and len(bb) == 4):
             continue

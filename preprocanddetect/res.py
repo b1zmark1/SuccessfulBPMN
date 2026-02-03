@@ -27,7 +27,6 @@ def _parse_args() -> argparse.Namespace:
 
     ap.add_argument("--input", required=True)
 
-    # поддержка двух имён параметра
     ap.add_argument("--outdir", dest="outdir", default=None)
     ap.add_argument("--out-dir", dest="outdir", default=None)
 
@@ -36,7 +35,6 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--adaptive-block", type=int, default=35)
     ap.add_argument("--adaptive-c", type=int, default=11)
 
-    # 0 => авто-подбор (по умолчанию)
     ap.add_argument("--geom-close-kernel", type=int, default=0)
 
     args = ap.parse_args()
@@ -65,15 +63,19 @@ def main() -> None:
 
     result = preprocess(str(input_path), cfg)
 
+    # CHANGED: показываем model_bgr как основной кадр для моделей
     mapping = {
-        "00_original.png": result["orig_bgr"],
-        "01_gray.png": result["gray"],
-        "02_gray_eq.png": result["gray_eq"],
-        "03_denoised.png": result["denoised"],
-        "04_ocr.png": result["ocr"],
-        "05_cv_binary.png": result["cv_binary"],
-        "06_geom.png": result["geom"],
-        "07_edges.png": result["edges"],
+        "00_model.png": result["model_bgr"],
+        "01_orig.png": result["orig_bgr"],
+        "02_geom_bgr.png": result["geom_bgr"],
+
+        "03_gray.png": result["gray"],
+        "04_gray_eq.png": result["gray_eq"],
+        "05_denoised.png": result["denoised"],
+        "06_ocr.png": result["ocr"],
+        "07_cv_binary.png": result["cv_binary"],
+        "08_geom.png": result["geom"],
+        "09_edges.png": result["edges"],
     }
 
     for name, img in mapping.items():
@@ -81,9 +83,18 @@ def main() -> None:
 
     meta = {
         "input": str(input_path),
+        "coord_space": "model",
         "config": asdict(cfg),
-        "shapes": {k: list(v.shape) for k, v in result.items()},
-        "dtypes": {k: str(v.dtype) for k, v in result.items()},
+
+        "orig_shape": list(result["orig_bgr"].shape),
+        "geom_shape": list(result["geom_bgr"].shape),
+        "model_shape": list(result["model_bgr"].shape),
+
+        "resize_ratio": float(result["resize_ratio"]),
+        "geom_angle_deg": float(result["geom_angle_deg"]),
+        "deskew_matrix": result["deskew_matrix"].tolist(),
+        "deskew_matrix_inv": result["deskew_matrix_inv"].tolist(),
+
         "black_ratio_ocr": float(np.mean(result["ocr"] == 0)),
         "black_ratio_cv": float(np.mean(result["cv_binary"] == 0)),
         "black_ratio_geom": float(np.mean(result["geom"] == 0)),

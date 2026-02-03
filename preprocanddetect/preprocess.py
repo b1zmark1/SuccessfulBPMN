@@ -65,11 +65,21 @@ def preprocess(
     image: Union[str, bytes, np.ndarray],
     cfg: Optional[PreprocessConfig] = None,
 ) -> Dict[str, np.ndarray]:
+    """
+    CHANGED:
+      - preprocess теперь является единственной точкой геометрической нормализации (deskew + resize).
+      - возвращает model_bgr — единый вход для YOLOX и text-detector.
+      - добавлены deskew_matrix и deskew_matrix_inv для трассировки координат (coord_space="model").
+    """
     if cfg is None:
         cfg = PreprocessConfig()
 
     bgr_orig = _load_as_bgr(image)
-    bgr_geom, geom_angle = _deskew_if_needed(bgr_orig, cfg)
+
+    # deskew -> geom_bgr + матрицы
+    bgr_geom, geom_angle, deskew_mat, deskew_mat_inv = _deskew_if_needed(bgr_orig, cfg)
+
+    # resize -> model_bgr (ЕДИНЫЙ вход для детекторов)
     bgr, resize_ratio = _resize(bgr_geom, cfg)
 
     gray = _to_gray_uint8(bgr)
@@ -87,11 +97,23 @@ def preprocess(
     edges = _edges_from_gray(denoised, cfg)
 
     return {
+        # orig -> только для reference/debug
         "orig_bgr": bgr_orig,
+
+        # geom_bgr -> после deskew (до resize)
         "geom_bgr": bgr_geom,
+
+        # model_bgr -> ПОСЛЕ deskew + resize (ЕДИНЫЙ вход для YOLOX и text-detector)
         "model_bgr": bgr,
+
         "resize_ratio": np.array(resize_ratio, dtype=np.float32),
         "geom_angle_deg": np.array(geom_angle, dtype=np.float32),
+
+        # CHANGED: матрицы deskew (orig -> geom) и inverse (geom -> orig)
+        "deskew_matrix": deskew_mat.astype(np.float32),
+        "deskew_matrix_inv": deskew_mat_inv.astype(np.float32),
+
+        # derived from model_bgr
         "gray": gray,
         "gray_eq": gray_eq,
         "denoised": denoised,
@@ -250,17 +272,11 @@ def _make_geom(cv_binary_black_on_white: np.ndarray, cfg: PreprocessConfig) -> n
 
 
 def _auto_select_close_kernel(cv_binary_black_on_white: np.ndarray, cfg: PreprocessConfig) -> int:
-    """
-    Выбираем минимальный kernel из [1,3,5], который:
-      - заметно уменьшает число компонент связности (разрывы линий),
-      - но не сильно увеличивает долю черного (утолщение/склейка).
-    """
     candidates = [1, 3, 5]
 
     base_cc = _count_black_components(cv_binary_black_on_white)
     base_black = float(np.mean(cv_binary_black_on_white == 0))
 
-    # Если всё уже цельно — close не нужен
     if base_cc <= 200:
         return 1
 
@@ -274,9 +290,7 @@ def _auto_select_close_kernel(cv_binary_black_on_white: np.ndarray, cfg: Preproc
         cc = _count_black_components(geom)
         black = float(np.mean(geom == 0))
 
-        # хотим уменьшить компонентность хотя бы на 3%
         cc_improved = (cc <= base_cc * 0.97)
-        # и не нарастить черного больше чем на 2% абсолютных
         black_ok = (black <= base_black + 0.02)
 
         if cc_improved and black_ok:
@@ -299,9 +313,16 @@ def _edges_from_gray(gray: np.ndarray, cfg: PreprocessConfig) -> np.ndarray:
     return cv2.Canny(gray, lower, upper)
 
 
-def _deskew_if_needed(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarray, float]:
+def _deskew_if_needed(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarray, float, np.ndarray, np.ndarray]:
+    """
+    CHANGED:
+      Возвращаем также матрицы affine для трассировки координат:
+        deskew_matrix (orig -> geom),
+        deskew_matrix_inv (geom -> orig).
+    """
     if not cfg.enable_deskew:
-        return bgr, 0.0
+        mat = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], dtype=np.float32)
+        return bgr, 0.0, mat, mat
 
     gray = _to_gray_uint8(bgr)
     edges = cv2.Canny(gray, 50, 150)
@@ -314,7 +335,8 @@ def _deskew_if_needed(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarra
         maxLineGap=int(cfg.deskew_max_line_gap),
     )
     if lines is None or len(lines) == 0:
-        return bgr, 0.0
+        mat = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], dtype=np.float32)
+        return bgr, 0.0, mat, mat
 
     angles = []
     for line in lines[:, 0, :]:
@@ -331,23 +353,26 @@ def _deskew_if_needed(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarra
         angles.append(angle)
 
     if not angles:
-        return bgr, 0.0
+        mat = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], dtype=np.float32)
+        return bgr, 0.0, mat, mat
 
     median_angle = float(np.median(angles))
-    if abs(median_angle) < cfg.deskew_min_deg:
-        return bgr, 0.0
-    if abs(median_angle) > cfg.deskew_max_deg:
-        return bgr, 0.0
+    if abs(median_angle) < cfg.deskew_min_deg or abs(median_angle) > cfg.deskew_max_deg:
+        mat = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], dtype=np.float32)
+        return bgr, 0.0, mat, mat
 
     h, w = bgr.shape[:2]
     center = (w / 2.0, h / 2.0)
     mat = cv2.getRotationMatrix2D(center, median_angle, 1.0)
+
     cos = abs(mat[0, 0])
     sin = abs(mat[0, 1])
     new_w = int((h * sin) + (w * cos))
     new_h = int((h * cos) + (w * sin))
+
     mat[0, 2] += (new_w / 2.0) - center[0]
     mat[1, 2] += (new_h / 2.0) - center[1]
+
     rotated = cv2.warpAffine(
         bgr,
         mat,
@@ -355,4 +380,6 @@ def _deskew_if_needed(bgr: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarra
         flags=cv2.INTER_LINEAR,
         borderValue=(255, 255, 255),
     )
-    return rotated, median_angle
+
+    mat_inv = cv2.invertAffineTransform(mat)
+    return rotated, median_angle, mat, mat_inv

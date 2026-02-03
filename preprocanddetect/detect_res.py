@@ -78,6 +78,8 @@ def main() -> None:
         adaptive_c=args.adaptive_c,
         geom_close_kernel=args.geom_close_kernel,
     )
+
+    # CHANGED: preprocess вызываем ОДИН раз
     pre = preprocess(str(input_path), p_cfg)
 
     download_enabled = True
@@ -99,8 +101,10 @@ def main() -> None:
         height_ths=float(args.height_ths),
     )
 
-    det = detect_text_boxes(pre["orig_bgr"], d_cfg)
-    overlay_words = draw_text_boxes(pre["orig_bgr"], det)
+    # CHANGED: текстовый детектор работает на model_bgr (единый вход с YOLOX)
+    model_bgr = pre["model_bgr"]
+    det = detect_text_boxes(model_bgr, d_cfg)
+    overlay_words = draw_text_boxes(model_bgr, det)
 
     g_cfg = GroupConfig(
         gap_mult=float(args.gap_mult),
@@ -108,17 +112,21 @@ def main() -> None:
         line_gap_mult=float(args.line_gap_mult),
     )
 
-    h, w = pre["orig_bgr"].shape[:2]
+    h, w = model_bgr.shape[:2]
     blocks = build_text_blocks(det, image_w=w, image_h=h, cfg=g_cfg)
-    overlay_blocks = draw_text_blocks(pre["orig_bgr"], blocks)
+    overlay_blocks = draw_text_blocks(model_bgr, blocks)
 
     mapping = {
-        "00_original.png": pre["orig_bgr"],
+        # CHANGED: базовый кадр для отладки — model_bgr
+        "00_model.png": model_bgr,
         "01_text_detect_words.png": overlay_words,
         "02_text_detect_blocks.png": overlay_blocks,
         "03_ocr_bin.png": pre["ocr"],
         "04_geom.png": pre["geom"],
         "05_edges.png": pre["edges"],
+
+        # опционально: оригинал чисто для визуального сравнения
+        "99_orig.png": pre["orig_bgr"],
     }
 
     for name, img in mapping.items():
@@ -129,10 +137,20 @@ def main() -> None:
 
     meta = {
         "input": str(input_path),
+        "coord_space": "model",
         "preprocess_config": asdict(p_cfg),
         "detect_config": det.get("config", {}),
         "group_config": asdict(g_cfg),
-        "image_shape": list(pre["orig_bgr"].shape),
+
+        "orig_shape": list(pre["orig_bgr"].shape),
+        "geom_shape": list(pre["geom_bgr"].shape),
+        "model_shape": list(pre["model_bgr"].shape),
+
+        "resize_ratio": float(pre["resize_ratio"]),
+        "geom_angle_deg": float(pre["geom_angle_deg"]),
+        "deskew_matrix": pre["deskew_matrix"].tolist(),
+        "deskew_matrix_inv": pre["deskew_matrix_inv"].tolist(),
+
         "num_text_boxes": int(len(det.get("boxes", []))),
         "num_text_blocks": int(len(blocks.get("blocks", []))),
     }

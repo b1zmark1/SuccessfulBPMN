@@ -69,17 +69,40 @@ class YoloXPredictor:
         return outputs, img_info
 
     def draw(self, output, img_info):
+        """
+        CHANGED:
+        - Перед отрисовкой фильтруем YOLOX детекты класса "text",
+            потому что текстовые bbox берём из отдельного детектора (EasyOCR).
+        """
         from yolox.utils import vis
 
         img = img_info["raw_img"].copy()
         if output is None:
             return img
+
         output = output.cpu()
+
+        # Найдём id класса "text" по classes.txt (если есть)
+        text_class_id = None
+        if self.cls_names is not None:
+            for i, name in enumerate(self.cls_names):
+                if name == "text":
+                    text_class_id = i
+                    break
+
+        # Уберём "text" из output, чтобы он не рисовался на _yolox.png
+        if text_class_id is not None and output.numel() > 0:
+            output = output[output[:, 6] != float(text_class_id)]
+
+        if output.numel() == 0:
+            return img
+
         bboxes = output[:, 0:4]
         bboxes /= img_info["ratio"]
         cls = output[:, 6]
         scores = output[:, 4] * output[:, 5]
         return vis(img, bboxes, scores, cls, self.confthre, self.cls_names)
+
 
     def to_detections(self, output, img_info):
         if output is None:
@@ -172,7 +195,7 @@ def main() -> None:
         if args.fp16:
             model.half()
     model.eval()
-    # Detect Git LFS pointer (text) instead of real checkpoint
+
     with open(args.ckpt, "rb") as f:
         head = f.read(200)
     if b"git-lfs.github.com/spec/v1" in head or head.startswith(b"version "):
@@ -209,7 +232,10 @@ def main() -> None:
     pre_cfg = PreprocessConfig()
     t0 = time.time()
     for img_path in image_list:
+        # preprocess ОДИН раз
         pre = preprocess(img_path, pre_cfg)
+
+        # CHANGED: единый вход для YOLOX и text-detector — model_bgr
         model_bgr = pre["model_bgr"]
 
         outputs, img_info = predictor.inference(model_bgr)
@@ -223,8 +249,6 @@ def main() -> None:
         if not args.no_text:
             text_det = detect_text_boxes(model_bgr.copy(), d_cfg)
             text_overlay = draw_text_boxes(model_bgr.copy(), text_det)
-
-            # overlay text on top of YOLOX overlay for a combined view
             ensemble_overlay = draw_text_boxes(yolox_overlay.copy(), text_det)
 
         rel = os.path.relpath(img_path, str(images_path)) if images_path.is_dir() else os.path.basename(img_path)
@@ -244,24 +268,31 @@ def main() -> None:
                 if not isinstance(bbox, list) or len(bbox) != 4:
                     continue
                 x1, y1, x2, y2 = [float(x) for x in bbox]
+                score = b.get("score", None)
+                score_out = float(score) if isinstance(score, (int, float)) else None
                 text_dets.append(
                     {
                         "class_id": -1,
                         "class_name": "text",
-                        "score": float(b.get("score", 1.0)) if isinstance(b.get("score", 1.0), (int, float)) else 1.0,
+                        "score": score_out,
                         "bbox_xyxy": [x1, y1, x2, y2],
                         "bbox_xywh": [x1, y1, max(0.0, x2 - x1), max(0.0, y2 - y1)],
-                        "source": "easyocr",
+                        "source": "easyocr_detect",
                     }
                 )
 
         result = {
+            "coord_space": "model",
             "image": {
                 "file_name": rel,
                 "width": int(model_bgr.shape[1]),
                 "height": int(model_bgr.shape[0]),
+                "orig_width": int(pre["orig_bgr"].shape[1]),
+                "orig_height": int(pre["orig_bgr"].shape[0]),
                 "resize_ratio": float(pre["resize_ratio"]),
                 "geom_angle_deg": float(pre["geom_angle_deg"]),
+                "deskew_matrix": pre["deskew_matrix"].tolist(),
+                "deskew_matrix_inv": pre["deskew_matrix_inv"].tolist(),
             },
             "meta": {
                 "yolox_conf": float(exp.test_conf),

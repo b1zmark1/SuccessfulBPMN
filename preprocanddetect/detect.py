@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from typing import Any, Dict, List, Optional
+from threading import Lock
+from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -29,7 +30,7 @@ class DetectionConfig:
     low_text: float = 0.25
     link_threshold: float = 0.25
     canvas_size: int = 3840
-    mag_ratio: float = 1.2
+    mag_ratio: float = 1.0
 
     # Мерджинг боксов (важно не склеивать в полосы)
     slope_ths: float = 0.10
@@ -51,6 +52,35 @@ class TextBox:
     poly: List[List[int]]  # 4 точки
     bbox: List[int]        # [x1,y1,x2,y2]
     kind: str              # "horizontal" | "free"
+    # CHANGED: если EasyOCR отдаёт score, сохраняем. Иначе None.
+    score: Optional[float] = None
+
+
+# CHANGED: кэш EasyOCR.Reader, чтобы не пересоздавать модель на каждый вызов.
+_READER_CACHE: Dict[Tuple[str, bool, bool, Optional[str]], Any] = {}
+_READER_LOCK = Lock()
+
+
+def _get_easyocr_reader(cfg: DetectionConfig) -> Any:
+    try:
+        import easyocr  # type: ignore
+    except Exception as e:
+        raise DetectionError("EasyOCR is not installed. Install: python -m pip install easyocr") from e
+
+    key = (cfg.lang, bool(cfg.gpu), bool(cfg.download_enabled), cfg.model_storage_directory)
+    with _READER_LOCK:
+        reader = _READER_CACHE.get(key)
+        if reader is None:
+            reader = easyocr.Reader(
+                [cfg.lang],
+                gpu=bool(cfg.gpu),
+                detector=True,
+                recognizer=False,
+                download_enabled=bool(cfg.download_enabled),
+                model_storage_directory=cfg.model_storage_directory,
+            )
+            _READER_CACHE[key] = reader
+        return reader
 
 
 def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) -> Dict[str, Any]:
@@ -62,16 +92,10 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
 
     h, w = bgr.shape[:2]
 
-    try:
-        import easyocr  # type: ignore
-    except Exception as e:
-        raise DetectionError("EasyOCR is not installed. Install: python -m pip install easyocr") from e
-
     # EasyOCR ожидает RGB массив
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
-    # detector=True, recognizer=False: only text detection
-    reader = _get_or_create_reader(easyocr, cfg)
+    reader = _get_easyocr_reader(cfg)
 
     det = reader.detect(
         rgb,
@@ -93,7 +117,6 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
 
     horizontal_list, free_list = det
 
-    # Важно: easyocr часто возвращает batch-структуру: [boxes_for_img]
     horizontal_list = _unwrap_batch_list(horizontal_list)
     free_list = _unwrap_batch_list(free_list)
 
@@ -104,6 +127,11 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
         for item in horizontal_list:
             if not isinstance(item, (list, tuple)) or len(item) < 4:
                 continue
+
+            score: Optional[float] = None
+            if len(item) >= 5 and isinstance(item[4], (int, float)):
+                score = float(item[4])
+
             x_min, x_max, y_min, y_max = [int(round(float(v))) for v in item[:4]]
 
             x1 = max(0, min(w - 1, x_min))
@@ -120,13 +148,17 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
                 continue
 
             poly = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]]
-            boxes.append(TextBox(poly=poly, bbox=[x1, y1, x2, y2], kind="horizontal"))
+            boxes.append(TextBox(poly=poly, bbox=[x1, y1, x2, y2], kind="horizontal", score=score))
 
     # free_list: [[[x1,y1],[x2,y2],[x3,y3],[x4,y4]] ...] (иногда +score)
     if isinstance(free_list, list):
         for item in free_list:
             if not isinstance(item, (list, tuple)) or len(item) < 4:
                 continue
+
+            score = None
+            if len(item) >= 5 and isinstance(item[4], (int, float)):
+                score = float(item[4])
 
             pts: List[List[int]] = []
             ok = True
@@ -154,7 +186,7 @@ def detect_text_boxes(bgr: np.ndarray, cfg: Optional[DetectionConfig] = None) ->
                 continue
 
             poly = [[max(0, min(w - 1, p[0])), max(0, min(h - 1, p[1]))] for p in pts]
-            boxes.append(TextBox(poly=poly, bbox=[x1, y1, x2, y2], kind="free"))
+            boxes.append(TextBox(poly=poly, bbox=[x1, y1, x2, y2], kind="free", score=score))
 
     boxes = _nms_text_boxes(boxes, float(cfg.nms_iou_threshold))
 
@@ -214,12 +246,6 @@ def draw_text_boxes(bgr: np.ndarray, detection: Dict[str, Any]) -> np.ndarray:
 
 
 def _unwrap_batch_list(x: Any) -> Any:
-    """
-    EasyOCR.detect часто возвращает:
-      horizontal_list = [ list_for_img ]
-      free_list       = [ list_for_img ]
-    Нам нужен именно list_for_img.
-    """
     if isinstance(x, list) and len(x) == 1 and isinstance(x[0], list):
         return x[0]
     return x
@@ -244,7 +270,16 @@ def _iou(a: List[int], b: List[int]) -> float:
 def _nms_text_boxes(boxes: List[TextBox], iou_th: float) -> List[TextBox]:
     if not boxes:
         return boxes
-    order = sorted(range(len(boxes)), key=lambda i: (boxes[i].bbox[2] - boxes[i].bbox[0]) * (boxes[i].bbox[3] - boxes[i].bbox[1]), reverse=True)
+
+    # CHANGED: если score есть, используем его как первичный приоритет, иначе fallback на area.
+    order = sorted(
+        range(len(boxes)),
+        key=lambda i: (
+            float(boxes[i].score) if isinstance(boxes[i].score, (int, float)) else 0.0,
+            (boxes[i].bbox[2] - boxes[i].bbox[0]) * (boxes[i].bbox[3] - boxes[i].bbox[1]),
+        ),
+        reverse=True,
+    )
 
     keep: List[int] = []
     while order:
