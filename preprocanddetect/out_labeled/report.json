@@ -1,0 +1,203 @@
+{
+  "mode": "fallback",
+  "min_match_score": 0.85,
+  "nodes_total": 17,
+  "edges_total": 16,
+  "ocr_blocks_total": 23,
+  "nodes_labeled": 7,
+  "ocr_blocks_unused": 16,
+  "unused_blocks": [
+    {
+      "block_id": 1,
+      "bbox": [
+        110.0,
+        8.0,
+        202.0,
+        20.0
+      ],
+      "text": "Данные формы",
+      "confidence": 0.96,
+      "confidence_available": true
+    },
+    {
+      "block_id": 2,
+      "bbox": [
+        720.0,
+        16.0,
+        782.0,
+        28.0
+      ],
+      "text": "Отклонена",
+      "confidence": 0.84,
+      "confidence_available": true
+    },
+    {
+      "block_id": 3,
+      "bbox": [
+        868.0,
+        30.0,
+        1050.0,
+        42.0
+      ],
+      "text": "Отказ в исполнении заявки",
+      "confidence": 0.9475,
+      "confidence_available": true
+    },
+    {
+      "block_id": 5,
+      "bbox": [
+        962.0,
+        74.0,
+        1122.0,
+        100.0
+      ],
+      "text": "Уведомление\nоб исполнении получено\n> _ <",
+      "confidence": 0.7371428571428571,
+      "confidence_available": true
+    },
+    {
+      "block_id": 6,
+      "bbox": [
+        6.0,
+        88.0,
+        16.0,
+        114.0
+      ],
+      "text": "о\nо",
+      "confidence": 0.6233333333333334,
+      "confidence_available": true
+    },
+    {
+      "block_id": 9,
+      "bbox": [
+        28.0,
+        114.0,
+        144.0,
+        140.0
+      ],
+      "text": "Заявка\nзарегистрирована",
+      "confidence": 0.96,
+      "confidence_available": true
+    },
+    {
+      "block_id": 10,
+      "bbox": [
+        752.0,
+        114.0,
+        800.0,
+        126.0
+      ],
+      "text": "уу",
+      "confidence": 0.33,
+      "confidence_available": true
+    },
+    {
+      "block_id": 11,
+      "bbox": [
+        1262.0,
+        160.0,
+        1382.0,
+        188.0
+      ],
+      "text": ") а\nОбработка заявки\nзавершена",
+      "confidence": 0.742,
+      "confidence_available": true
+    },
+    {
+      "block_id": 12,
+      "bbox": [
+        604.0,
+        162.0,
+        702.0,
+        174.0
+      ],
+      "text": "Статус заявки",
+      "confidence": 0.955,
+      "confidence_available": true
+    },
+    {
+      "block_id": 15,
+      "bbox": [
+        6.0,
+        326.0,
+        128.0,
+        386.0
+      ],
+      "text": "—\nо ычэнут\n5\nо | Заявка принята\nя к рассмотрению\nя\nо",
+      "confidence": 0.7276923076923077,
+      "confidence_available": true
+    },
+    {
+      "block_id": 16,
+      "bbox": [
+        404.0,
+        342.0,
+        688.0,
+        356.0
+      ],
+      "text": "| Заявка отклонена по технической причине",
+      "confidence": 0.9216666666666667,
+      "confidence_available": true
+    },
+    {
+      "block_id": 17,
+      "bbox": [
+        38.0,
+        358.0,
+        128.0,
+        372.0
+      ],
+      "text": "Заявка принята [\nк рассмотрению",
+      "confidence": 0.812,
+      "confidence_available": true
+    },
+    {
+      "block_id": 18,
+      "bbox": [
+        506.0,
+        386.0,
+        520.0,
+        398.0
+      ],
+      "text": "Да",
+      "confidence": 0.72,
+      "confidence_available": true
+    },
+    {
+      "block_id": 20,
+      "bbox": [
+        642.0,
+        434.0,
+        744.0,
+        446.0
+      ],
+      "text": "и\nЗаявка принята в",
+      "confidence": 0.795,
+      "confidence_available": true
+    },
+    {
+      "block_id": 21,
+      "bbox": [
+        764.0,
+        434.0,
+        810.0,
+        448.0
+      ],
+      "text": "| в работу",
+      "confidence": 0.96,
+      "confidence_available": true
+    },
+    {
+      "block_id": 22,
+      "bbox": [
+        968.0,
+        434.0,
+        1116.0,
+        460.0
+      ],
+      "text": ") Передача отчёта\nоб исполнении заявки",
+      "confidence": 0.8416666666666667,
+      "confidence_available": true
+    }
+  ]
+}
