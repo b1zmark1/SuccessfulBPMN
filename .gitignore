@@ -1,0 +1,8 @@
+# Models
+narrator/*.gguf
+narrator/.cache/
+
+# Python cache
+**/__pycache__/
+*.pyc
+.pytest_cache/

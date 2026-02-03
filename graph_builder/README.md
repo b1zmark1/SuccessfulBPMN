@@ -157,6 +157,27 @@ def build_graph(ensemble_json: dict) -> dict:
 
 ---
 
+## Graph -> Semantic Projection integration point
+
+For LLM Narrator integration, use a fixed stage call:
+
+```python
+from graph_builder.pipeline import run_graph_to_semantic_pipeline
+
+result = run_graph_to_semantic_pipeline(ensemble_json)
+semantic_payload = result["semantic_payload"]
+projection_meta = result["projection_meta"]
+```
+
+`semantic_payload` follows:
+- `graph_builder/contracts/semantic_projection.schema.json`
+- `graph_builder/contracts/semantic_projection_contract.md`
+- `meta.schema_version == "semantic-projection.v1"`
+- `steps[]` contain only `id`, `order`, `role`, `text`, `next_step_ids`
+- no geometry (`bbox`, coordinates, centers) is exposed
+
+---
+
 ## Важные архитектурные принципы
 
 - Геометрия приоритетнее классов.

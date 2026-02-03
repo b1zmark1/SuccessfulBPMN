@@ -59,6 +59,20 @@ from .serialize import (
     SerializeError,
     serialize_graph_output,
 )
+from .semantic_projection import (
+    SemanticProjectionConfig,
+    SemanticProjectionError,
+    project_graph_to_semantic,
+)
+from .pipeline import (
+    build_graph_from_ensemble,
+    run_graph_to_semantic_pipeline,
+)
+from .semantic_contract import (
+    SemanticContractError,
+    check_semantic_projection_contract,
+    validate_semantic_projection_contract,
+)
 
 __all__ = [
     "InternalDetection",
@@ -98,4 +112,12 @@ __all__ = [
     "SerializeConfig",
     "SerializeError",
     "serialize_graph_output",
+    "SemanticProjectionConfig",
+    "SemanticProjectionError",
+    "project_graph_to_semantic",
+    "build_graph_from_ensemble",
+    "run_graph_to_semantic_pipeline",
+    "SemanticContractError",
+    "check_semantic_projection_contract",
+    "validate_semantic_projection_contract",
 ]

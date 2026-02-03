@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "graph_builder/contracts/semantic_projection.schema.json",
+  "title": "LLM-friendly Semantic Projection",
+  "type": "object",
+  "required": ["meta", "steps"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "source_graph_schema_version",
+        "direction",
+        "warnings"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "semantic-projection.v1"
+        },
+        "source_graph_schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["LR", "TB"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "order", "role", "text", "next_step_ids"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "order": { "type": "integer", "minimum": 1 },
+          "role": {
+            "type": "string",
+            "enum": ["start", "action", "decision", "parallel", "end"]
+          },
+          "text": { "type": ["string", "null"] },
+          "next_step_ids": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
