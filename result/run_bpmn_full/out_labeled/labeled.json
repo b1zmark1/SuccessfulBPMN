@@ -1,0 +1,676 @@
+{
+  "coord_space": "model",
+  "image": {
+    "file_name": "BPMN.png",
+    "width": 1800,
+    "height": 731,
+    "orig_width": 2317,
+    "orig_height": 941,
+    "resize_ratio": 0.776866614818573,
+    "geom_angle_deg": 0.0,
+    "deskew_matrix": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "deskew_matrix_inv": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ]
+    ]
+  },
+  "assigned_nodes": [
+    {
+      "det_id": 1,
+      "class_name": "task",
+      "det_score": 0.9710832238197327,
+      "bbox": [
+        1305.5418701171875,
+        334.6292724609375,
+        1390.418212890625,
+        402.468505859375
+      ],
+      "text": "Годклоче- е мо-етизацин ; ролн;",
+      "block_id": 14,
+      "ocr_confidence": 0.493920427334486,
+      "match_score": 3.6484172750711266
+    },
+    {
+      "det_id": 2,
+      "class_name": "task",
+      "det_score": 0.9679524898529053,
+      "bbox": [
+        173.91156005859375,
+        91.02029418945312,
+        262.44769287109375,
+        158.74169921875
+      ],
+      "text": "Затузить вилео",
+      "block_id": 5,
+      "ocr_confidence": 0.5360031220106218,
+      "match_score": 3.3973961956704546
+    },
+    {
+      "det_id": 3,
+      "class_name": "task",
+      "det_score": 0.9676105380058289,
+      "bbox": [
+        914.0829467773438,
+        348.7716064453125,
+        1003.6945190429688,
+        415.6952209472656
+      ],
+      "text": "провёрить количество предутреждений если боЛьше 3 заблокноовать ааш",
+      "block_id": 12,
+      "ocr_confidence": 0.6552349249754263,
+      "match_score": 3.483581179419955
+    },
+    {
+      "det_id": 4,
+      "class_name": "task",
+      "det_score": 0.9644722938537598,
+      "bbox": [
+        458.8826599121094,
+        348.630615234375,
+        547.383544921875,
+        417.3605651855469
+      ],
+      "text": "видео добавленне автонатических субтмтров",
+      "block_id": 20,
+      "ocr_confidence": 0.8514360235453675,
+      "match_score": 3.4870395944550463
+    },
+    {
+      "det_id": 5,
+      "class_name": "end_event",
+      "det_score": 0.958984375,
+      "bbox": [
+        1651.3734130859375,
+        435.97479248046875,
+        1689.1878662109375,
+        473.4425964355469
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 6,
+      "class_name": "task",
+      "det_score": 0.9498430490493774,
+      "bbox": [
+        1453.6331787109375,
+        170.7496795654297,
+        1544.3179931640625,
+        237.7763214111328
+      ],
+      "text": "Вв0д данных свосй банковской карты",
+      "block_id": 10,
+      "ocr_confidence": 0.7904752859661316,
+      "match_score": 3.375477826203681
+    },
+    {
+      "det_id": 7,
+      "class_name": "task",
+      "det_score": 0.9475135803222656,
+      "bbox": [
+        706.6614990234375,
+        548.8309326171875,
+        795.5803833007812,
+        617.817626953125
+      ],
+      "text": "Модератор оцетивает роП?",
+      "block_id": 24,
+      "ocr_confidence": 0.797448152078409,
+      "match_score": 3.5675971565925093
+    },
+    {
+      "det_id": 8,
+      "class_name": "task",
+      "det_score": 0.9440937638282776,
+      "bbox": [
+        1457.8211669921875,
+        335.2892761230469,
+        1542.6539306640625,
+        400.6665344238281
+      ],
+      "text": "Проверка датных Харты сохраненке ВСе да ных",
+      "block_id": 16,
+      "ocr_confidence": 0.622500682707188,
+      "match_score": 3.420936128099082
+    },
+    {
+      "det_id": 9,
+      "class_name": "task",
+      "det_score": 0.9283633232116699,
+      "bbox": [
+        1116.1903076171875,
+        338.97247314453125,
+        1202.8760986328125,
+        403.4869384765625
+      ],
+      "text": "Оганитенне 18 + а конкретнон Еллео]",
+      "block_id": 17,
+      "ocr_confidence": 0.5754754752649694,
+      "match_score": 3.2487453019425967
+    },
+    {
+      "det_id": 10,
+      "class_name": "start_event",
+      "det_score": 0.9282872676849365,
+      "bbox": [
+        67.51966094970703,
+        110.02191925048828,
+        97.7277603149414,
+        138.7270050048828
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 11,
+      "class_name": "task",
+      "det_score": 0.9254175424575806,
+      "bbox": [
+        342.9286193847656,
+        95.4837875366211,
+        433.7093811035156,
+        158.52110290527344
+      ],
+      "text": "[Затолнить Бсе Поля; названуе описанке теги; екдымОСть",
+      "block_id": 4,
+      "ocr_confidence": 0.4556394448861622,
+      "match_score": 3.3600964301781424
+    },
+    {
+      "det_id": 12,
+      "class_name": "task",
+      "det_score": 0.9224904179573059,
+      "bbox": [
+        1627.3045654296875,
+        172.2985382080078,
+        1713.4727783203125,
+        234.853271484375
+      ],
+      "text": "Выбрать время пубпихацки м на -аты кнолку опубПЫКОВаТь",
+      "block_id": 9,
+      "ocr_confidence": 0.6168562429875668,
+      "match_score": 3.2291183074171834
+    },
+    {
+      "det_id": 14,
+      "class_name": "task",
+      "det_score": 0.8887490034103394,
+      "bbox": [
+        341.2578125,
+        351.3710021972656,
+        435.2571716308594,
+        414.5540466308594
+      ],
+      "text": "Сообщенке 0 новом Видсо заг;зка 8 0 на серзер",
+      "block_id": 19,
+      "ocr_confidence": 0.6390318058248762,
+      "match_score": 3.558577574235967
+    },
+    {
+      "det_id": 16,
+      "class_name": "end_event",
+      "det_score": 0.8617716431617737,
+      "bbox": [
+        737.1300048828125,
+        424.9427795410156,
+        765.1881713867188,
+        452.80059814453125
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 17,
+      "class_name": "end_event",
+      "det_score": 0.8586816191673279,
+      "bbox": [
+        1134.9271240234375,
+        559.9136962890625,
+        1171.6378173828125,
+        597.1417846679688
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 19,
+      "class_name": "gateway_parallel",
+      "det_score": 0.850601315498352,
+      "bbox": [
+        837.1835327148438,
+        303.2563171386719,
+        868.2030639648438,
+        333.45745849609375
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 21,
+      "class_name": "gateway_parallel",
+      "det_score": 0.809959888458252,
+      "bbox": [
+        837.9299926757812,
+        567.9735717773438,
+        867.7101440429688,
+        596.5415649414062
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 26,
+      "class_name": "end_event",
+      "det_score": 0.7711637616157532,
+      "bbox": [
+        1332.512451171875,
+        186.92649841308594,
+        1363.1668701171875,
+        217.14694213867188
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 30,
+      "class_name": "end_event",
+      "det_score": 0.7623127698898315,
+      "bbox": [
+        1200.6246337890625,
+        626.3049926757812,
+        1231.472412109375,
+        655.9137573242188
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 31,
+      "class_name": "intermediate_event",
+      "det_score": 0.7334722280502319,
+      "bbox": [
+        1104.505615234375,
+        106.0023193359375,
+        1141.322265625,
+        142.1568603515625
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 32,
+      "class_name": "start_event",
+      "det_score": 0.7297924757003784,
+      "bbox": [
+        61.559417724609375,
+        112.78974151611328,
+        93.6203842163086,
+        140.12997436523438
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 34,
+      "class_name": "intermediate_event",
+      "det_score": 0.6820034980773926,
+      "bbox": [
+        834.6793212890625,
+        106.18004608154297,
+        870.81640625,
+        142.30618286132812
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 40,
+      "class_name": "intermediate_event",
+      "det_score": 0.637337327003479,
+      "bbox": [
+        942.4551391601562,
+        222.2062530517578,
+        977.5382690429688,
+        259.599365234375
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 41,
+      "class_name": "end_event",
+      "det_score": 0.6301729679107666,
+      "bbox": [
+        688.6469116210938,
+        305.7558898925781,
+        718.1180419921875,
+        332.06707763671875
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 44,
+      "class_name": "end_event",
+      "det_score": 0.6077138781547546,
+      "bbox": [
+        838.3980712890625,
+        494.9957580566406,
+        868.5394287109375,
+        525.7039184570312
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 47,
+      "class_name": "end_event",
+      "det_score": 0.5902627110481262,
+      "bbox": [
+        586.2039794921875,
+        368.4320068359375,
+        608.1941528320312,
+        390.40911865234375
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 49,
+      "class_name": "gateway_parallel",
+      "det_score": 0.5746468305587769,
+      "bbox": [
+        1225.3477783203125,
+        111.09228515625,
+        1252.2264404296875,
+        136.24290466308594
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    },
+    {
+      "det_id": 54,
+      "class_name": "task",
+      "det_score": 0.49039432406425476,
+      "bbox": [
+        1622.9549560546875,
+        338.58282470703125,
+        1731.90625,
+        407.4208068847656
+      ],
+      "text": "Олубгикозать видеоролнк со всем я паранетрани нужнсе еремя",
+      "block_id": 13,
+      "ocr_confidence": 0.6897260669318025,
+      "match_score": 3.7461625767970763
+    },
+    {
+      "det_id": 59,
+      "class_name": "start_event",
+      "det_score": 0.40599605441093445,
+      "bbox": [
+        64.50376892089844,
+        111.17882537841797,
+        90.99305725097656,
+        133.5854034423828
+      ],
+      "text": "",
+      "block_id": null,
+      "ocr_confidence": null,
+      "match_score": null
+    }
+  ],
+  "report": {
+    "mode": "fallback",
+    "min_match_score": 0.85,
+    "nodes_total": 29,
+    "edges_total": 30,
+    "ocr_blocks_total": 28,
+    "nodes_labeled": 12,
+    "ocr_blocks_unused": 16,
+    "unused_blocks": [
+      {
+        "block_id": 1,
+        "bbox": [
+          1751.0,
+          0.0,
+          1800.0,
+          25.0
+        ],
+        "text": "Зрифель",
+        "confidence": 0.5434504924494703,
+        "confidence_available": true
+      },
+      {
+        "block_id": 2,
+        "bbox": [
+          1532.0,
+          64.0,
+          1644.0,
+          92.0
+        ],
+        "text": "Нонкзлтацуя быключсна",
+        "confidence": 0.24292184465384795,
+        "confidence_available": true
+      },
+      {
+        "block_id": 3,
+        "bbox": [
+          12.0,
+          86.0,
+          34.0,
+          194.0
+        ],
+        "text": "8",
+        "confidence": 0.9,
+        "confidence_available": true
+      },
+      {
+        "block_id": 6,
+        "bbox": [
+          772.0,
+          140.0,
+          936.0,
+          168.0
+        ],
+        "text": "Сосощекис 00 утпешной загоуз с",
+        "confidence": 0.581747286276854,
+        "confidence_available": true
+      },
+      {
+        "block_id": 7,
+        "bbox": [
+          1008.0,
+          140.0,
+          1340.0,
+          168.0
+        ],
+        "text": "Собщскис 0 запрстс мокаикзацим м ограничсним 18+ Иснизнтация вклмена",
+        "confidence": 0.282606689509477,
+        "confidence_available": true
+      },
+      {
+        "block_id": 8,
+        "bbox": [
+          40.0,
+          141.0,
+          124.0,
+          169.0
+        ],
+        "text": "Собыме старта",
+        "confidence": 0.7617045210809887,
+        "confidence_available": true
+      },
+      {
+        "block_id": 11,
+        "bbox": [
+          682.0,
+          336.0,
+          728.0,
+          364.0
+        ],
+        "text": "Все %к",
+        "confidence": 0.8860085222249727,
+        "confidence_available": true
+      },
+      {
+        "block_id": 15,
+        "bbox": [
+          454.0,
+          346.0,
+          549.0,
+          382.0
+        ],
+        "text": "Автомодерация видео добавлетие",
+        "confidence": 0.7821699639681459,
+        "confidence_available": true
+      },
+      {
+        "block_id": 18,
+        "bbox": [
+          0.0,
+          354.0,
+          32.0,
+          420.0
+        ],
+        "text": "[",
+        "confidence": 0.70981343304544,
+        "confidence_available": true
+      },
+      {
+        "block_id": 21,
+        "bbox": [
+          562.0,
+          388.0,
+          766.0,
+          416.0
+        ],
+        "text": "нарушение авторскт х прав нес аконный контент",
+        "confidence": 0.528146232732061,
+        "confidence_available": true
+      },
+      {
+        "block_id": 22,
+        "bbox": [
+          832.0,
+          526.0,
+          876.0,
+          554.0
+        ],
+        "text": "Всё %",
+        "confidence": 0.9236072691363567,
+        "confidence_available": true
+      },
+      {
+        "block_id": 23,
+        "bbox": [
+          14.0,
+          552.0,
+          36.0,
+          662.0
+        ],
+        "text": "8 2",
+        "confidence": 0.765,
+        "confidence_available": true
+      },
+      {
+        "block_id": 25,
+        "bbox": [
+          1032.0,
+          568.0,
+          1136.0,
+          596.0
+        ],
+        "text": "контент",
+        "confidence": 0.7355536277266783,
+        "confidence_available": true
+      },
+      {
+        "block_id": 26,
+        "bbox": [
+          1114.0,
+          596.0,
+          1194.0,
+          624.0
+        ],
+        "text": "Удапнть ропнк",
+        "confidence": 0.5697683847983759,
+        "confidence_available": true
+      },
+      {
+        "block_id": 27,
+        "bbox": [
+          898.0,
+          600.0,
+          1022.0,
+          628.0
+        ],
+        "text": "Выдать предупрежденке",
+        "confidence": 0.7576334080735747,
+        "confidence_available": true
+      },
+      {
+        "block_id": 28,
+        "bbox": [
+          1172.0,
+          658.0,
+          1262.0,
+          686.0
+        ],
+        "text": "Ограничетне 18+",
+        "confidence": 0.7439530504164275,
+        "confidence_available": true
+      }
+    ]
+  }
+}

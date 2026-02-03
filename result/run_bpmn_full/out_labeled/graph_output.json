@@ -1,0 +1,1715 @@
+{
+  "meta": {
+    "schema_version": "graph-builder.v1",
+    "direction": "LR",
+    "warnings": [
+      "weak_edge_evidence:8/41",
+      "unknown_edge_types:23/41"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_det_000000",
+      "type": "shape",
+      "bbox": [
+        1305.5418701171875,
+        334.6292724609375,
+        1390.418212890625,
+        402.468505859375
+      ],
+      "center": [
+        1347.9800415039062,
+        368.54888916015625
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Годклоче- е мо-етизацин ; ролн;"
+    },
+    {
+      "id": "node_det_000001",
+      "type": "shape",
+      "bbox": [
+        173.91156005859375,
+        91.02029418945312,
+        262.44769287109375,
+        158.74169921875
+      ],
+      "center": [
+        218.17962646484375,
+        124.88099670410156
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Затузить вилео"
+    },
+    {
+      "id": "node_det_000002",
+      "type": "shape",
+      "bbox": [
+        914.0829467773438,
+        348.7716064453125,
+        1003.6945190429688,
+        415.6952209472656
+      ],
+      "center": [
+        958.8887329101562,
+        382.23341369628906
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "провёрить количество предутреждений если боЛьше 3 заблокноовать ааш"
+    },
+    {
+      "id": "node_det_000003",
+      "type": "shape",
+      "bbox": [
+        458.8826599121094,
+        348.630615234375,
+        547.383544921875,
+        417.3605651855469
+      ],
+      "center": [
+        503.1331024169922,
+        382.99559020996094
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "видео добавленне автонатических субтмтров"
+    },
+    {
+      "id": "node_det_000004",
+      "type": "shape",
+      "bbox": [
+        1651.3734130859375,
+        435.97479248046875,
+        1689.1878662109375,
+        473.4425964355469
+      ],
+      "center": [
+        1670.2806396484375,
+        454.7086944580078
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000005",
+      "type": "shape",
+      "bbox": [
+        1453.6331787109375,
+        170.7496795654297,
+        1544.3179931640625,
+        237.7763214111328
+      ],
+      "center": [
+        1498.9755859375,
+        204.26300048828125
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Вв0д данных свосй банковской карты"
+    },
+    {
+      "id": "node_det_000006",
+      "type": "shape",
+      "bbox": [
+        706.6614990234375,
+        548.8309326171875,
+        795.5803833007812,
+        617.817626953125
+      ],
+      "center": [
+        751.1209411621094,
+        583.3242797851562
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Модератор оцетивает роП?"
+    },
+    {
+      "id": "node_det_000007",
+      "type": "shape",
+      "bbox": [
+        1457.8211669921875,
+        335.2892761230469,
+        1542.6539306640625,
+        400.6665344238281
+      ],
+      "center": [
+        1500.237548828125,
+        367.9779052734375
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Проверка датных Харты сохраненке ВСе да ных"
+    },
+    {
+      "id": "node_det_000008",
+      "type": "shape",
+      "bbox": [
+        1116.1903076171875,
+        338.97247314453125,
+        1202.8760986328125,
+        403.4869384765625
+      ],
+      "center": [
+        1159.533203125,
+        371.2297058105469
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Оганитенне 18 + а конкретнон Еллео]"
+    },
+    {
+      "id": "node_det_000009",
+      "type": "shape",
+      "bbox": [
+        67.51966094970703,
+        110.02191925048828,
+        97.7277603149414,
+        138.7270050048828
+      ],
+      "center": [
+        82.62371063232422,
+        124.37446212768555
+      ],
+      "role": "start",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000010",
+      "type": "shape",
+      "bbox": [
+        342.9286193847656,
+        95.4837875366211,
+        433.7093811035156,
+        158.52110290527344
+      ],
+      "center": [
+        388.3190002441406,
+        127.00244522094727
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "[Затолнить Бсе Поля; названуе описанке теги; екдымОСть"
+    },
+    {
+      "id": "node_det_000011",
+      "type": "shape",
+      "bbox": [
+        1627.3045654296875,
+        172.2985382080078,
+        1713.4727783203125,
+        234.853271484375
+      ],
+      "center": [
+        1670.388671875,
+        203.5759048461914
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Выбрать время пубпихацки м на -аты кнолку опубПЫКОВаТь"
+    },
+    {
+      "id": "node_det_000012",
+      "type": "flow",
+      "bbox": [
+        1138.222412109375,
+        119.46907043457031,
+        1229.03125,
+        129.0043487548828
+      ],
+      "center": [
+        1183.6268310546875,
+        124.23670959472656
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000013",
+      "type": "shape",
+      "bbox": [
+        341.2578125,
+        351.3710021972656,
+        435.2571716308594,
+        414.5540466308594
+      ],
+      "center": [
+        388.2574920654297,
+        382.9625244140625
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Сообщенке 0 новом Видсо заг;зка 8 0 на серзер"
+    },
+    {
+      "id": "node_det_000014",
+      "type": "flow",
+      "bbox": [
+        264.9435119628906,
+        121.369873046875,
+        344.5247497558594,
+        127.08941650390625
+      ],
+      "center": [
+        304.734130859375,
+        124.22964477539062
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000015",
+      "type": "shape",
+      "bbox": [
+        737.1300048828125,
+        424.9427795410156,
+        765.1881713867188,
+        452.80059814453125
+      ],
+      "center": [
+        751.1590881347656,
+        438.87168884277344
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000016",
+      "type": "shape",
+      "bbox": [
+        1134.9271240234375,
+        559.9136962890625,
+        1171.6378173828125,
+        597.1417846679688
+      ],
+      "center": [
+        1153.282470703125,
+        578.5277404785156
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000017",
+      "type": "flow",
+      "bbox": [
+        98.47604370117188,
+        120.78070068359375,
+        172.91900634765625,
+        127.07743072509766
+      ],
+      "center": [
+        135.69752502441406,
+        123.9290657043457
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000018",
+      "type": "shape",
+      "bbox": [
+        837.1835327148438,
+        303.2563171386719,
+        868.2030639648438,
+        333.45745849609375
+      ],
+      "center": [
+        852.6932983398438,
+        318.3568878173828
+      ],
+      "role": "decision",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000019",
+      "type": "flow",
+      "bbox": [
+        1252.7667236328125,
+        142.1027374267578,
+        1336.624755859375,
+        197.865966796875
+      ],
+      "center": [
+        1294.6957397460938,
+        169.9843521118164
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000020",
+      "type": "shape",
+      "bbox": [
+        837.9299926757812,
+        567.9735717773438,
+        867.7101440429688,
+        596.5415649414062
+      ],
+      "center": [
+        852.820068359375,
+        582.257568359375
+      ],
+      "role": "decision",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000021",
+      "type": "flow",
+      "bbox": [
+        720.0694580078125,
+        314.5796813964844,
+        838.7078857421875,
+        322.1988220214844
+      ],
+      "center": [
+        779.388671875,
+        318.3892517089844
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000022",
+      "type": "flow",
+      "bbox": [
+        863.7222290039062,
+        119.99249267578125,
+        1097.286865234375,
+        130.18606567382812
+      ],
+      "center": [
+        980.5045471191406,
+        125.08927917480469
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000023",
+      "type": "flow",
+      "bbox": [
+        794.7401733398438,
+        579.0580444335938,
+        837.7451171875,
+        586.3643188476562
+      ],
+      "center": [
+        816.2426452636719,
+        582.711181640625
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000024",
+      "type": "flow",
+      "bbox": [
+        1393.4415283203125,
+        364.17071533203125,
+        1458.22314453125,
+        370.94061279296875
+      ],
+      "center": [
+        1425.8323364257812,
+        367.5556640625
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000025",
+      "type": "shape",
+      "bbox": [
+        1332.512451171875,
+        186.92649841308594,
+        1363.1668701171875,
+        217.14694213867188
+      ],
+      "center": [
+        1347.8396606445312,
+        202.0367202758789
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000026",
+      "type": "flow",
+      "bbox": [
+        1391.23779296875,
+        362.9498291015625,
+        1457.9923095703125,
+        368.53387451171875
+      ],
+      "center": [
+        1424.6150512695312,
+        365.7418518066406
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000027",
+      "type": "flow",
+      "bbox": [
+        1364.174560546875,
+        198.59164428710938,
+        1453.541748046875,
+        205.6221160888672
+      ],
+      "center": [
+        1408.858154296875,
+        202.10688018798828
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000028",
+      "type": "flow",
+      "bbox": [
+        550.3449096679688,
+        376.759033203125,
+        587.2245483398438,
+        384.1739807128906
+      ],
+      "center": [
+        568.7847290039062,
+        380.4665069580078
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000029",
+      "type": "shape",
+      "bbox": [
+        1200.6246337890625,
+        626.3049926757812,
+        1231.472412109375,
+        655.9137573242188
+      ],
+      "center": [
+        1216.0485229492188,
+        641.109375
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000030",
+      "type": "shape",
+      "bbox": [
+        1104.505615234375,
+        106.0023193359375,
+        1141.322265625,
+        142.1568603515625
+      ],
+      "center": [
+        1122.9139404296875,
+        124.07958984375
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000031",
+      "type": "shape",
+      "bbox": [
+        61.559417724609375,
+        112.78974151611328,
+        93.6203842163086,
+        140.12997436523438
+      ],
+      "center": [
+        77.58990097045898,
+        126.45985794067383
+      ],
+      "role": "start",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000032",
+      "type": "flow",
+      "bbox": [
+        1343.80908203125,
+        232.6167449951172,
+        1355.42138671875,
+        326.9264831542969
+      ],
+      "center": [
+        1349.615234375,
+        279.77161407470703
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000033",
+      "type": "shape",
+      "bbox": [
+        834.6793212890625,
+        106.18004608154297,
+        870.81640625,
+        142.30618286132812
+      ],
+      "center": [
+        852.7478637695312,
+        124.24311447143555
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000034",
+      "type": "flow",
+      "bbox": [
+        867.3762817382812,
+        579.8170776367188,
+        945.1968383789062,
+        586.530029296875
+      ],
+      "center": [
+        906.2865600585938,
+        583.1735534667969
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000035",
+      "type": "flow",
+      "bbox": [
+        1546.7955322265625,
+        198.58465576171875,
+        1626.1451416015625,
+        205.00363159179688
+      ],
+      "center": [
+        1586.4703369140625,
+        201.7941436767578
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000036",
+      "type": "flow",
+      "bbox": [
+        955.2772827148438,
+        405.8395080566406,
+        966.0501098632812,
+        568.62451171875
+      ],
+      "center": [
+        960.6636962890625,
+        487.2320098876953
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000037",
+      "type": "flow",
+      "bbox": [
+        611.9158325195312,
+        321.9151611328125,
+        694.7015380859375,
+        368.2245178222656
+      ],
+      "center": [
+        653.3086853027344,
+        345.06983947753906
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000038",
+      "type": "flow",
+      "bbox": [
+        1395.274658203125,
+        365.9449462890625,
+        1460.0521240234375,
+        372.6773376464844
+      ],
+      "center": [
+        1427.6633911132812,
+        369.31114196777344
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000039",
+      "type": "shape",
+      "bbox": [
+        942.4551391601562,
+        222.2062530517578,
+        977.5382690429688,
+        259.599365234375
+      ],
+      "center": [
+        959.9967041015625,
+        240.9028091430664
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000040",
+      "type": "shape",
+      "bbox": [
+        688.6469116210938,
+        305.7558898925781,
+        718.1180419921875,
+        332.06707763671875
+      ],
+      "center": [
+        703.3824768066406,
+        318.91148376464844
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000041",
+      "type": "flow",
+      "bbox": [
+        853.6755981445312,
+        247.63548278808594,
+        952.1028442382812,
+        308.43310546875
+      ],
+      "center": [
+        902.8892211914062,
+        278.03429412841797
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000042",
+      "type": "flow",
+      "bbox": [
+        978.2396850585938,
+        576.53076171875,
+        1144.338623046875,
+        585.7173461914062
+      ],
+      "center": [
+        1061.2891540527344,
+        581.1240539550781
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000043",
+      "type": "shape",
+      "bbox": [
+        838.3980712890625,
+        494.9957580566406,
+        868.5394287109375,
+        525.7039184570312
+      ],
+      "center": [
+        853.46875,
+        510.34983825683594
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000044",
+      "type": "flow",
+      "bbox": [
+        432.7381591796875,
+        377.9022216796875,
+        461.2696533203125,
+        385.4292297363281
+      ],
+      "center": [
+        447.00390625,
+        381.6657257080078
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000045",
+      "type": "flow",
+      "bbox": [
+        1202.354248046875,
+        364.1452941894531,
+        1298.790771484375,
+        371.4889221191406
+      ],
+      "center": [
+        1250.572509765625,
+        367.8171081542969
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000046",
+      "type": "shape",
+      "bbox": [
+        586.2039794921875,
+        368.4320068359375,
+        608.1941528320312,
+        390.40911865234375
+      ],
+      "center": [
+        597.1990661621094,
+        379.4205627441406
+      ],
+      "role": "end",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000047",
+      "type": "flow",
+      "bbox": [
+        433.5258483886719,
+        376.32537841796875,
+        461.2547912597656,
+        383.1577453613281
+      ],
+      "center": [
+        447.39031982421875,
+        379.74156188964844
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000048",
+      "type": "shape",
+      "bbox": [
+        1225.3477783203125,
+        111.09228515625,
+        1252.2264404296875,
+        136.24290466308594
+      ],
+      "center": [
+        1238.787109375,
+        123.66759490966797
+      ],
+      "role": "decision",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000049",
+      "type": "flow",
+      "bbox": [
+        610.7916259765625,
+        393.4060363769531,
+        721.3931274414062,
+        430.3264465332031
+      ],
+      "center": [
+        666.0923767089844,
+        411.8662414550781
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000050",
+      "type": "flow",
+      "bbox": [
+        385.1534423828125,
+        142.16366577148438,
+        394.1304931640625,
+        345.040283203125
+      ],
+      "center": [
+        389.6419677734375,
+        243.6019744873047
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000051",
+      "type": "flow",
+      "bbox": [
+        624.9178466796875,
+        396.80670166015625,
+        727.4470825195312,
+        439.04803466796875
+      ],
+      "center": [
+        676.1824645996094,
+        417.9273681640625
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000052",
+      "type": "flow",
+      "bbox": [
+        851.2774658203125,
+        333.99163818359375,
+        918.6231079101562,
+        380.3983459472656
+      ],
+      "center": [
+        884.9502868652344,
+        357.1949920654297
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000053",
+      "type": "shape",
+      "bbox": [
+        1622.9549560546875,
+        338.58282470703125,
+        1731.90625,
+        407.4208068847656
+      ],
+      "center": [
+        1677.4306030273438,
+        373.00181579589844
+      ],
+      "role": "action",
+      "container_id": null,
+      "text": "Олубгикозать видеоролнк со всем я паранетрани нужнсе еремя"
+    },
+    {
+      "id": "node_det_000054",
+      "type": "flow",
+      "bbox": [
+        1184.65478515625,
+        357.4927062988281,
+        1193.8468017578125,
+        565.0540161132812
+      ],
+      "center": [
+        1189.2507934570312,
+        461.2733612060547
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000055",
+      "type": "flow",
+      "bbox": [
+        1005.815185546875,
+        371.7612609863281,
+        1114.6282958984375,
+        379.96624755859375
+      ],
+      "center": [
+        1060.2217407226562,
+        375.86375427246094
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000056",
+      "type": "flow",
+      "bbox": [
+        745.9235229492188,
+        464.8085632324219,
+        753.968017578125,
+        560.8637084960938
+      ],
+      "center": [
+        749.9457702636719,
+        512.8361358642578
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000057",
+      "type": "flow",
+      "bbox": [
+        1200.724365234375,
+        361.3083190917969,
+        1297.1431884765625,
+        369.1941833496094
+      ],
+      "center": [
+        1248.9337768554688,
+        365.2512512207031
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000058",
+      "type": "shape",
+      "bbox": [
+        64.50376892089844,
+        111.17882537841797,
+        90.99305725097656,
+        133.5854034423828
+      ],
+      "center": [
+        77.7484130859375,
+        122.38211441040039
+      ],
+      "role": "start",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000062",
+      "type": "text",
+      "bbox": [
+        904.0,
+        608.0,
+        1016.0,
+        620.0
+      ],
+      "center": [
+        960.0,
+        614.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000067",
+      "type": "text",
+      "bbox": [
+        1038.0,
+        576.0,
+        1130.0,
+        588.0
+      ],
+      "center": [
+        1084.0,
+        582.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000070",
+      "type": "text",
+      "bbox": [
+        180.0,
+        118.0,
+        256.0,
+        132.0
+      ],
+      "center": [
+        218.0,
+        125.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000075",
+      "type": "text",
+      "bbox": [
+        46.0,
+        148.0,
+        118.0,
+        162.0
+      ],
+      "center": [
+        82.0,
+        155.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000079",
+      "type": "text",
+      "bbox": [
+        18.0,
+        92.0,
+        28.0,
+        188.0
+      ],
+      "center": [
+        23.0,
+        140.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000085",
+      "type": "text",
+      "bbox": [
+        1178.0,
+        666.0,
+        1256.0,
+        678.0
+      ],
+      "center": [
+        1217.0,
+        672.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000092",
+      "type": "text",
+      "bbox": [
+        1120.0,
+        604.0,
+        1188.0,
+        616.0
+      ],
+      "center": [
+        1154.0,
+        610.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000093",
+      "type": "text",
+      "bbox": [
+        1538.0,
+        74.0,
+        1638.0,
+        82.0
+      ],
+      "center": [
+        1588.0,
+        78.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000098",
+      "type": "text",
+      "bbox": [
+        1757.0,
+        0.0,
+        1799.0,
+        16.0
+      ],
+      "center": [
+        1778.0,
+        8.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000105",
+      "type": "text",
+      "bbox": [
+        1014.0,
+        150.0,
+        1062.0,
+        162.0
+      ],
+      "center": [
+        1038.0,
+        156.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000108",
+      "type": "text",
+      "bbox": [
+        4.0,
+        360.0,
+        12.0,
+        414.0
+      ],
+      "center": [
+        8.0,
+        387.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000109",
+      "type": "text",
+      "bbox": [
+        688.0,
+        344.0,
+        722.0,
+        356.0
+      ],
+      "center": [
+        705.0,
+        350.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000112",
+      "type": "text",
+      "bbox": [
+        838.0,
+        534.0,
+        870.0,
+        546.0
+      ],
+      "center": [
+        854.0,
+        540.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_det_000116",
+      "type": "text",
+      "bbox": [
+        18.0,
+        360.0,
+        26.0,
+        400.0
+      ],
+      "center": [
+        22.0,
+        380.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000059",
+      "type": "text",
+      "bbox": [
+        460.0,
+        352.0,
+        548.0,
+        404.0
+      ],
+      "center": [
+        504.0,
+        378.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000060",
+      "type": "text",
+      "bbox": [
+        1626.0,
+        346.0,
+        1716.0,
+        396.0
+      ],
+      "center": [
+        1671.0,
+        371.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000061",
+      "type": "text",
+      "bbox": [
+        778.0,
+        146.0,
+        930.0,
+        162.0
+      ],
+      "center": [
+        854.0,
+        154.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000063",
+      "type": "text",
+      "bbox": [
+        568.0,
+        396.0,
+        760.0,
+        408.0
+      ],
+      "center": [
+        664.0,
+        402.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000064",
+      "type": "text",
+      "bbox": [
+        1624.0,
+        186.0,
+        1718.0,
+        220.0
+      ],
+      "center": [
+        1671.0,
+        203.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000065",
+      "type": "text",
+      "bbox": [
+        1458.0,
+        352.0,
+        1542.0,
+        388.0
+      ],
+      "center": [
+        1500.0,
+        370.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000066",
+      "type": "text",
+      "bbox": [
+        342.0,
+        108.0,
+        434.0,
+        144.0
+      ],
+      "center": [
+        388.0,
+        126.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000068",
+      "type": "text",
+      "bbox": [
+        344.0,
+        364.0,
+        434.0,
+        400.0
+      ],
+      "center": [
+        389.0,
+        382.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000072",
+      "type": "text",
+      "bbox": [
+        1456.0,
+        192.0,
+        1544.0,
+        216.0
+      ],
+      "center": [
+        1500.0,
+        204.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000073",
+      "type": "text",
+      "bbox": [
+        1314.0,
+        351.0,
+        1382.0,
+        388.0
+      ],
+      "center": [
+        1348.0,
+        369.5
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000077",
+      "type": "text",
+      "bbox": [
+        1120.0,
+        358.0,
+        1206.0,
+        382.0
+      ],
+      "center": [
+        1163.0,
+        370.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000078",
+      "type": "text",
+      "bbox": [
+        1070.0,
+        146.0,
+        1334.0,
+        160.0
+      ],
+      "center": [
+        1202.0,
+        153.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000083",
+      "type": "text",
+      "bbox": [
+        920.0,
+        346.0,
+        998.0,
+        414.0
+      ],
+      "center": [
+        959.0,
+        380.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000084",
+      "type": "text",
+      "bbox": [
+        712.0,
+        572.0,
+        790.0,
+        596.0
+      ],
+      "center": [
+        751.0,
+        584.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    },
+    {
+      "id": "node_textmerge_000106",
+      "type": "text",
+      "bbox": [
+        20.0,
+        558.0,
+        30.0,
+        656.0
+      ],
+      "center": [
+        25.0,
+        607.0
+      ],
+      "role": "unknown",
+      "container_id": null,
+      "text": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_det_000000",
+      "to": "node_det_000007",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000001",
+      "to": "node_det_000010",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000002",
+      "to": "node_det_000008",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000002",
+      "to": "node_det_000039",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000003",
+      "to": "node_det_000040",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000003",
+      "to": "node_det_000046",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000004",
+      "to": "node_det_000053",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000005",
+      "to": "node_det_000011",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000006",
+      "to": "node_det_000020",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000006",
+      "to": "node_det_000043",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000007",
+      "to": "node_det_000004",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000007",
+      "to": "node_det_000053",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000008",
+      "to": "node_det_000000",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000009",
+      "to": "node_det_000001",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000013",
+      "to": "node_det_000003",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000013",
+      "to": "node_det_000046",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000015",
+      "to": "node_det_000002",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000015",
+      "to": "node_det_000018",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000015",
+      "to": "node_det_000043",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000016",
+      "to": "node_det_000008",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000016",
+      "to": "node_det_000029",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000018",
+      "to": "node_det_000002",
+      "type": "conditional"
+    },
+    {
+      "from": "node_det_000018",
+      "to": "node_det_000039",
+      "type": "conditional"
+    },
+    {
+      "from": "node_det_000018",
+      "to": "node_det_000043",
+      "type": "conditional"
+    },
+    {
+      "from": "node_det_000020",
+      "to": "node_det_000043",
+      "type": "conditional"
+    },
+    {
+      "from": "node_det_000025",
+      "to": "node_det_000000",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000025",
+      "to": "node_det_000005",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000030",
+      "to": "node_det_000048",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000031",
+      "to": "node_det_000001",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000031",
+      "to": "node_det_000009",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000031",
+      "to": "node_det_000058",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000033",
+      "to": "node_det_000039",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000039",
+      "to": "node_det_000030",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000040",
+      "to": "node_det_000015",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000040",
+      "to": "node_det_000018",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000043",
+      "to": "node_det_000002",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000046",
+      "to": "node_det_000015",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000046",
+      "to": "node_det_000040",
+      "type": "sequential"
+    },
+    {
+      "from": "node_det_000048",
+      "to": "node_det_000025",
+      "type": "conditional"
+    },
+    {
+      "from": "node_det_000058",
+      "to": "node_det_000001",
+      "type": "unknown"
+    },
+    {
+      "from": "node_det_000058",
+      "to": "node_det_000009",
+      "type": "unknown"
+    }
+  ]
+}

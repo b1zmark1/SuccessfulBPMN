@@ -126,6 +126,10 @@ def _to_group_item(
         "bbox_xyxy": det.get("bbox_xyxy"),
         "center": det.get("center"),
         "area": det.get("area"),
+        "text": det.get("text"),
+        "ocr_confidence": det.get("ocr_confidence"),
+        "ocr_block_ids": det.get("ocr_block_ids", []),
+        "match_score": det.get("match_score"),
         "class_hint_reliability": hint_reliability,
         "provenance": {
             "source": source,

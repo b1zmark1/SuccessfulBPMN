@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
+import re
 
 
 class NormalizationError(RuntimeError):
@@ -31,6 +32,10 @@ class InternalDetection:
     bbox: Tuple[float, float, float, float]
     center: Tuple[float, float]
     area: float
+    text: Optional[str] = None
+    ocr_confidence: Optional[float] = None
+    ocr_block_ids: Tuple[int, ...] = ()
+    match_score: Optional[float] = None
     dropped: bool = False
     drop_reason: Optional[str] = None
     notes: Tuple[str, ...] = ()
@@ -50,12 +55,22 @@ def normalize_ensemble_input(
     image = payload.get("image")
     if not isinstance(image, dict):
         raise NormalizationError("Input must contain object field 'image'.")
-    width = _as_positive_int(image.get("width"), "image.width")
-    height = _as_positive_int(image.get("height"), "image.height")
+    width = _as_optional_positive_int(image.get("width"))
+    height = _as_optional_positive_int(image.get("height"))
 
     detections = payload.get("detections")
     if not isinstance(detections, list):
         raise NormalizationError("Input must contain array field 'detections'.")
+    if width is None or height is None:
+        inferred = _infer_image_size_from_detections(detections)
+        if inferred is None:
+            if width is None:
+                raise NormalizationError("image.width_must_be_positive_int")
+            if height is None:
+                raise NormalizationError("image.height_must_be_positive_int")
+        else:
+            width = width if width is not None else inferred[0]
+            height = height if height is not None else inferred[1]
 
     parsed: List[InternalDetection] = []
     dropped: List[InternalDetection] = []
@@ -86,7 +101,7 @@ def normalize_ensemble_input(
                 InternalDetection(
                     det_id=f"det_{idx:06d}",
                     original_index=idx,
-                    class_name=_normalize_class_name(raw.get("class_name")),
+                    class_name=_normalize_class_name(raw.get("class_name") or raw.get("class")),
                     source=_normalize_source(raw.get("source")),
                     score=_safe_score(raw.get("score")),
                     bbox=(0.0, 0.0, 0.0, 0.0),
@@ -105,7 +120,7 @@ def normalize_ensemble_input(
 
     return {
         "image": {
-            "file_name": image.get("file_name"),
+            "file_name": image.get("file_name") or image.get("path"),
             "path": image.get("path"),
             "width": width,
             "height": height,
@@ -128,7 +143,7 @@ def _parse_and_sanitize_one(
     height: int,
     cfg: NormalizationConfig,
 ) -> InternalDetection:
-    class_name = _normalize_class_name(raw.get("class_name"))
+    class_name = _normalize_class_name(raw.get("class_name") or raw.get("class"))
     if not class_name:
         raise NormalizationError("missing_class_name")
 
@@ -136,7 +151,7 @@ def _parse_and_sanitize_one(
     if not source:
         raise NormalizationError("missing_source")
 
-    bbox_raw = raw.get("bbox_xyxy")
+    bbox_raw = raw.get("bbox_xyxy") or raw.get("bbox")
     bbox = _parse_bbox_xyxy(bbox_raw)
     clipped_bbox, was_clipped = _clip_bbox_xyxy(bbox, width, height)
 
@@ -163,6 +178,10 @@ def _parse_and_sanitize_one(
         bbox=(x1, y1, x2, y2),
         center=center,
         area=area,
+        text=_normalize_text(raw.get("text")),
+        ocr_confidence=_safe_optional_score(raw.get("ocr_confidence", raw.get("text_conf"))),
+        ocr_block_ids=_normalize_block_ids(raw.get("text_block_ids")),
+        match_score=_safe_optional_score(raw.get("match_score")),
         notes=tuple(notes),
     )
 
@@ -231,6 +250,10 @@ def _det_to_dict(det: InternalDetection) -> Dict[str, Any]:
         "bbox_xyxy": [det.bbox[0], det.bbox[1], det.bbox[2], det.bbox[3]],
         "center": [det.center[0], det.center[1]],
         "area": det.area,
+        "text": det.text,
+        "ocr_confidence": det.ocr_confidence,
+        "ocr_block_ids": list(det.ocr_block_ids),
+        "match_score": det.match_score,
         "dropped": det.dropped,
         "drop_reason": det.drop_reason,
         "notes": list(det.notes),
@@ -243,6 +266,14 @@ def _as_positive_int(value: Any, field_name: str) -> int:
     return value
 
 
+def _as_optional_positive_int(value: Any) -> Optional[int]:
+    if value is None:
+        return None
+    if isinstance(value, int) and value > 0:
+        return value
+    return None
+
+
 def _parse_bbox_xyxy(value: Any) -> Tuple[float, float, float, float]:
     if not isinstance(value, list) or len(value) != 4:
         raise NormalizationError("bbox_xyxy_must_be_list_of_4")
@@ -251,6 +282,31 @@ def _parse_bbox_xyxy(value: Any) -> Tuple[float, float, float, float]:
     except Exception as e:
         raise NormalizationError("bbox_xyxy_contains_non_numeric") from e
     return x1, y1, x2, y2
+
+
+def _infer_image_size_from_detections(detections: List[Any]) -> Optional[Tuple[int, int]]:
+    max_x = 0.0
+    max_y = 0.0
+    found = False
+    for raw in detections:
+        if not isinstance(raw, dict):
+            continue
+        bbox_raw = raw.get("bbox_xyxy") or raw.get("bbox")
+        if not (isinstance(bbox_raw, list) and len(bbox_raw) == 4):
+            continue
+        try:
+            _, _, x2, y2 = [float(v) for v in bbox_raw]
+        except Exception:
+            continue
+        max_x = max(max_x, x2)
+        max_y = max(max_y, y2)
+        found = True
+    if not found:
+        return None
+    # +1 to preserve max coordinate inside image range.
+    width = max(1, int(max_x) + 1)
+    height = max(1, int(max_y) + 1)
+    return (width, height)
 
 
 def _clip_bbox_xyxy(
@@ -289,6 +345,54 @@ def _safe_score(value: Any) -> float:
     if s > 1.0:
         return 1.0
     return s
+
+
+def _safe_optional_score(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    try:
+        s = float(value)
+    except Exception:
+        return None
+    if s < 0.0:
+        s = 0.0
+    if s > 1.0:
+        s = 1.0
+    return s
+
+
+_WS_RE = re.compile(r"\s+")
+
+
+def _normalize_text(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        value = str(value)
+    t = value.replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not t:
+        return None
+    lines = []
+    for ln in t.split("\n"):
+        ln = _WS_RE.sub(" ", ln).strip()
+        if ln:
+            lines.append(ln)
+    if not lines:
+        return None
+    out = "\n".join(lines).strip()
+    return out or None
+
+
+def _normalize_block_ids(value: Any) -> Tuple[int, ...]:
+    if not isinstance(value, list):
+        return ()
+    out: List[int] = []
+    for v in value:
+        try:
+            out.append(int(v))
+        except Exception:
+            continue
+    return tuple(sorted(set(out)))
 
 
 def _iou(a: Tuple[float, float, float, float], b: Tuple[float, float, float, float]) -> float:

@@ -1,0 +1,203 @@
+{
+  "mode": "fallback",
+  "min_match_score": 0.85,
+  "nodes_total": 29,
+  "edges_total": 30,
+  "ocr_blocks_total": 28,
+  "nodes_labeled": 12,
+  "ocr_blocks_unused": 16,
+  "unused_blocks": [
+    {
+      "block_id": 1,
+      "bbox": [
+        1751.0,
+        0.0,
+        1800.0,
+        25.0
+      ],
+      "text": "Зрифель",
+      "confidence": 0.5434504924494703,
+      "confidence_available": true
+    },
+    {
+      "block_id": 2,
+      "bbox": [
+        1532.0,
+        64.0,
+        1644.0,
+        92.0
+      ],
+      "text": "Нонкзлтацуя быключсна",
+      "confidence": 0.24292184465384795,
+      "confidence_available": true
+    },
+    {
+      "block_id": 3,
+      "bbox": [
+        12.0,
+        86.0,
+        34.0,
+        194.0
+      ],
+      "text": "8",
+      "confidence": 0.9,
+      "confidence_available": true
+    },
+    {
+      "block_id": 6,
+      "bbox": [
+        772.0,
+        140.0,
+        936.0,
+        168.0
+      ],
+      "text": "Сосощекис 00 утпешной загоуз с",
+      "confidence": 0.581747286276854,
+      "confidence_available": true
+    },
+    {
+      "block_id": 7,
+      "bbox": [
+        1008.0,
+        140.0,
+        1340.0,
+        168.0
+      ],
+      "text": "Собщскис 0 запрстс мокаикзацим м ограничсним 18+ Иснизнтация вклмена",
+      "confidence": 0.282606689509477,
+      "confidence_available": true
+    },
+    {
+      "block_id": 8,
+      "bbox": [
+        40.0,
+        141.0,
+        124.0,
+        169.0
+      ],
+      "text": "Собыме старта",
+      "confidence": 0.7617045210809887,
+      "confidence_available": true
+    },
+    {
+      "block_id": 11,
+      "bbox": [
+        682.0,
+        336.0,
+        728.0,
+        364.0
+      ],
+      "text": "Все %к",
+      "confidence": 0.8860085222249727,
+      "confidence_available": true
+    },
+    {
+      "block_id": 15,
+      "bbox": [
+        454.0,
+        346.0,
+        549.0,
+        382.0
+      ],
+      "text": "Автомодерация видео добавлетие",
+      "confidence": 0.7821699639681459,
+      "confidence_available": true
+    },
+    {
+      "block_id": 18,
+      "bbox": [
+        0.0,
+        354.0,
+        32.0,
+        420.0
+      ],
+      "text": "[",
+      "confidence": 0.70981343304544,
+      "confidence_available": true
+    },
+    {
+      "block_id": 21,
+      "bbox": [
+        562.0,
+        388.0,
+        766.0,
+        416.0
+      ],
+      "text": "нарушение авторскт х прав нес аконный контент",
+      "confidence": 0.528146232732061,
+      "confidence_available": true
+    },
+    {
+      "block_id": 22,
+      "bbox": [
+        832.0,
+        526.0,
+        876.0,
+        554.0
+      ],
+      "text": "Всё %",
+      "confidence": 0.9236072691363567,
+      "confidence_available": true
+    },
+    {
+      "block_id": 23,
+      "bbox": [
+        14.0,
+        552.0,
+        36.0,
+        662.0
+      ],
+      "text": "8 2",
+      "confidence": 0.765,
+      "confidence_available": true
+    },
+    {
+      "block_id": 25,
+      "bbox": [
+        1032.0,
+        568.0,
+        1136.0,
+        596.0
+      ],
+      "text": "контент",
+      "confidence": 0.7355536277266783,
+      "confidence_available": true
+    },
+    {
+      "block_id": 26,
+      "bbox": [
+        1114.0,
+        596.0,
+        1194.0,
+        624.0
+      ],
+      "text": "Удапнть ропнк",
+      "confidence": 0.5697683847983759,
+      "confidence_available": true
+    },
+    {
+      "block_id": 27,
+      "bbox": [
+        898.0,
+        600.0,
+        1022.0,
+        628.0
+      ],
+      "text": "Выдать предупрежденке",
+      "confidence": 0.7576334080735747,
+      "confidence_available": true
+    },
+    {
+      "block_id": 28,
+      "bbox": [
+        1172.0,
+        658.0,
+        1262.0,
+        686.0
+      ],
+      "text": "Ограничетне 18+",
+      "confidence": 0.7439530504164275,
+      "confidence_available": true
+    }
+  ]
+}

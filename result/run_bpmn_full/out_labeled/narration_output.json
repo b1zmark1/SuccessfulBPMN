@@ -1,0 +1,117 @@
+{
+  "text": "Процесс начинается с нескольких шагов, которые могут выполняться одновременно. Сначала нужно затушить видео. Затем видео модератор оценивает, добавляются новые поля и теги, а также проверяются данные. В зависимости от результата оценки, видео может быть добавлено в базу данных или отправлено на сервер.\n\nПараллельно видео добавляется с автоматическими субтитрами, а модератор проверяет новое видео. Если видео проходит проверку, оно отправляется на сервер. В случае, если видео не проходит проверку, оно может быть заблокировано или отправлено на повторную проверку.\n\nЕсли видео проходит все проверки, оно добавляется в базу данных. После этого, если у видео есть предупреждения, оно может быть заблокировано. Если видео проходит все проверки и не имеет предупреждений, оно отправляется на публикацию. В конце процесса видео описывается и сохраняется с правильными параметрами.",
+  "status": "ok",
+  "errors": [],
+  "meta": {
+    "projection": {
+      "semantic_schema_version": "semantic-projection.v1",
+      "source_graph_schema_version": "graph-builder.v1",
+      "steps_count": 29
+    },
+    "narrator": {
+      "applied_policy": {
+        "max_sentences": 10,
+        "missing_text_policy": "generalize",
+        "branches_policy": "cover_all"
+      },
+      "prompt_version": "narrator-prompt.v1",
+      "provider": "llama_cpp",
+      "model_path": "narrator/qwen2.5-7b-instruct-q5_k_m-00001-of-00002.gguf",
+      "single_call": true,
+      "duration_ms": 286098,
+      "runtime": {
+        "n_ctx": 4096,
+        "n_threads": 12,
+        "n_batch": 256,
+        "temperature": 0.2,
+        "max_tokens": 384,
+        "timeout_sec": 120,
+        "cpu_only": true
+      },
+      "postprocess": {
+        "normalized": true,
+        "normalization_warnings": [
+          "text_normalized"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "projection",
+        "status": "started"
+      },
+      {
+        "stage": "projection",
+        "status": "completed"
+      },
+      {
+        "stage": "contract_validation",
+        "status": "started"
+      },
+      {
+        "stage": "contract_validation",
+        "status": "completed"
+      },
+      {
+        "stage": "policy_resolution",
+        "status": "started"
+      },
+      {
+        "stage": "policy_resolution",
+        "status": "completed"
+      },
+      {
+        "stage": "prompt_build",
+        "status": "started"
+      },
+      {
+        "stage": "prompt_build",
+        "status": "completed"
+      },
+      {
+        "stage": "runtime_resolution",
+        "status": "started"
+      },
+      {
+        "stage": "runtime_resolution",
+        "status": "completed"
+      },
+      {
+        "stage": "llm_call",
+        "status": "started"
+      },
+      {
+        "stage": "llm_call",
+        "status": "completed"
+      },
+      {
+        "stage": "postprocess",
+        "status": "started"
+      },
+      {
+        "stage": "postprocess",
+        "status": "completed"
+      }
+    ],
+    "observability": {
+      "trace_id": "3def0a5b45044700",
+      "status": "ok",
+      "degraded": false,
+      "stage_durations_ms": {
+        "projection": 0,
+        "contract_validation": 0,
+        "policy_resolution": 0,
+        "prompt_build": 0,
+        "runtime_resolution": 0,
+        "llm_call": 287454,
+        "postprocess": 0
+      },
+      "total_duration_ms": 287456,
+      "semantic_schema_version": "semantic-projection.v1",
+      "source_graph_schema_version": "graph-builder.v1",
+      "provider": "llama_cpp",
+      "prompt_version": "narrator-prompt.v1",
+      "error_codes": []
+    }
+  }
+}

@@ -474,8 +474,100 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--outdir", required=True)
 
     ap.add_argument("--min-match-score", type=float, default=0.85)
+    ap.add_argument(
+        "--out-ensemble",
+        type=str,
+        default="",
+        help="Output path for auto-generated merged ensemble JSON. "
+        "Default: <outdir>/<ensemble_stem>_merged_labeled.json",
+    )
 
     return ap.parse_args()
+
+
+def _merge_labeled_into_ensemble(
+    ensemble_json: Dict[str, Any],
+    assigned: List[Assigned],
+) -> Dict[str, Any]:
+    """
+    Auto-generate ensemble with OCR text labels:
+    - keeps all detections from YOLOX (including sequence_flow)
+    - injects node text fields from labeled assignment
+    """
+    merged = json.loads(json.dumps(ensemble_json, ensure_ascii=False))
+    dets = merged.get("detections", [])
+    if not isinstance(dets, list):
+        raise ValueError("ensemble_json['detections'] must be a list")
+
+    assigned_by_det_id: Dict[int, Assigned] = {int(a.det_id): a for a in assigned}
+    used_assigned: set[int] = set()
+    labeled_nodes = 0
+    flows_kept = 0
+
+    # Primary mapping by det_id (1-based order from detections list).
+    for i, d in enumerate(dets, start=1):
+        if not isinstance(d, dict):
+            continue
+        cls = str(d.get("class_name") or "")
+        if cls in EDGE_CLASSES:
+            flows_kept += 1
+
+        a = assigned_by_det_id.get(i)
+        if a is None:
+            continue
+        if str(a.class_name) != cls:
+            continue
+
+        txt = _clean_text(a.text or "")
+        d["text"] = txt if txt else None
+        d["text_block_ids"] = [int(a.block_id)] if a.block_id is not None else []
+        d["text_conf"] = float(a.ocr_confidence) if a.ocr_confidence is not None else 0.0
+        d["match_score"] = float(a.match_score) if a.match_score is not None else None
+
+        if txt:
+            labeled_nodes += 1
+        used_assigned.add(i)
+
+    # Fallback for unmatched labels: class + IoU.
+    for a in assigned:
+        if int(a.det_id) in used_assigned:
+            continue
+        txt = _clean_text(a.text or "")
+        if not txt:
+            continue
+        best_j = None
+        best_iou = 0.0
+        for j, d in enumerate(dets):
+            if not isinstance(d, dict):
+                continue
+            if str(d.get("class_name") or "") != str(a.class_name):
+                continue
+            bb = _as_bbox_xyxy(d.get("bbox_xyxy") or d.get("bbox"))
+            if bb is None:
+                continue
+            iou = _iou(a.bbox, bb)
+            if iou > best_iou:
+                best_iou = iou
+                best_j = j
+        if best_j is not None and best_iou >= 0.5:
+            d = dets[best_j]
+            d["text"] = txt
+            d["text_block_ids"] = [int(a.block_id)] if a.block_id is not None else []
+            d["text_conf"] = float(a.ocr_confidence) if a.ocr_confidence is not None else 0.0
+            d["match_score"] = float(a.match_score) if a.match_score is not None else None
+            labeled_nodes += 1
+            used_assigned.add(int(a.det_id))
+
+    meta = merged.get("meta")
+    if not isinstance(meta, dict):
+        meta = {}
+    meta["text_merge_source"] = "label_res:labeled+ensemble"
+    meta["text_nodes_labeled"] = int(labeled_nodes)
+    meta["sequence_flows_kept"] = int(flows_kept)
+    meta["assigned_nodes_total"] = int(len(assigned))
+    meta["assigned_nodes_matched"] = int(len(used_assigned))
+    merged["meta"] = meta
+    return merged
 
 
 def main() -> None:
@@ -587,6 +679,16 @@ def main() -> None:
 
     _write_json(out_dir / "report.json", report)
 
+    merged_ensemble = _merge_labeled_into_ensemble(
+        ensemble_json=ensemble_json,
+        assigned=(assigned if isinstance(assigned, list) else []),
+    )
+    if args.out_ensemble:
+        merged_out_path = Path(args.out_ensemble).expanduser().resolve()
+    else:
+        merged_out_path = out_dir / f"{ensemble_p.stem}_merged_labeled.json"
+    _write_json(merged_out_path, merged_ensemble)
+
     # короткая статистика
     nodes_total = sum(1 for d in dets if d.class_name in NODE_CLASSES)
     edges_total = sum(1 for d in dets if d.class_name in EDGE_CLASSES)
@@ -601,6 +703,7 @@ def main() -> None:
     print(f"[label_res] saved: {out_dir / 'labeled.json'}")
     print(f"[label_res] saved: {overlay_path}")
     print(f"[label_res] saved: {out_dir / 'report.json'}")
+    print(f"[label_res] saved: {merged_out_path}")
 
 
 if __name__ == "__main__":

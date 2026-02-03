@@ -115,12 +115,15 @@ def _build_nodes_from_items(
                 "center": [float(center[0]), float(center[1])],
                 "role": role,
                 "container_id": None,
-                "text": None,
+                "text": _normalize_node_text(item.get("text")),
                 # extra debug/provenance fields (allowed by output schema)
                 "class_name": class_name,
                 "source": item.get("source"),
                 "score": float(item.get("score", 0.0)),
                 "det_id": det_id,
+                "ocr_confidence": item.get("ocr_confidence"),
+                "ocr_block_ids": item.get("ocr_block_ids", []),
+                "match_score": item.get("match_score"),
                 "original_index": int(item.get("original_index", 0)),
             }
         )
@@ -149,3 +152,12 @@ def _safe_list(value: Any) -> List[Dict[str, Any]]:
 
 def _count_by_type(nodes: List[Dict[str, Any]], node_type: str) -> int:
     return sum(1 for n in nodes if n.get("type") == node_type)
+
+
+def _normalize_node_text(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        value = str(value)
+    t = value.strip()
+    return t or None

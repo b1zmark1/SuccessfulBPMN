@@ -1,0 +1,406 @@
+{
+  "coord_space": "auto",
+  "engine": "easyocr+tesseract",
+  "ocr_config": {
+    "coord_space": "auto",
+    "engine": "easyocr+tesseract",
+    "lang": "ru",
+    "gpu": false,
+    "download_enabled": true,
+    "model_storage_directory": null,
+    "max_side": 0,
+    "pad_px": 6,
+    "inner_crop_px": 1,
+    "upscale_factor": 2.0,
+    "min_crop_height": 28,
+    "min_confidence": 0.1,
+    "paragraph": false,
+    "decoder": "greedy",
+    "beam_width": 5,
+    "contrast_ths": 0.1,
+    "adjust_contrast": 0.5,
+    "use_adaptive_bin": false,
+    "adaptive_block": 41,
+    "adaptive_c": 11,
+    "remove_lines": false,
+    "line_h_kernel": 35,
+    "line_v_kernel": 35,
+    "line_iter": 1,
+    "allowlist": "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789 .,:;!?-–—/()[]\"'№%+",
+    "try_rotate_90": false,
+    "tesseract_enabled": true,
+    "tesseract_lang": "rus",
+    "tesseract_psm_single_line": 7,
+    "tesseract_psm_block": 6,
+    "domain_postprocess": true
+  },
+  "summary": {
+    "blocks_total": 28,
+    "avg_confidence": 0.6584940135930598,
+    "low_confidence_ids_lt_0_85": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "empty_text_ids": []
+  },
+  "blocks": [
+    {
+      "block_id": 1,
+      "bbox_xyxy": [
+        1751,
+        0,
+        1800,
+        25
+      ],
+      "text": "Зрифель",
+      "confidence": 0.5434504924494703,
+      "confidence_available": true
+    },
+    {
+      "block_id": 2,
+      "bbox_xyxy": [
+        1532,
+        64,
+        1644,
+        92
+      ],
+      "text": "Нонкзлтацуя быключсна",
+      "confidence": 0.24292184465384795,
+      "confidence_available": true
+    },
+    {
+      "block_id": 3,
+      "bbox_xyxy": [
+        12,
+        86,
+        34,
+        194
+      ],
+      "text": "8",
+      "confidence": 0.9,
+      "confidence_available": true
+    },
+    {
+      "block_id": 4,
+      "bbox_xyxy": [
+        336,
+        102,
+        440,
+        150
+      ],
+      "text": "[Затолнить Бсе Поля; названуе описанке теги; екдымОСть",
+      "confidence": 0.4556394448861622,
+      "confidence_available": true
+    },
+    {
+      "block_id": 5,
+      "bbox_xyxy": [
+        174,
+        111,
+        262,
+        139
+      ],
+      "text": "Затузить вилео",
+      "confidence": 0.5360031220106218,
+      "confidence_available": true
+    },
+    {
+      "block_id": 6,
+      "bbox_xyxy": [
+        772,
+        140,
+        936,
+        168
+      ],
+      "text": "Сосощекис 00 утпешной загоуз с",
+      "confidence": 0.581747286276854,
+      "confidence_available": true
+    },
+    {
+      "block_id": 7,
+      "bbox_xyxy": [
+        1008,
+        140,
+        1340,
+        168
+      ],
+      "text": "Собщскис 0 запрстс мокаикзацим м ограничсним 18+ Иснизнтация вклмена",
+      "confidence": 0.282606689509477,
+      "confidence_available": true
+    },
+    {
+      "block_id": 8,
+      "bbox_xyxy": [
+        40,
+        141,
+        124,
+        169
+      ],
+      "text": "Собыме старта",
+      "confidence": 0.7617045210809887,
+      "confidence_available": true
+    },
+    {
+      "block_id": 9,
+      "bbox_xyxy": [
+        1618,
+        180,
+        1724,
+        226
+      ],
+      "text": "Выбрать время пубпихацки м на -аты кнолку опубПЫКОВаТь",
+      "confidence": 0.6168562429875668,
+      "confidence_available": true
+    },
+    {
+      "block_id": 10,
+      "bbox_xyxy": [
+        1450,
+        186,
+        1550,
+        222
+      ],
+      "text": "Вв0д данных свосй банковской карты",
+      "confidence": 0.7904752859661316,
+      "confidence_available": true
+    },
+    {
+      "block_id": 11,
+      "bbox_xyxy": [
+        682,
+        336,
+        728,
+        364
+      ],
+      "text": "Все %к",
+      "confidence": 0.8860085222249727,
+      "confidence_available": true
+    },
+    {
+      "block_id": 12,
+      "bbox_xyxy": [
+        914,
+        340,
+        1004,
+        420
+      ],
+      "text": "провёрить количество предутреждений если боЛьше 3 заблокноовать ааш",
+      "confidence": 0.6552349249754263,
+      "confidence_available": true
+    },
+    {
+      "block_id": 13,
+      "bbox_xyxy": [
+        1620,
+        340,
+        1722,
+        402
+      ],
+      "text": "Олубгикозать видеоролнк со всем я паранетрани нужнсе еремя",
+      "confidence": 0.6897260669318025,
+      "confidence_available": true
+    },
+    {
+      "block_id": 14,
+      "bbox_xyxy": [
+        1308,
+        345,
+        1388,
+        394
+      ],
+      "text": "Годклоче- е мо-етизацин ; ролн;",
+      "confidence": 0.493920427334486,
+      "confidence_available": true
+    },
+    {
+      "block_id": 15,
+      "bbox_xyxy": [
+        454,
+        346,
+        549,
+        382
+      ],
+      "text": "Автомодерация видео добавлетие",
+      "confidence": 0.7821699639681459,
+      "confidence_available": true
+    },
+    {
+      "block_id": 16,
+      "bbox_xyxy": [
+        1452,
+        346,
+        1548,
+        394
+      ],
+      "text": "Проверка датных Харты сохраненке ВСе да ных",
+      "confidence": 0.622500682707188,
+      "confidence_available": true
+    },
+    {
+      "block_id": 17,
+      "bbox_xyxy": [
+        1114,
+        352,
+        1212,
+        388
+      ],
+      "text": "Оганитенне 18 + а конкретнон Еллео]",
+      "confidence": 0.5754754752649694,
+      "confidence_available": true
+    },
+    {
+      "block_id": 18,
+      "bbox_xyxy": [
+        0,
+        354,
+        32,
+        420
+      ],
+      "text": "[",
+      "confidence": 0.70981343304544,
+      "confidence_available": true
+    },
+    {
+      "block_id": 19,
+      "bbox_xyxy": [
+        338,
+        358,
+        440,
+        406
+      ],
+      "text": "Сообщенке 0 новом Видсо заг;зка 8 0 на серзер",
+      "confidence": 0.6390318058248762,
+      "confidence_available": true
+    },
+    {
+      "block_id": 20,
+      "bbox_xyxy": [
+        456,
+        364,
+        554,
+        410
+      ],
+      "text": "видео добавленне автонатических субтмтров",
+      "confidence": 0.8514360235453675,
+      "confidence_available": true
+    },
+    {
+      "block_id": 21,
+      "bbox_xyxy": [
+        562,
+        388,
+        766,
+        416
+      ],
+      "text": "нарушение авторскт х прав нес аконный контент",
+      "confidence": 0.528146232732061,
+      "confidence_available": true
+    },
+    {
+      "block_id": 22,
+      "bbox_xyxy": [
+        832,
+        526,
+        876,
+        554
+      ],
+      "text": "Всё %",
+      "confidence": 0.9236072691363567,
+      "confidence_available": true
+    },
+    {
+      "block_id": 23,
+      "bbox_xyxy": [
+        14,
+        552,
+        36,
+        662
+      ],
+      "text": "8 2",
+      "confidence": 0.765,
+      "confidence_available": true
+    },
+    {
+      "block_id": 24,
+      "bbox_xyxy": [
+        706,
+        566,
+        796,
+        602
+      ],
+      "text": "Модератор оцетивает роП?",
+      "confidence": 0.797448152078409,
+      "confidence_available": true
+    },
+    {
+      "block_id": 25,
+      "bbox_xyxy": [
+        1032,
+        568,
+        1136,
+        596
+      ],
+      "text": "контент",
+      "confidence": 0.7355536277266783,
+      "confidence_available": true
+    },
+    {
+      "block_id": 26,
+      "bbox_xyxy": [
+        1114,
+        596,
+        1194,
+        624
+      ],
+      "text": "Удапнть ропнк",
+      "confidence": 0.5697683847983759,
+      "confidence_available": true
+    },
+    {
+      "block_id": 27,
+      "bbox_xyxy": [
+        898,
+        600,
+        1022,
+        628
+      ],
+      "text": "Выдать предупрежденке",
+      "confidence": 0.7576334080735747,
+      "confidence_available": true
+    },
+    {
+      "block_id": 28,
+      "bbox_xyxy": [
+        1172,
+        658,
+        1262,
+        686
+      ],
+      "text": "Ограничетне 18+",
+      "confidence": 0.7439530504164275,
+      "confidence_available": true
+    }
+  ]
+}
