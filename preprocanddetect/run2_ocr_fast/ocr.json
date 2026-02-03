@@ -1,0 +1,859 @@
+{
+  "coord_space": "auto",
+  "engine": "tesseract_fast",
+  "ocr_config": {
+    "lang": "rus",
+    "pad_px": 10,
+    "inner_crop_px": 0,
+    "upscale_factor": 1.8,
+    "try_rotate_90": true,
+    "psm_block": 6,
+    "psm_single": 7,
+    "conf_ok": 0.4,
+    "jobs": 4,
+    "max_side": 4096
+  },
+  "blocks": [
+    {
+      "block_id": 1,
+      "seg_ids": [
+        1
+      ],
+      "word_ids": [
+        38,
+        52
+      ],
+      "bbox": [
+        110,
+        8,
+        202,
+        20
+      ],
+      "bbox_xyxy": [
+        110,
+        8,
+        202,
+        20
+      ],
+      "text": "Данныеформы\nМА.",
+      "confidence": 0.19,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.19
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 2,
+      "seg_ids": [
+        2
+      ],
+      "word_ids": [
+        24
+      ],
+      "bbox": [
+        720,
+        16,
+        782,
+        28
+      ],
+      "bbox_xyxy": [
+        720,
+        16,
+        782,
+        28
+      ],
+      "text": "Отклонена",
+      "confidence": 0.88,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.88
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 3,
+      "seg_ids": [
+        3
+      ],
+      "word_ids": [
+        22,
+        53,
+        55
+      ],
+      "bbox": [
+        868,
+        30,
+        1050,
+        42
+      ],
+      "bbox_xyxy": [
+        868,
+        30,
+        1050,
+        42
+      ],
+      "text": "каз висполнениизаявки",
+      "confidence": 0.17,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.17
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 4,
+      "seg_ids": [
+        4,
+        6
+      ],
+      "word_ids": [
+        10,
+        12,
+        54
+      ],
+      "bbox": [
+        192,
+        68,
+        310,
+        96
+      ],
+      "bbox_xyxy": [
+        192,
+        68,
+        310,
+        96
+      ],
+      "text": "р РЕ вки Е",
+      "confidence": 0.5275,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.5275
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 5,
+      "seg_ids": [
+        5,
+        8
+      ],
+      "word_ids": [
+        6,
+        23,
+        36,
+        60
+      ],
+      "bbox": [
+        962,
+        74,
+        1122,
+        100
+      ],
+      "bbox_xyxy": [
+        962,
+        74,
+        1122,
+        100
+      ],
+      "text": "об ао",
+      "confidence": 0.625,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.625
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 6,
+      "seg_ids": [
+        7
+      ],
+      "word_ids": [
+        56
+      ],
+      "bbox": [
+        6,
+        88,
+        16,
+        114
+      ],
+      "bbox_xyxy": [
+        6,
+        88,
+        16,
+        114
+      ],
+      "text": "В\nо\nя",
+      "confidence": 0.7833333333333333,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.7833333333333333
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 7,
+      "seg_ids": [
+        9,
+        11,
+        15,
+        18,
+        19
+      ],
+      "word_ids": [
+        7,
+        13,
+        15,
+        16,
+        40
+      ],
+      "bbox": [
+        1144,
+        96,
+        1234,
+        164
+      ],
+      "bbox_xyxy": [
+        1144,
+        96,
+        1234,
+        164
+      ],
+      "text": "Уведомить\nпользователяс\nрезультате\nисполнения\nзаязки",
+      "confidence": 0.718,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.718
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 8,
+      "seg_ids": [
+        10,
+        14,
+        17
+      ],
+      "word_ids": [
+        17,
+        26,
+        34,
+        49
+      ],
+      "bbox": [
+        832,
+        110,
+        950,
+        150
+      ],
+      "bbox_xyxy": [
+        832,
+        110,
+        950,
+        150
+      ],
+      "text": "к",
+      "confidence": 0.01,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.01
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 9,
+      "seg_ids": [
+        12,
+        16
+      ],
+      "word_ids": [
+        1,
+        39
+      ],
+      "bbox": [
+        28,
+        114,
+        144,
+        140
+      ],
+      "bbox_xyxy": [
+        28,
+        114,
+        144,
+        140
+      ],
+      "text": "Заявка\nзарегистрирована",
+      "confidence": 0.96,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.96
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 10,
+      "seg_ids": [
+        13
+      ],
+      "word_ids": [
+        37
+      ],
+      "bbox": [
+        752,
+        114,
+        800,
+        126
+      ],
+      "bbox_xyxy": [
+        752,
+        114,
+        800,
+        126
+      ],
+      "text": "тринята",
+      "confidence": 0.0,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.0
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 11,
+      "seg_ids": [
+        20,
+        22
+      ],
+      "word_ids": [
+        11,
+        18,
+        43
+      ],
+      "bbox": [
+        1262,
+        160,
+        1382,
+        188
+      ],
+      "bbox_xyxy": [
+        1262,
+        160,
+        1382,
+        188
+      ],
+      "text": ") а\nОбработказаявки\nзавершена",
+      "confidence": 0.5375,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.5375
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 12,
+      "seg_ids": [
+        21
+      ],
+      "word_ids": [
+        41,
+        42
+      ],
+      "bbox": [
+        604,
+        162,
+        702,
+        174
+      ],
+      "bbox_xyxy": [
+        604,
+        162,
+        702,
+        174
+      ],
+      "text": "Статусзаявки",
+      "confidence": 0.0,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.0
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 13,
+      "seg_ids": [
+        23,
+        25
+      ],
+      "word_ids": [
+        21,
+        44,
+        50,
+        57
+      ],
+      "bbox": [
+        290,
+        270,
+        460,
+        306
+      ],
+      "bbox_xyxy": [
+        290,
+        270,
+        460,
+        306
+      ],
+      "text": "ОН о",
+      "confidence": 0.23,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.23
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 14,
+      "seg_ids": [
+        24,
+        26,
+        27
+      ],
+      "word_ids": [
+        3,
+        8,
+        19,
+        45
+      ],
+      "bbox": [
+        152,
+        289,
+        270,
+        332
+      ],
+      "bbox_xyxy": [
+        152,
+        289,
+        270,
+        332
+      ],
+      "text": "Проверка\nкорректности\nвведённыхданных",
+      "confidence": 0.64,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.64
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 15,
+      "seg_ids": [
+        28
+      ],
+      "word_ids": [
+        27,
+        29,
+        31
+      ],
+      "bbox": [
+        6,
+        326,
+        128,
+        386
+      ],
+      "bbox_xyxy": [
+        6,
+        326,
+        128,
+        386
+      ],
+      "text": "—\n- 7\nх\n% Заявкапринята\nЯ крассмотрению\nя\nо",
+      "confidence": 0.27399999999999997,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.27399999999999997
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 16,
+      "seg_ids": [
+        29
+      ],
+      "word_ids": [
+        9,
+        20,
+        30,
+        32,
+        58
+      ],
+      "bbox": [
+        404,
+        342,
+        688,
+        356
+      ],
+      "bbox_xyxy": [
+        404,
+        342,
+        688,
+        356
+      ],
+      "text": "№00\nЗаявкаотклоненапотехническойпричине",
+      "confidence": 0.215,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.215
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 17,
+      "seg_ids": [
+        30
+      ],
+      "word_ids": [
+        4
+      ],
+      "bbox": [
+        38,
+        358,
+        128,
+        372
+      ],
+      "bbox_xyxy": [
+        38,
+        358,
+        128,
+        372
+      ],
+      "text": "рассмотрению",
+      "confidence": 0.11,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.11
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 18,
+      "seg_ids": [
+        31
+      ],
+      "word_ids": [
+        61
+      ],
+      "bbox": [
+        506,
+        386,
+        520,
+        398
+      ],
+      "bbox_xyxy": [
+        506,
+        386,
+        520,
+        398
+      ],
+      "text": "да",
+      "confidence": 0.92,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.92
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 19,
+      "seg_ids": [
+        32,
+        33
+      ],
+      "word_ids": [
+        14,
+        46
+      ],
+      "bbox": [
+        862,
+        388,
+        938,
+        416
+      ],
+      "bbox_xyxy": [
+        862,
+        388,
+        938,
+        416
+      ],
+      "text": "Исполнение\nзаявки",
+      "confidence": 0.96,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.96
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 20,
+      "seg_ids": [
+        34
+      ],
+      "word_ids": [
+        35,
+        47
+      ],
+      "bbox": [
+        642,
+        434,
+        744,
+        446
+      ],
+      "bbox_xyxy": [
+        642,
+        434,
+        744,
+        446
+      ],
+      "text": "Заявка принята1",
+      "confidence": 0.48,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.48
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 21,
+      "seg_ids": [
+        35
+      ],
+      "word_ids": [
+        33
+      ],
+      "bbox": [
+        764,
+        434,
+        810,
+        448
+      ],
+      "bbox_xyxy": [
+        764,
+        434,
+        810,
+        448
+      ],
+      "text": "зработу",
+      "confidence": 0.0,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.0
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 22,
+      "seg_ids": [
+        36,
+        37
+      ],
+      "word_ids": [
+        25,
+        28,
+        48,
+        51,
+        59
+      ],
+      "bbox": [
+        968,
+        434,
+        1116,
+        460
+      ],
+      "bbox_xyxy": [
+        968,
+        434,
+        1116,
+        460
+      ],
+      "text": "об ела ан ри р ки",
+      "confidence": 0.49666666666666665,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.49666666666666665
+        }
+      ],
+      "raw": []
+    },
+    {
+      "block_id": 23,
+      "seg_ids": [
+        38,
+        39
+      ],
+      "word_ids": [
+        2,
+        5
+      ],
+      "bbox": [
+        852,
+        508,
+        948,
+        536
+      ],
+      "bbox_xyxy": [
+        852,
+        508,
+        948,
+        536
+      ],
+      "text": "———\nответственное\nподразделение",
+      "confidence": 0.7333333333333333,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.7333333333333333
+        }
+      ],
+      "raw": []
+    }
+  ],
+  "image": {
+    "w": 1391,
+    "h": 542,
+    "path": "preprocanddetect/diagram1.jpg"
+  }
+}
