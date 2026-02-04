@@ -11,6 +11,7 @@ class TitleHintError(RuntimeError):
 @dataclass(frozen=True)
 class TitleHintConfig:
     min_horizontal_ratio: float = 1.2
+    min_vertical_ratio: float = 1.6
     container_left_band_ratio: float = 0.22
     container_min_inside_ratio: float = 0.7
     ambiguity_margin: float = 0.05
@@ -62,13 +63,13 @@ def assign_title_hints(
 
     text_hint_map: Dict[str, Dict[str, Any]] = {}
 
-    # 1) pool/lane title hints (left-edge horizontal text inside container)
+    # 1) pool/lane title hints (left-edge horizontal or vertical text inside container)
     for t in text_nodes:
         tid = t.get("id")
         tb = _bbox(t.get("bbox"))
         if not (isinstance(tid, str) and tb):
             continue
-        if not _is_horizontal(tb, cfg.min_horizontal_ratio):
+        if not _is_title_oriented(tb, cfg.min_horizontal_ratio, cfg.min_vertical_ratio):
             continue
 
         cands: List[Tuple[float, str, str]] = []
@@ -191,6 +192,22 @@ def _is_horizontal(b: Tuple[float, float, float, float], min_ratio: float) -> bo
     if h <= 1e-9:
         return True
     return (w / h) >= min_ratio
+
+
+def _is_vertical(b: Tuple[float, float, float, float], min_ratio: float) -> bool:
+    w = b[2] - b[0]
+    h = b[3] - b[1]
+    if w <= 1e-9:
+        return True
+    return (h / w) >= min_ratio
+
+
+def _is_title_oriented(
+    b: Tuple[float, float, float, float],
+    min_horizontal_ratio: float,
+    min_vertical_ratio: float,
+) -> bool:
+    return _is_horizontal(b, min_horizontal_ratio) or _is_vertical(b, min_vertical_ratio)
 
 
 def _inside_ratio(

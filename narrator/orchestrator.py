@@ -114,7 +114,13 @@ def run_narration(
     trace.append({"stage": "prompt_build", "status": "started"})
     stage_started = time.perf_counter()
     try:
-        prompt_pack = build_narrator_prompts(semantic_payload, policy=policy, cfg=prompt_cfg)
+        role_hints = _infer_step_role_hints_from_graph(graph_payload, semantic_payload)
+        prompt_pack = build_narrator_prompts(
+            semantic_payload,
+            policy=policy,
+            role_hints=role_hints,
+            cfg=prompt_cfg,
+        )
         stage_durations_ms["prompt_build"] = int((time.perf_counter() - stage_started) * 1000)
         trace.append({"stage": "prompt_build", "status": "completed"})
     except Exception as exc:
@@ -325,3 +331,240 @@ def _classify_llm_error_code(exc: Exception) -> str:
     if "non-string" in msg or "invalid output" in msg:
         return "LLM_INVALID_OUTPUT"
     return "LLM_RUNTIME_ERROR"
+
+
+def _infer_step_role_hints_from_graph(
+    graph_payload: Dict[str, Any],
+    semantic_payload: Dict[str, Any],
+) -> Dict[str, str]:
+    nodes = graph_payload.get("nodes")
+    steps = semantic_payload.get("steps")
+    if not isinstance(nodes, list) or not isinstance(steps, list):
+        return {}
+
+    containers: Dict[str, Dict[str, float]] = {}
+    texts: List[Dict[str, Any]] = []
+    for n in nodes:
+        if not isinstance(n, dict):
+            continue
+        ntype = str(n.get("type", "")).lower()
+        nid = n.get("id")
+        bbox = n.get("bbox")
+        if ntype == "container" and isinstance(nid, str) and _valid_bbox(bbox):
+            containers[nid] = {"bbox": bbox}
+        elif ntype == "text":
+            texts.append(n)
+
+    container_roles: Dict[str, str] = {}
+    container_scores: Dict[str, float] = {}
+    for t in texts:
+        cid = t.get("container_id")
+        if not isinstance(cid, str) or cid not in containers:
+            continue
+        tb = t.get("bbox")
+        if not _valid_bbox(tb):
+            continue
+        label = _clean_role_label(t.get("text"))
+        if not label:
+            continue
+        cb = containers[cid]["bbox"]
+        inside = _inside_ratio(tb, cb)
+        if inside < 0.7:
+            continue
+        if not _in_left_band(tb, cb, 0.22):
+            continue
+        orientation_ok = _is_horizontal(tb, 1.2) or _is_vertical(tb, 1.6)
+        if not orientation_ok:
+            continue
+        left_dist = abs(float(tb[0]) - float(cb[0])) / max(1.0, float(cb[2]) - float(cb[0]))
+        score = inside + (1.0 - left_dist)
+        if score > container_scores.get(cid, -1.0):
+            container_scores[cid] = score
+            container_roles[cid] = label
+
+    node_by_id: Dict[str, Dict[str, Any]] = {
+        str(n.get("id")): n for n in nodes if isinstance(n, dict) and isinstance(n.get("id"), str)
+    }
+    step_role_hints: Dict[str, str] = {}
+    if container_roles:
+        for step in steps:
+            if not isinstance(step, dict):
+                continue
+            sid = step.get("id")
+            if not isinstance(sid, str):
+                continue
+            node = node_by_id.get(sid)
+            if not node:
+                continue
+            cid = node.get("container_id")
+            if isinstance(cid, str):
+                role = container_roles.get(cid)
+                if role:
+                    step_role_hints[sid] = role
+
+    # Fallback: infer role bands from left-edge vertical text even without lane/pool detections.
+    if not step_role_hints:
+        step_role_hints = _infer_role_hints_from_left_edge_text(nodes, steps, node_by_id)
+    return step_role_hints
+
+
+def _clean_role_label(value: Any) -> str:
+    if not isinstance(value, str):
+        return ""
+    parts = [p.strip() for p in value.replace("\r", "\n").split("\n")]
+    out = " ".join([p for p in parts if p]).strip()
+    return out
+
+
+def _valid_bbox(v: Any) -> bool:
+    if not (isinstance(v, list) and len(v) == 4):
+        return False
+    try:
+        x1, y1, x2, y2 = [float(x) for x in v]
+    except Exception:
+        return False
+    return x2 > x1 and y2 > y1
+
+
+def _inside_ratio(inner: List[float], outer: List[float]) -> float:
+    ix1 = max(float(inner[0]), float(outer[0]))
+    iy1 = max(float(inner[1]), float(outer[1]))
+    ix2 = min(float(inner[2]), float(outer[2]))
+    iy2 = min(float(inner[3]), float(outer[3]))
+    if ix2 <= ix1 or iy2 <= iy1:
+        return 0.0
+    inter = (ix2 - ix1) * (iy2 - iy1)
+    area_inner = max(1e-9, (float(inner[2]) - float(inner[0])) * (float(inner[3]) - float(inner[1])))
+    return float(inter / area_inner)
+
+
+def _in_left_band(text_box: List[float], container_box: List[float], left_band_ratio: float) -> bool:
+    c_w = float(container_box[2]) - float(container_box[0])
+    left_limit = float(container_box[0]) + left_band_ratio * c_w
+    cx = (float(text_box[0]) + float(text_box[2])) / 2.0
+    return cx <= left_limit
+
+
+def _is_horizontal(b: List[float], min_ratio: float) -> bool:
+    w = float(b[2]) - float(b[0])
+    h = float(b[3]) - float(b[1])
+    if h <= 1e-9:
+        return True
+    return (w / h) >= min_ratio
+
+
+def _is_vertical(b: List[float], min_ratio: float) -> bool:
+    w = float(b[2]) - float(b[0])
+    h = float(b[3]) - float(b[1])
+    if w <= 1e-9:
+        return True
+    return (h / w) >= min_ratio
+
+
+def _infer_role_hints_from_left_edge_text(
+    nodes: List[Dict[str, Any]],
+    steps: List[Dict[str, Any]],
+    node_by_id: Dict[str, Dict[str, Any]],
+) -> Dict[str, str]:
+    x1_all = []
+    y1_all = []
+    x2_all = []
+    y2_all = []
+    for n in nodes:
+        bb = n.get("bbox")
+        if _valid_bbox(bb):
+            x1_all.append(float(bb[0]))
+            y1_all.append(float(bb[1]))
+            x2_all.append(float(bb[2]))
+            y2_all.append(float(bb[3]))
+    if not x1_all:
+        return {}
+
+    img_x1 = min(x1_all)
+    img_y1 = min(y1_all)
+    img_x2 = max(x2_all)
+    img_y2 = max(y2_all)
+    img_w = max(1.0, img_x2 - img_x1)
+    img_h = max(1.0, img_y2 - img_y1)
+
+    candidates: List[Dict[str, Any]] = []
+    for n in nodes:
+        if str(n.get("type", "")).lower() != "text":
+            continue
+        bb = n.get("bbox")
+        if not _valid_bbox(bb):
+            continue
+        label = _clean_role_label(n.get("text"))
+        if not _looks_like_role_text(label):
+            continue
+        cx = (float(bb[0]) + float(bb[2])) / 2.0
+        if cx > img_x1 + 0.10 * img_w:
+            continue
+        if float(bb[3]) <= img_y1 + 0.08 * img_h:
+            continue  # likely diagram title in top stripe
+        if not _is_vertical(bb, 1.6):
+            continue
+        candidates.append({"label": label, "bbox": bb})
+
+    if not candidates:
+        return {}
+
+    candidates.sort(key=lambda x: float(x["bbox"][1]))
+    role_bands: List[Dict[str, Any]] = []
+    for c in candidates:
+        cb = c["bbox"]
+        merged = False
+        for rb in role_bands:
+            if _y_overlap_ratio(cb, rb["bbox"]) >= 0.35:
+                if len(c["label"]) > len(rb["label"]):
+                    rb["label"] = c["label"]
+                rb["bbox"] = [
+                    min(float(rb["bbox"][0]), float(cb[0])),
+                    min(float(rb["bbox"][1]), float(cb[1])),
+                    max(float(rb["bbox"][2]), float(cb[2])),
+                    max(float(rb["bbox"][3]), float(cb[3])),
+                ]
+                merged = True
+                break
+        if not merged:
+            role_bands.append({"label": c["label"], "bbox": [float(x) for x in cb]})
+
+    out: Dict[str, str] = {}
+    for s in steps:
+        if not isinstance(s, dict):
+            continue
+        sid = s.get("id")
+        if not isinstance(sid, str):
+            continue
+        node = node_by_id.get(sid)
+        if not node:
+            continue
+        bb = node.get("bbox")
+        if not _valid_bbox(bb):
+            continue
+        best_label = None
+        best_score = 0.0
+        for rb in role_bands:
+            score = _y_overlap_ratio(bb, rb["bbox"])
+            if score > best_score:
+                best_score = score
+                best_label = rb["label"]
+        if best_label and best_score > 0.1:
+            out[sid] = best_label
+    return out
+
+
+def _looks_like_role_text(label: str) -> bool:
+    s = label.strip()
+    if len(s) < 3:
+        return False
+    letters = sum(1 for ch in s if ch.isalpha())
+    return letters >= 2
+
+
+def _y_overlap_ratio(a: List[float], b: List[float]) -> float:
+    ay1, ay2 = float(a[1]), float(a[3])
+    by1, by2 = float(b[1]), float(b[3])
+    inter = max(0.0, min(ay2, by2) - max(ay1, by1))
+    amin = max(1e-9, ay2 - ay1)
+    return inter / amin

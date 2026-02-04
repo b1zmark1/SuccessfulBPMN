@@ -1,406 +1,1060 @@
 {
   "coord_space": "auto",
-  "engine": "easyocr+tesseract",
+  "engine": "tesseract_fast",
   "ocr_config": {
-    "coord_space": "auto",
-    "engine": "easyocr+tesseract",
-    "lang": "ru",
-    "gpu": false,
-    "download_enabled": true,
-    "model_storage_directory": null,
-    "max_side": 0,
-    "pad_px": 6,
-    "inner_crop_px": 1,
+    "lang": "rus",
+    "pad_px": 10,
+    "inner_crop_px": 0,
     "upscale_factor": 2.0,
-    "min_crop_height": 28,
-    "min_confidence": 0.1,
-    "paragraph": false,
-    "decoder": "greedy",
-    "beam_width": 5,
-    "contrast_ths": 0.1,
-    "adjust_contrast": 0.5,
-    "use_adaptive_bin": false,
-    "adaptive_block": 41,
-    "adaptive_c": 11,
-    "remove_lines": false,
-    "line_h_kernel": 35,
-    "line_v_kernel": 35,
-    "line_iter": 1,
-    "allowlist": "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789 .,:;!?-–—/()[]\"'№%+",
-    "try_rotate_90": false,
-    "tesseract_enabled": true,
-    "tesseract_lang": "rus",
-    "tesseract_psm_single_line": 7,
-    "tesseract_psm_block": 6,
-    "domain_postprocess": true
-  },
-  "summary": {
-    "blocks_total": 28,
-    "avg_confidence": 0.6584940135930598,
-    "low_confidence_ids_lt_0_85": [
-      1,
-      2,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      18,
-      19,
-      21,
-      23,
-      24,
-      25,
-      26,
-      27,
-      28
-    ],
-    "empty_text_ids": []
+    "try_rotate_90": true,
+    "psm_block": 6,
+    "psm_single": 7,
+    "psm_raw_line": 13,
+    "conf_ok": 0.4,
+    "jobs": 4,
+    "max_side": 4096,
+    "refine_text_bbox": true,
+    "cc_max_area_frac": 0.18,
+    "cc_min_area_px": 20,
+    "use_whitelist": false
   },
   "blocks": [
     {
       "block_id": 1,
-      "bbox_xyxy": [
-        1751,
-        0,
-        1800,
-        25
+      "seg_ids": [
+        1
       ],
-      "text": "Зрифель",
-      "confidence": 0.5434504924494703,
-      "confidence_available": true
+      "word_ids": [
+        40
+      ],
+      "bbox": [
+        1757,
+        0,
+        1799,
+        16
+      ],
+      "bbox_xyxy": [
+        1757,
+        0,
+        1799,
+        16
+      ],
+      "text": "эль",
+      "confidence": 0.17,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "invert_adaptive",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.17,
+          "score": 0.29000000000000004
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 2,
-      "bbox_xyxy": [
-        1532,
-        64,
-        1644,
-        92
+      "seg_ids": [
+        2
       ],
-      "text": "Нонкзлтацуя быключсна",
-      "confidence": 0.24292184465384795,
-      "confidence_available": true
+      "word_ids": [
+        35
+      ],
+      "bbox": [
+        1538,
+        74,
+        1638,
+        82
+      ],
+      "bbox_xyxy": [
+        1538,
+        74,
+        1638,
+        82
+      ],
+      "text": "—— Момизитация выключена——",
+      "confidence": 0.4766666666666666,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.4766666666666666,
+          "score": 1.1066666666666667
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 3,
-      "bbox_xyxy": [
-        12,
-        86,
-        34,
-        194
+      "seg_ids": [
+        3
       ],
-      "text": "8",
-      "confidence": 0.9,
-      "confidence_available": true
+      "word_ids": [
+        21
+      ],
+      "bbox": [
+        18,
+        92,
+        28,
+        188
+      ],
+      "bbox_xyxy": [
+        18,
+        92,
+        28,
+        188
+      ],
+      "text": "2\n5\n=\nЕ\nр-]\n5\n®\nЯ\n8",
+      "confidence": 0.63,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.63,
+          "score": 0.9299999999999999
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 4,
-      "bbox_xyxy": [
-        336,
-        102,
-        440,
-        150
+      "seg_ids": [
+        4,
+        6,
+        7
       ],
-      "text": "[Затолнить Бсе Поля; названуе описанке теги; екдымОСть",
-      "confidence": 0.4556394448861622,
-      "confidence_available": true
+      "word_ids": [
+        8,
+        13,
+        29
+      ],
+      "bbox": [
+        342,
+        108,
+        434,
+        144
+      ],
+      "bbox_xyxy": [
+        342,
+        108,
+        434,
+        144
+      ],
+      "text": "Заполнить все поля\nназвание, описание\nтеги, видимость",
+      "confidence": 0.9328571428571429,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.9328571428571429,
+          "score": 2.1228571428571428
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 5,
-      "bbox_xyxy": [
-        174,
-        111,
-        262,
-        139
+      "seg_ids": [
+        5
       ],
-      "text": "Затузить вилео",
-      "confidence": 0.5360031220106218,
-      "confidence_available": true
+      "word_ids": [
+        12
+      ],
+      "bbox": [
+        180,
+        118,
+        256,
+        132
+      ],
+      "bbox_xyxy": [
+        180,
+        118,
+        256,
+        132
+      ],
+      "text": "Загрузить видео",
+      "confidence": 0.955,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.955,
+          "score": 1.405
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 6,
-      "bbox_xyxy": [
-        772,
-        140,
-        936,
-        168
+      "seg_ids": [
+        8
       ],
-      "text": "Сосощекис 00 утпешной загоуз с",
-      "confidence": 0.581747286276854,
-      "confidence_available": true
+      "word_ids": [
+        3,
+        43
+      ],
+      "bbox": [
+        778,
+        146,
+        930,
+        162
+      ],
+      "bbox_xyxy": [
+        778,
+        146,
+        930,
+        162
+      ],
+      "text": "Сообщение об ублешной загрузке\n|",
+      "confidence": 0.866,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.866,
+          "score": 1.6860000000000002
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 7,
-      "bbox_xyxy": [
-        1008,
-        140,
-        1340,
-        168
+      "seg_ids": [
+        9
       ],
-      "text": "Собщскис 0 запрстс мокаикзацим м ограничсним 18+ Иснизнтация вклмена",
-      "confidence": 0.282606689509477,
-      "confidence_available": true
+      "word_ids": [
+        20,
+        28,
+        38,
+        47
+      ],
+      "bbox": [
+        1014,
+        146,
+        1334,
+        162
+      ],
+      "bbox_xyxy": [
+        1014,
+        146,
+        1334,
+        162
+      ],
+      "text": "и 24\nСообщение о запрете мометизации и ограмичении 18+ Монизитация включена\n| |\nН",
+      "confidence": 0.7235714285714286,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.7235714285714286,
+          "score": 1.8435714285714284
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 8,
-      "bbox_xyxy": [
-        40,
-        141,
-        124,
-        169
+      "seg_ids": [
+        10
       ],
-      "text": "Собыме старта",
-      "confidence": 0.7617045210809887,
-      "confidence_available": true
+      "word_ids": [
+        17
+      ],
+      "bbox": [
+        46,
+        148,
+        118,
+        162
+      ],
+      "bbox_xyxy": [
+        46,
+        148,
+        118,
+        162
+      ],
+      "text": "‚| Событие старта\n|",
+      "confidence": 0.78,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.78,
+          "score": 1.13
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 9,
-      "bbox_xyxy": [
-        1618,
-        180,
-        1724,
-        226
+      "seg_ids": [
+        11,
+        13
       ],
-      "text": "Выбрать время пубпихацки м на -аты кнолку опубПЫКОВаТь",
-      "confidence": 0.6168562429875668,
-      "confidence_available": true
+      "word_ids": [
+        6,
+        23,
+        31
+      ],
+      "bbox": [
+        1624,
+        186,
+        1718,
+        220
+      ],
+      "bbox_xyxy": [
+        1624,
+        186,
+        1718,
+        220
+      ],
+      "text": "Выбрать время\nикации и нажать\nкнопку опубликовать",
+      "confidence": 0.9414285714285714,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.9414285714285714,
+          "score": 2.1314285714285712
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 10,
-      "bbox_xyxy": [
-        1450,
-        186,
-        1550,
-        222
+      "seg_ids": [
+        12,
+        14
       ],
-      "text": "Вв0д данных свосй банковской карты",
-      "confidence": 0.7904752859661316,
-      "confidence_available": true
+      "word_ids": [
+        14,
+        22
+      ],
+      "bbox": [
+        1456,
+        192,
+        1544,
+        216
+      ],
+      "bbox_xyxy": [
+        1456,
+        192,
+        1544,
+        216
+      ],
+      "text": "Ввод данных своей\nбанковской карты",
+      "confidence": 0.946,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.946,
+          "score": 1.906
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 11,
-      "bbox_xyxy": [
-        682,
-        336,
-        728,
-        364
+      "seg_ids": [
+        15
       ],
-      "text": "Все %к",
-      "confidence": 0.8860085222249727,
-      "confidence_available": true
+      "word_ids": [
+        51
+      ],
+      "bbox": [
+        688,
+        344,
+        722,
+        356
+      ],
+      "bbox_xyxy": [
+        688,
+        344,
+        722,
+        356
+      ],
+      "text": "<=\nВсё ок",
+      "confidence": 0.65,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "invert_adaptive",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.65,
+          "score": 0.81
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 12,
-      "bbox_xyxy": [
-        914,
-        340,
-        1004,
-        420
+      "seg_ids": [
+        16,
+        23,
+        29,
+        36,
+        38
       ],
-      "text": "провёрить количество предутреждений если боЛьше 3 заблокноовать ааш",
-      "confidence": 0.6552349249754263,
-      "confidence_available": true
+      "word_ids": [
+        25,
+        32,
+        36,
+        39,
+        45,
+        56
+      ],
+      "bbox": [
+        920,
+        346,
+        998,
+        414
+      ],
+      "bbox_xyxy": [
+        920,
+        346,
+        998,
+        414
+      ],
+      "text": "количество\nпредупреждений,\nесли больше 3,\nзаблокировать\nаккаунт",
+      "confidence": 0.8928571428571429,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.8928571428571429,
+          "score": 2.1428571428571432
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 13,
-      "bbox_xyxy": [
-        1620,
-        340,
-        1722,
-        402
+      "seg_ids": [
+        17,
+        27,
+        31
       ],
-      "text": "Олубгикозать видеоролнк со всем я паранетрани нужнсе еремя",
-      "confidence": 0.6897260669318025,
-      "confidence_available": true
+      "word_ids": [
+        2,
+        11,
+        41,
+        42
+      ],
+      "bbox": [
+        1626,
+        346,
+        1716,
+        396
+      ],
+      "bbox_xyxy": [
+        1626,
+        346,
+        1716,
+        396
+      ],
+      "text": "о Опубликовать\nвидеоролик со\nвсеми параметрами\nв нужное время",
+      "confidence": 0.8655555555555555,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.8655555555555555,
+          "score": 2.0855555555555556
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 14,
-      "bbox_xyxy": [
-        1308,
-        345,
-        1388,
-        394
+      "seg_ids": [
+        18,
+        25,
+        33
       ],
-      "text": "Годклоче- е мо-етизацин ; ролн;",
-      "confidence": 0.493920427334486,
-      "confidence_available": true
+      "word_ids": [
+        15,
+        33,
+        52
+      ],
+      "bbox": [
+        1314,
+        351,
+        1382,
+        388
+      ],
+      "bbox_xyxy": [
+        1314,
+        351,
+        1382,
+        388
+      ],
+      "text": "з\nПодключение\nмонетизации к\nролику",
+      "confidence": 0.764,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.764,
+          "score": 1.7839999999999998
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 15,
-      "bbox_xyxy": [
-        454,
-        346,
-        549,
-        382
+      "seg_ids": [
+        19
       ],
-      "text": "Автомодерация видео добавлетие",
-      "confidence": 0.7821699639681459,
-      "confidence_available": true
+      "word_ids": [
+        1
+      ],
+      "bbox": [
+        460,
+        352,
+        543,
+        376
+      ],
+      "bbox_xyxy": [
+        460,
+        352,
+        543,
+        376
+      ],
+      "text": "модерация\nвидео, добавление",
+      "confidence": 0.9566666666666667,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.9566666666666667,
+          "score": 1.7366666666666666
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 16,
-      "bbox_xyxy": [
-        1452,
-        346,
-        1548,
-        394
+      "seg_ids": [
+        20,
+        26,
+        34
       ],
-      "text": "Проверка датных Харты сохраненке ВСе да ных",
-      "confidence": 0.622500682707188,
-      "confidence_available": true
+      "word_ids": [
+        7,
+        18,
+        37
+      ],
+      "bbox": [
+        1458,
+        352,
+        1542,
+        388
+      ],
+      "bbox_xyxy": [
+        1458,
+        352,
+        1542,
+        388
+      ],
+      "text": "Проверка данных\nкарты, сохранение\nвсех данных",
+      "confidence": 0.9566666666666667,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.9566666666666667,
+          "score": 2.1266666666666665
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 17,
-      "bbox_xyxy": [
-        1114,
-        352,
-        1212,
-        388
+      "seg_ids": [
+        21,
+        30
       ],
-      "text": "Оганитенне 18 + а конкретнон Еллео]",
-      "confidence": 0.5754754752649694,
-      "confidence_available": true
+      "word_ids": [
+        19,
+        24
+      ],
+      "bbox": [
+        1120,
+        358,
+        1206,
+        382
+      ],
+      "bbox_xyxy": [
+        1120,
+        358,
+        1206,
+        382
+      ],
+      "text": "Ограничение 18+ |\nз конкретном видео",
+      "confidence": 0.9283333333333332,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.9283333333333332,
+          "score": 1.7883333333333333
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 18,
-      "bbox_xyxy": [
-        0,
-        354,
-        32,
-        420
+      "seg_ids": [
+        22
       ],
-      "text": "[",
-      "confidence": 0.70981343304544,
-      "confidence_available": true
+      "word_ids": [
+        50,
+        58
+      ],
+      "bbox": [
+        4,
+        360,
+        26,
+        414
+      ],
+      "bbox_xyxy": [
+        4,
+        360,
+        26,
+        414
+      ],
+      "text": "е\\915и5\n1 и гудово ди",
+      "confidence": 0.23600000000000002,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot90",
+          "psm": 6,
+          "conf": 0.23600000000000002,
+          "score": 0.8059999999999999
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 19,
-      "bbox_xyxy": [
-        338,
-        358,
-        440,
-        406
+      "seg_ids": [
+        24,
+        32
       ],
-      "text": "Сообщенке 0 новом Видсо заг;зка 8 0 на серзер",
-      "confidence": 0.6390318058248762,
-      "confidence_available": true
+      "word_ids": [
+        10,
+        16,
+        53,
+        61
+      ],
+      "bbox": [
+        344,
+        364,
+        434,
+        400
+      ],
+      "bbox_xyxy": [
+        344,
+        364,
+        434,
+        400
+      ],
+      "text": "Сообщение о новом\nвидео, загрузка его\nна серзер",
+      "confidence": 0.94375,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.94375,
+          "score": 2.1137499999999996
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 20,
-      "bbox_xyxy": [
-        456,
-        364,
-        554,
-        410
+      "seg_ids": [
+        28,
+        35
       ],
-      "text": "видео добавленне автонатических субтмтров",
-      "confidence": 0.8514360235453675,
-      "confidence_available": true
+      "word_ids": [
+        30,
+        44,
+        49,
+        60
+      ],
+      "bbox": [
+        462,
+        370,
+        548,
+        404
+      ],
+      "bbox_xyxy": [
+        462,
+        370,
+        548,
+        404
+      ],
+      "text": "`“Автомодерация\nвидео, добавление\nавтоматических\nсубтитров",
+      "confidence": 0.828,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.828,
+          "score": 1.998
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 21,
-      "bbox_xyxy": [
-        562,
-        388,
-        766,
-        416
+      "seg_ids": [
+        37
       ],
-      "text": "нарушение авторскт х прав нес аконный контент",
-      "confidence": 0.528146232732061,
-      "confidence_available": true
+      "word_ids": [
+        5,
+        55,
+        59
+      ],
+      "bbox": [
+        568,
+        396,
+        760,
+        408
+      ],
+      "bbox_xyxy": [
+        568,
+        396,
+        760,
+        408
+      ],
+      "text": "ра томат\nаа",
+      "confidence": 0.19,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "invert_adaptive",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.19,
+          "score": 0.52
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 22,
-      "bbox_xyxy": [
-        832,
-        526,
-        876,
-        554
+      "seg_ids": [
+        39
       ],
-      "text": "Всё %",
-      "confidence": 0.9236072691363567,
-      "confidence_available": true
+      "word_ids": [
+        54
+      ],
+      "bbox": [
+        838,
+        534,
+        870,
+        546
+      ],
+      "bbox_xyxy": [
+        838,
+        534,
+        870,
+        546
+      ],
+      "text": "Всё ок |",
+      "confidence": 0.94,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 7,
+          "conf": 0.94,
+          "score": 1.07
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 23,
-      "bbox_xyxy": [
-        14,
-        552,
-        36,
-        662
+      "seg_ids": [
+        40,
+        44
       ],
-      "text": "8 2",
-      "confidence": 0.765,
-      "confidence_available": true
+      "word_ids": [
+        48,
+        57
+      ],
+      "bbox": [
+        20,
+        558,
+        30,
+        656
+      ],
+      "bbox_xyxy": [
+        20,
+        558,
+        30,
+        656
+      ],
+      "text": "е1на1ном до1едэгоу",
+      "confidence": 0.255,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot90",
+          "psm": 7,
+          "conf": 0.255,
+          "score": 0.845
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 24,
-      "bbox_xyxy": [
-        706,
-        566,
-        796,
-        602
+      "seg_ids": [
+        41,
+        43
       ],
-      "text": "Модератор оцетивает роП?",
-      "confidence": 0.797448152078409,
-      "confidence_available": true
+      "word_ids": [
+        26,
+        46
+      ],
+      "bbox": [
+        712,
+        572,
+        790,
+        596
+      ],
+      "bbox_xyxy": [
+        712,
+        572,
+        790,
+        596
+      ],
+      "text": "Модератор\nоценивает ролик",
+      "confidence": 0.9566666666666667,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.9566666666666667,
+          "score": 1.7066666666666668
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 25,
-      "bbox_xyxy": [
-        1032,
-        568,
-        1136,
-        596
+      "seg_ids": [
+        42
       ],
-      "text": "контент",
-      "confidence": 0.7355536277266783,
-      "confidence_available": true
+      "word_ids": [
+        9
+      ],
+      "bbox": [
+        1038,
+        576,
+        1130,
+        588
+      ],
+      "bbox_xyxy": [
+        1038,
+        576,
+        1130,
+        588
+      ],
+      "text": "——_ запрещенный ---@",
+      "confidence": 0.48,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "otsu",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.48,
+          "score": 0.84
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 26,
-      "bbox_xyxy": [
-        1114,
-        596,
-        1194,
-        624
+      "seg_ids": [
+        45
       ],
-      "text": "Удапнть ропнк",
-      "confidence": 0.5697683847983759,
-      "confidence_available": true
+      "word_ids": [
+        34
+      ],
+      "bbox": [
+        1120,
+        604,
+        1188,
+        616
+      ],
+      "bbox_xyxy": [
+        1120,
+        604,
+        1188,
+        616
+      ],
+      "text": "Удалить ролик\n7",
+      "confidence": 0.82,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.82,
+          "score": 1.2600000000000002
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 27,
-      "bbox_xyxy": [
-        898,
-        600,
-        1022,
-        628
+      "seg_ids": [
+        46
       ],
-      "text": "Выдать предупрежденке",
-      "confidence": 0.7576334080735747,
-      "confidence_available": true
+      "word_ids": [
+        4
+      ],
+      "bbox": [
+        904,
+        608,
+        1016,
+        620
+      ],
+      "bbox_xyxy": [
+        904,
+        608,
+        1016,
+        620
+      ],
+      "text": "Выдать\nУ\nпреду!\nпрежд.\nен\nие",
+      "confidence": 0.5683333333333334,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.5683333333333334,
+          "score": 1.3783333333333332
+        }
+      ],
+      "raw": []
     },
     {
       "block_id": 28,
-      "bbox_xyxy": [
-        1172,
-        658,
-        1262,
-        686
+      "seg_ids": [
+        47
       ],
-      "text": "Ограничетне 18+",
-      "confidence": 0.7439530504164275,
-      "confidence_available": true
+      "word_ids": [
+        27
+      ],
+      "bbox": [
+        1178,
+        666,
+        1256,
+        678
+      ],
+      "bbox_xyxy": [
+        1178,
+        666,
+        1256,
+        678
+      ],
+      "text": "и\nОграничение 18+",
+      "confidence": 0.86,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "tesseract",
+          "variant": "gray",
+          "rotation": "rot0",
+          "psm": 6,
+          "conf": 0.86,
+          "score": 1.3200000000000003
+        }
+      ],
+      "raw": []
     }
-  ]
+  ],
+  "image": {
+    "w": 1800,
+    "h": 731,
+    "path": "result\\run_bpmn_full\\out_text\\00_model.png"
+  }
 }

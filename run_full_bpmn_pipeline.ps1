@@ -3,11 +3,20 @@ param(
     [string]$OutRoot = "result/run_bpmn_full",
     [string]$PythonExe = "python",
     [string]$ModelPath = "narrator/qwen2.5-7b-instruct-q5_k_m-00001-of-00002.gguf",
+    [string]$OutputFormat = "narrative",
     [int]$NCtx = 4096,
     [int]$Threads = 12,
     [double]$DetectorConf = 0.4,
-    [string]$OcrEngine = "easyocr+tesseract",
-    [bool]$DownloadOcrModels = $true,
+    [int]$OcrMaxSide = 4096,
+    [double]$OcrUpscaleFactor = 2.0,
+    [int]$OcrPadPx = 10,
+    [int]$OcrInnerCropPx = 0,
+    [int]$OcrPsmBlock = 6,
+    [int]$OcrPsmSingle = 7,
+    [int]$OcrPsmRawLine = 13,
+    [double]$OcrCcMaxAreaFrac = 0.18,
+    [int]$OcrCcMinAreaPx = 20,
+    [int]$OcrJobs = 4,
     [switch]$SkipNarrator
 )
 
@@ -64,25 +73,29 @@ if (-not (Test-Path $modelImagePath)) {
     throw "Model-space image not found: $modelImagePath"
 }
 
-if ($OcrEngine -ne "easyocr" -and $OcrEngine -ne "tesseract" -and $OcrEngine -ne "easyocr+tesseract") {
-    throw "Invalid OcrEngine: $OcrEngine. Allowed: easyocr, tesseract, easyocr+tesseract"
-}
-
 $ocrArgs = @(
-    "preprocanddetect/ocr_res.py",
+    "preprocanddetect/ocr_tesseract_fast.py",
     "--input", $modelImagePath,
     "--blocks", (Join-Path $outText "text_blocks.json"),
     "--outdir", $outOcr,
-    "--engine", $OcrEngine,
-    "--report"
+    "--max-side", "$OcrMaxSide",
+    "--upscale-factor", "$OcrUpscaleFactor",
+    "--pad-px", "$OcrPadPx",
+    "--inner-crop-px", "$OcrInnerCropPx",
+    "--psm-block", "$OcrPsmBlock",
+    "--psm-single", "$OcrPsmSingle",
+    "--psm-raw-line", "$OcrPsmRawLine",
+    "--try-rotate-90",
+    "--refine-text-bbox",
+    "--cc-max-area-frac", "$OcrCcMaxAreaFrac",
+    "--cc-min-area-px", "$OcrCcMinAreaPx",
+    "--jobs", "$OcrJobs"
 )
-if ($DownloadOcrModels) {
-    $ocrArgs += "--download-enabled"
-}
 Invoke-Step "3/5 OCR on text blocks" $ocrArgs
 
-$ensembleJson = Join-Path $outYolox "BPMN_ensemble.json"
-$mergedEnsemble = Join-Path $outLabeled "BPMN_ensemble_merged_labeled.json"
+$inputStem = [System.IO.Path]::GetFileNameWithoutExtension($InputImage)
+$ensembleJson = Join-Path $outYolox ("{0}_ensemble.json" -f $inputStem)
+$mergedEnsemble = Join-Path $outLabeled ("{0}_ensemble_merged_labeled.json" -f $inputStem)
 
 Invoke-Step "4/5 Label assign + auto merge ensemble" @(
     "preprocanddetect/label_res.py",
@@ -98,6 +111,9 @@ if (-not (Test-Path $mergedEnsemble)) {
 }
 
 if (-not $SkipNarrator) {
+    if ($OutputFormat -ne "narrative" -and $OutputFormat -ne "table") {
+        throw "Invalid OutputFormat: $OutputFormat. Allowed: narrative, table"
+    }
     $e2ePy = @"
 import json
 import sys
@@ -120,6 +136,9 @@ obj = json.loads(inp.read_text(encoding="utf-8"))
 graph = build_graph_from_ensemble(obj)
 res = run_narration(
     graph_payload=graph,
+    policy_overrides={
+        "output_format": "$OutputFormat",
+    },
     runtime_overrides={
         "model_path": r"$ModelPath",
         "n_ctx": $NCtx,

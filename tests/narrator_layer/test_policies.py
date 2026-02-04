@@ -19,6 +19,7 @@ def test_policy_defaults():
     assert cfg.max_sentences == 10
     assert cfg.missing_text_policy == "generalize"
     assert cfg.branches_policy == "cover_all"
+    assert cfg.output_format == "narrative"
 
 
 def test_policy_runtime_overrides():
@@ -27,11 +28,13 @@ def test_policy_runtime_overrides():
             "max_sentences": 7,
             "missing_text_policy": "skip",
             "branches_policy": "cover_all",
+            "output_format": "table",
         }
     )
     assert cfg.max_sentences == 7
     assert cfg.missing_text_policy == "skip"
     assert cfg.branches_policy == "cover_all"
+    assert cfg.output_format == "table"
 
 
 def test_policy_invalid_values_raise():
@@ -44,6 +47,9 @@ def test_policy_invalid_values_raise():
     with pytest.raises(NarratorPolicyError):
         resolve_narrator_policy({"branches_policy": "unknown"})
 
+    with pytest.raises(NarratorPolicyError):
+        resolve_narrator_policy({"output_format": "csv"})
+
 
 def test_narrator_meta_contains_applied_policy():
     cfg = resolve_narrator_policy({"max_sentences": 12})
@@ -52,3 +58,4 @@ def test_narrator_meta_contains_applied_policy():
     assert meta["applied_policy"]["max_sentences"] == 12
     assert meta["applied_policy"]["missing_text_policy"] == "generalize"
     assert meta["applied_policy"]["branches_policy"] == "cover_all"
+    assert meta["applied_policy"]["output_format"] == "narrative"

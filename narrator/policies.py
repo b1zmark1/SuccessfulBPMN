@@ -10,6 +10,7 @@ class NarratorPolicyError(RuntimeError):
 
 ALLOWED_MISSING_TEXT_POLICIES = {"generalize", "skip", "explicit_placeholder"}
 ALLOWED_BRANCHES_POLICIES = {"cover_all", "summarize"}
+ALLOWED_OUTPUT_FORMATS = {"narrative", "table"}
 
 
 @dataclass(frozen=True)
@@ -17,6 +18,7 @@ class NarratorPolicyConfig:
     max_sentences: int = 10
     missing_text_policy: str = "generalize"
     branches_policy: str = "cover_all"
+    output_format: str = "narrative"
 
 
 def resolve_narrator_policy(overrides: Optional[Dict[str, Any]] = None) -> NarratorPolicyConfig:
@@ -46,10 +48,18 @@ def resolve_narrator_policy(overrides: Optional[Dict[str, Any]] = None) -> Narra
             f"{sorted(ALLOWED_BRANCHES_POLICIES)}"
         )
 
+    output_format = merged.get("output_format")
+    if output_format not in ALLOWED_OUTPUT_FORMATS:
+        raise NarratorPolicyError(
+            "'output_format' must be one of "
+            f"{sorted(ALLOWED_OUTPUT_FORMATS)}"
+        )
+
     return NarratorPolicyConfig(
         max_sentences=max_sentences,
         missing_text_policy=missing_text_policy,
         branches_policy=branches_policy,
+        output_format=output_format,
     )
 
 
@@ -57,4 +67,3 @@ def build_narrator_meta(policy: NarratorPolicyConfig) -> Dict[str, Any]:
     return {
         "applied_policy": asdict(policy),
     }
-

@@ -155,3 +155,79 @@ def test_run_narration_guardrail_violation_returns_degraded(monkeypatch):
     assert out["status"] == "degraded"
     assert out["errors"][0]["code"] == "OUTPUT_GUARDRAIL_VIOLATION"
     assert "JSON_OUTPUT" in out["errors"][0]["message"]
+
+
+def test_run_narration_supports_table_output_policy():
+    _install_fake_llama_cpp()
+    payload = load_fixture("bpmn_like_01.json")
+    graph_payload = run_full_pipeline(payload)
+
+    out = run_narration(
+        graph_payload=graph_payload,
+        policy_overrides={"output_format": "table"},
+        runtime_overrides={"model_path": "dummy.gguf", "n_threads": 2},
+    )
+    assert out["status"] == "ok"
+    assert out["meta"]["narrator"]["applied_policy"]["output_format"] == "table"
+
+
+def test_role_hints_fallback_from_left_vertical_text_bands():
+    graph_payload = {
+        "meta": {"schema_version": "graph-builder.v1", "direction": "LR", "warnings": []},
+        "nodes": [
+            {
+                "id": "role_top",
+                "type": "text",
+                "bbox": [5.0, 90.0, 20.0, 220.0],
+                "center": [12.5, 155.0],
+                "role": "unknown",
+                "container_id": None,
+                "text": "Инициатор",
+            },
+            {
+                "id": "role_mid",
+                "type": "text",
+                "bbox": [6.0, 260.0, 22.0, 410.0],
+                "center": [14.0, 335.0],
+                "role": "unknown",
+                "container_id": None,
+                "text": "Координатор",
+            },
+            {
+                "id": "s1",
+                "type": "shape",
+                "bbox": [120.0, 110.0, 260.0, 180.0],
+                "center": [190.0, 145.0],
+                "role": "action",
+                "container_id": None,
+                "text": "Шаг 1",
+            },
+            {
+                "id": "s2",
+                "type": "shape",
+                "bbox": [120.0, 300.0, 260.0, 370.0],
+                "center": [190.0, 335.0],
+                "role": "action",
+                "container_id": None,
+                "text": "Шаг 2",
+            },
+        ],
+        "edges": [{"from": "s1", "to": "s2", "type": "sequential"}],
+    }
+
+    semantic_payload = {
+        "meta": {
+            "schema_version": "semantic-projection.v1",
+            "source_graph_schema_version": "graph-builder.v1",
+            "direction": "LR",
+            "warnings": [],
+        },
+        "steps": [
+            {"id": "s1", "order": 1, "role": "action", "text": "Шаг 1", "next_step_ids": ["s2"]},
+            {"id": "s2", "order": 2, "role": "action", "text": "Шаг 2", "next_step_ids": []},
+        ],
+    }
+
+    hints = orchestrator._infer_step_role_hints_from_graph(graph_payload, semantic_payload)
+    assert hints["s1"] == "Инициатор"
+    assert hints["s2"] == "Координатор"
