@@ -1,13 +1,9 @@
 from __future__ import annotations
 
 # Изменения (по делу):
-# 1) По умолчанию ОТКЛЮЧЕН whitelist (часто ухудшает кириллицу и пробелы). Можно включить флагом.
-# 2) Выбор лучшего кандидата: score = conf + бонусы за "качество текста" (алфанум, кириллица, длина),
-#    чтобы не проигрывать случаям с conf=0.0, но нормальным текстом.
-# 3) Otsu/Adaptive/Invert идут как фоллбек при плохом результате; базово предпочитаем gray (меньше слипаний).
-# 4) Добавлен refine-text-bbox: с cv2 убираем крупные нетекстовые компоненты (иконки/рамки), чтобы OCR не путался.
-# 5) Добавлен psm 13 (raw line) как доп.кандидат для коротких/узких блоков и низкого качества.
-# 6) Постпроцессинг текста: выкидываем мусорные линии из одних тире/скобок, убираем "№00" как служебную метку и т.п.
+# 1) Для prefer_rot90 теперь пробуем ПОВОРОТ в обе стороны: +90 (CW) и -90 (CCW).
+# 2) Обновлён бонус в score: теперь учитывает rot90_cw/rot90_ccw вместо "rot90".
+# 3) То же самое добавлено для fallback-веток (otsu/adaptive/invert).
 
 import argparse
 import csv
@@ -159,7 +155,6 @@ def _adaptive_threshold_cv(gray_u8: np.ndarray) -> Optional[np.ndarray]:
     if not _HAS_CV2:
         return None
     g = gray_u8
-    # Adaptive лучше работает на неоднородном фоне и мелком шрифте
     bw = cv2.adaptiveThreshold(
         g,
         255,
@@ -186,7 +181,6 @@ def _sanitize_whitelist_ru() -> str:
 
 
 def _mk_variants_base(crop_rgb: Image.Image) -> List[Tuple[str, Image.Image]]:
-    # База: только gray. Бинаризации — позже, как фоллбек (уменьшает слипание слов).
     gray = ImageOps.grayscale(crop_rgb)
     return [("gray", gray)]
 
@@ -216,12 +210,10 @@ def _clean_text_ru(text: str) -> str:
     for ln in lines:
         if not ln:
             continue
-        # убираем строки из одних "черточек"/мусора
         if re.fullmatch(r"[-–—_=.]{2,}", ln):
             continue
         if re.fullmatch(r"[()\[\]{}<>]{1,3}", ln):
             continue
-        # служебные метки типа "№00"
         if re.fullmatch(r"№\s*\d{1,4}", ln):
             continue
         cleaned.append(ln)
@@ -229,7 +221,6 @@ def _clean_text_ru(text: str) -> str:
     if not cleaned:
         return ""
 
-    # нормализация пробелов
     cleaned2 = []
     for ln in cleaned:
         ln = re.sub(r"[ \t]{2,}", " ", ln)
@@ -239,7 +230,6 @@ def _clean_text_ru(text: str) -> str:
 
 
 def _text_quality_score(text: str, conf: float, rotation: str, prefer_rotation: bool) -> float:
-    # conf в [0..1], но иногда 0 при нормальном тексте — поэтому добавляем эвристику.
     t = text.strip()
     if not t:
         return -1.0
@@ -247,7 +237,6 @@ def _text_quality_score(text: str, conf: float, rotation: str, prefer_rotation: 
     alnum = len(_ALNUM_RE.findall(t))
     cyr = len(_CYR_RE.findall(t))
     lines = t.count("\n") + 1
-    # штраф за “мусорные” символы
     junk = sum(1 for ch in t if ch in "()[]{}<>|~`")
 
     score = float(conf)
@@ -256,8 +245,8 @@ def _text_quality_score(text: str, conf: float, rotation: str, prefer_rotation: 
     score += 0.03 * min(6, lines)
     score -= 0.05 * min(10, junk)
 
-    if prefer_rotation and rotation == "rot90":
-        score += 0.08  # небольшое предпочтение rot90 для узких вертикальных боксов
+    if prefer_rotation and rotation in ("rot90_cw", "rot90_ccw"):
+        score += 0.08
 
     return score
 
@@ -304,12 +293,10 @@ def _tesseract_data(img_l: Image.Image, lang: str, psm: int, whitelist: str) -> 
     text_lines = [" ".join(lines[k]).strip() for k in ordered_keys]
     text = "\n".join([t for t in text_lines if t]).strip()
 
-    # conf: средний по словам; если слов много, ок. Если нет conf (все -1), даём мягкий fallback.
     conf = 0.0
     if confs:
         conf = float(np.mean(confs)) / 100.0
     else:
-        # fallback: чуть-чуть за наличие "нормального" текста
         alnum = len(_ALNUM_RE.findall(text))
         conf = min(0.35, 0.05 * alnum)
 
@@ -321,16 +308,14 @@ def _refine_crop_to_text_bbox(img_l: Image.Image, cfg: OcrCfg) -> Image.Image:
         return img_l
     try:
         g = np.array(img_l, dtype=np.uint8)
-        # бинаризуем Otsu, потом инвертируем (текст=1)
         bw = _otsu_threshold(g)
-        fg = (bw == 0).astype(np.uint8)  # black pixels
+        fg = (bw == 0).astype(np.uint8)
 
         h, w = fg.shape[:2]
         area = float(h * w)
         if area <= 0:
             return img_l
 
-        # connected components
         num, labels, stats, _ = cv2.connectedComponentsWithStats(fg, connectivity=8)  # type: ignore
         if num <= 1:
             return img_l
@@ -344,7 +329,6 @@ def _refine_crop_to_text_bbox(img_l: Image.Image, cfg: OcrCfg) -> Image.Image:
                 continue
             if a > max_area_px:
                 continue
-            # выкидываем слишком "линейные" компоненты (часто рамки/линии)
             if ww >= 0.9 * w and hh <= 0.12 * h:
                 continue
             if hh >= 0.9 * h and ww <= 0.12 * w:
@@ -359,14 +343,12 @@ def _refine_crop_to_text_bbox(img_l: Image.Image, cfg: OcrCfg) -> Image.Image:
         x2 = max(b[2] for b in keep_boxes)
         y2 = max(b[3] for b in keep_boxes)
 
-        # небольшой запас, но без фанатизма
         m = 2
         x1 = max(0, x1 - m)
         y1 = max(0, y1 - m)
         x2 = min(w, x2 + m)
         y2 = min(h, y2 + m)
 
-        # если bbox стал слишком маленьким — не трогаем
         if (x2 - x1) < 18 or (y2 - y1) < 12:
             return img_l
 
@@ -432,7 +414,6 @@ def _process_one_block(
     w, h = img_rgb.size
     x1, y1, x2, y2 = bbox
 
-    # динамический pad: мелкие боксы — больше pad, большие — меньше шанс захватить иконку
     bw = x2 - x1
     bh = y2 - y1
     pad = cfg.pad_px
@@ -447,7 +428,6 @@ def _process_one_block(
     crop = img_rgb.crop((x1, y1, x2, y2))
     crop = _safe_inner_crop(crop, cfg.inner_crop_px)
 
-    # увеличение: мелкие боксы усиливаем
     cw, ch = crop.size
     eff_scale = cfg.upscale_factor
     if max(cw, ch) < 140:
@@ -458,7 +438,6 @@ def _process_one_block(
     crop_path = os.path.join(crops_dir, f"blk_{block_id}.png")
     crop.save(crop_path)
 
-    # Нужно ли предпочесть rot90 (вертикальные подписи)
     prefer_rot90 = False
     if cfg.try_rotate_90:
         rw, rh = crop.size
@@ -477,7 +456,6 @@ def _process_one_block(
         else:
             img_l2 = img_l
 
-        # refine crop (убрать иконки/рамки)
         img_l2 = _refine_crop_to_text_bbox(img_l2, cfg)
 
         txt, conf, _ = _tesseract_data(img_l2, cfg.lang, psm, whitelist)
@@ -488,42 +466,60 @@ def _process_one_block(
             best_score = score
             best_text = txt
             best_conf = float(conf)
-            best_meta = {"engine": "tesseract", "variant": variant_name, "rotation": rotation, "psm": int(psm), "conf": float(conf), "score": float(score)}
+            best_meta = {
+                "engine": "tesseract",
+                "variant": variant_name,
+                "rotation": rotation,
+                "psm": int(psm),
+                "conf": float(conf),
+                "score": float(score),
+            }
 
-    # 1) База: gray + (psm 7,6) + psm13 для коротких/узких
+    # 1) База: gray + (psm 7,6) + psm13
     base_variants = _mk_variants_base(crop)
     for vname, vimg in base_variants:
         try_candidate(vimg, vname, "rot0", cfg.psm_single)
         try_candidate(vimg, vname, "rot0", cfg.psm_block)
-        if prefer_rot90:
-            r = vimg.rotate(90, expand=True)
-            try_candidate(r, vname, "rot90", cfg.psm_single)
-            try_candidate(r, vname, "rot90", cfg.psm_block)
 
-        # raw-line иногда помогает коротким словам/титрам
+        if prefer_rot90:
+            r_cw = vimg.rotate(90, expand=True)
+            r_ccw = vimg.rotate(-90, expand=True)
+
+            try_candidate(r_cw, vname, "rot90_cw", cfg.psm_single)
+            try_candidate(r_cw, vname, "rot90_cw", cfg.psm_block)
+            try_candidate(r_ccw, vname, "rot90_ccw", cfg.psm_single)
+            try_candidate(r_ccw, vname, "rot90_ccw", cfg.psm_block)
+
         if max(cw, ch) < 220:
             try_candidate(vimg, vname, "rot0", cfg.psm_raw_line)
             if prefer_rot90:
-                r = vimg.rotate(90, expand=True)
-                try_candidate(r, vname, "rot90", cfg.psm_raw_line)
+                r_cw = vimg.rotate(90, expand=True)
+                r_ccw = vimg.rotate(-90, expand=True)
+                try_candidate(r_cw, vname, "rot90_cw", cfg.psm_raw_line)
+                try_candidate(r_ccw, vname, "rot90_ccw", cfg.psm_raw_line)
 
     # 2) Фоллбек: если результат слабый — добавляем бинаризации и инверсию
-    if best_score < (cfg.conf_ok + 0.4):  # порог по score, не по conf
+    if best_score < (cfg.conf_ok + 0.4):
         fb = _mk_variants_fallback(crop)
         for vname, vimg in fb:
             try_candidate(vimg, vname, "rot0", cfg.psm_block)
             try_candidate(vimg, vname, "rot0", cfg.psm_single)
+
             if prefer_rot90:
-                r = vimg.rotate(90, expand=True)
-                try_candidate(r, vname, "rot90", cfg.psm_block)
+                r_cw = vimg.rotate(90, expand=True)
+                r_ccw = vimg.rotate(-90, expand=True)
+                try_candidate(r_cw, vname, "rot90_cw", cfg.psm_block)
+                try_candidate(r_ccw, vname, "rot90_ccw", cfg.psm_block)
 
             inv = _invert_l(vimg)
             try_candidate(inv, f"invert_{vname}", "rot0", cfg.psm_block)
-            if prefer_rot90:
-                r2 = inv.rotate(90, expand=True)
-                try_candidate(r2, f"invert_{vname}", "rot90", cfg.psm_block)
 
-            # psm13 в фоллбеке тоже
+            if prefer_rot90:
+                r2_cw = inv.rotate(90, expand=True)
+                r2_ccw = inv.rotate(-90, expand=True)
+                try_candidate(r2_cw, f"invert_{vname}", "rot90_cw", cfg.psm_block)
+                try_candidate(r2_ccw, f"invert_{vname}", "rot90_ccw", cfg.psm_block)
+
             if max(cw, ch) < 220:
                 try_candidate(vimg, vname, "rot0", cfg.psm_raw_line)
 
