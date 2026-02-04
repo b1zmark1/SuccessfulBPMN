@@ -12,6 +12,7 @@ class NodeBuildError(RuntimeError):
 class NodeBuildConfig:
     role_start_classes: Set[str] = field(default_factory=lambda: {"start_event"})
     role_end_classes: Set[str] = field(default_factory=lambda: {"end_event"})
+    role_event_classes: Set[str] = field(default_factory=lambda: {"intermediate_event"})  # ДОБАВЛЕНО
     role_decision_classes: Set[str] = field(
         default_factory=lambda: {
             "gateway_exclusive",
@@ -25,6 +26,7 @@ class NodeBuildConfig:
             "data_object",
         }
     )
+    role_annotation_classes: Set[str] = field(default_factory=lambda: {"text_annotation"})  # ДОБАВЛЕНО
 
 
 def build_graph_nodes(
@@ -49,12 +51,15 @@ def build_graph_nodes(
     flows = _safe_list(groups.get("flows"))
     containers = _safe_list(groups.get("containers"))
     texts = _safe_list(groups.get("texts"))
+    annotations = _safe_list(groups.get("annotations"))  # ДОБАВЛЕНО
     unknown = _safe_list(groups.get("unknown"))
 
     nodes.extend(_build_nodes_from_items(process_shapes, "shape", cfg))
     nodes.extend(_build_nodes_from_items(flows, "flow", cfg))
     nodes.extend(_build_nodes_from_items(containers, "container", cfg))
     nodes.extend(_build_nodes_from_items(texts, "text", cfg))
+    # Аннотации оставляем как shape, но с ролью annotation (и потом исключим их из edge-candidates)
+    nodes.extend(_build_nodes_from_items(annotations, "shape", cfg))
     nodes.extend(_build_nodes_from_items(unknown, "shape", cfg, force_role="unknown"))
 
     nodes.sort(key=lambda n: (n.get("original_index", 10**12), n["id"]))
@@ -116,7 +121,6 @@ def _build_nodes_from_items(
                 "role": role,
                 "container_id": None,
                 "text": _normalize_node_text(item.get("text")),
-                # extra debug/provenance fields (allowed by output schema)
                 "class_name": class_name,
                 "source": item.get("source"),
                 "score": float(item.get("score", 0.0)),
@@ -133,10 +137,14 @@ def _build_nodes_from_items(
 def _infer_role(class_name: str, node_type: str, cfg: NodeBuildConfig) -> str:
     if node_type in {"text", "container", "flow"}:
         return "unknown"
+    if class_name in cfg.role_annotation_classes:
+        return "annotation"
     if class_name in cfg.role_start_classes:
         return "start"
     if class_name in cfg.role_end_classes:
         return "end"
+    if class_name in cfg.role_event_classes:
+        return "event"
     if class_name in cfg.role_decision_classes:
         return "decision"
     if class_name in cfg.role_action_classes:

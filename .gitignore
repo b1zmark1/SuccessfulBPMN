@@ -9,3 +9,13 @@ narrator/.cache/
 frontend/node_modules/
 frontend/dist/
 frontend/coverage/
+
+# python venv
+.venv/
+
+# python cache
+__pycache__/
+*.pyc
+
+# ocr artifacts
+preprocanddetect/run*/

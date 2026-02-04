@@ -11,6 +11,7 @@ class NarratorPolicyError(RuntimeError):
 ALLOWED_MISSING_TEXT_POLICIES = {"generalize", "skip", "explicit_placeholder"}
 ALLOWED_BRANCHES_POLICIES = {"cover_all", "summarize"}
 ALLOWED_OUTPUT_FORMATS = {"narrative", "table"}
+ALLOWED_ROLE_INFERENCE = {"strict", "heuristic"}
 
 
 @dataclass(frozen=True)
@@ -19,6 +20,7 @@ class NarratorPolicyConfig:
     missing_text_policy: str = "generalize"
     branches_policy: str = "cover_all"
     output_format: str = "narrative"
+    role_inference: str = "strict"  # strict = только явные/из lane, heuristic = из текста шага
 
 
 def resolve_narrator_policy(overrides: Optional[Dict[str, Any]] = None) -> NarratorPolicyConfig:
@@ -55,11 +57,19 @@ def resolve_narrator_policy(overrides: Optional[Dict[str, Any]] = None) -> Narra
             f"{sorted(ALLOWED_OUTPUT_FORMATS)}"
         )
 
+    role_inference = merged.get("role_inference")
+    if role_inference not in ALLOWED_ROLE_INFERENCE:
+        raise NarratorPolicyError(
+            "'role_inference' must be one of "
+            f"{sorted(ALLOWED_ROLE_INFERENCE)}"
+        )
+
     return NarratorPolicyConfig(
         max_sentences=max_sentences,
         missing_text_policy=missing_text_policy,
         branches_policy=branches_policy,
         output_format=output_format,
+        role_inference=role_inference,
     )
 
 

@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+# Изменения (по делу):
+# 1) Ротации теперь не boolean, а строковые: rot0 / rot90_cw / rot90_ccw / rot180.
+# 2) rot90 пробуем в обе стороны (CW и CCW), иначе вертикальные lane/role подписи часто читаются в мусор.
+# 3) rot90 включаем только для "вертикальных" кропов (h >> w), чтобы не тратить время на обычный текст.
+# 4) Исправлен debug-save: раньше проверялся best.rotation == "rot90", теперь используется строковая rotation.
+
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -69,7 +75,7 @@ class OcrConfig:
 class OcrCandidate:
     engine: str  # "easyocr" | "tesseract"
     variant: str  # "gray" | "clahe" | "otsu" | "adaptive" | etc
-    rotation: str  # "rot0" | "rot90"
+    rotation: str  # "rot0" | "rot90_cw" | "rot90_ccw" | "rot180"
     text: str
     conf: float  # 0..1 (если доступно)
     score: float
@@ -128,10 +134,21 @@ def _pick_bbox_for_image(block: Dict[str, Any], img_w: int, img_h: int) -> Tuple
     return _clamp_xyxy(x1, y1, x2, y2, img_w, img_h)
 
 
-def _rotate_gray(gray: np.ndarray, rot90: bool) -> np.ndarray:
-    if not rot90:
+def _rotate_gray(gray: np.ndarray, rotation: str) -> np.ndarray:
+    if rotation == "rot0":
         return gray
-    return cv2.rotate(gray, cv2.ROTATE_90_CLOCKWISE)
+    if rotation == "rot90_cw":
+        return cv2.rotate(gray, cv2.ROTATE_90_CLOCKWISE)
+    if rotation == "rot90_ccw":
+        return cv2.rotate(gray, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    if rotation == "rot180":
+        return cv2.rotate(gray, cv2.ROTATE_180)
+    raise ValueError(f"Unknown rotation: {rotation}")
+
+
+def _is_vertical_candidate(gray: np.ndarray, ratio: float = 1.35) -> bool:
+    h, w = gray.shape[:2]
+    return h > int(w * ratio)
 
 
 def _clean_text(s: str) -> str:
@@ -419,15 +436,15 @@ def recognize_text_blocks(
 
         gray = _ensure_upscale(gray, float(cfg.upscale_factor))
 
-        rotations = [("rot0", False)]
-        if cfg.try_rotate_90:
-            rotations.append(("rot90", True))
+        rotations: List[str] = ["rot0"]
+        if cfg.try_rotate_90 and _is_vertical_candidate(gray, ratio=1.35):
+            rotations.extend(["rot90_cw", "rot90_ccw"])
 
         best: Optional[OcrCandidate] = None
         chosen: List[Dict[str, Any]] = []
 
-        for rot_name, rot90 in rotations:
-            g = _rotate_gray(gray, rot90)
+        for rot_name in rotations:
+            g = _rotate_gray(gray, rot_name)
             variants = _make_variants(g, cfg)
 
             for v_name, v_img in variants:
@@ -475,8 +492,6 @@ def recognize_text_blocks(
             # всё равно возвращаем текст (иногда полезно), но помечаем низкой уверенностью
             pass
 
-        # chosen: сохраняем несколько лучших по score (не больше 5)
-        # (не усложняем: пересчитывать топ-5 по всем кандидатам дорого по памяти; оставим только best)
         chosen.append(
             {
                 "engine": best.engine,
@@ -494,8 +509,7 @@ def recognize_text_blocks(
             cv2.imwrite(str(crops_dir / crop_name), crop)
 
             # сохраняем «лучшее» изображение (после upscale + предобработка)
-            # для простоты: пересобираем лучшую variant/rotation на gray
-            g0 = _rotate_gray(gray, best.rotation == "rot90")
+            g0 = _rotate_gray(gray, best.rotation)
             vmap = dict(_make_variants(g0, cfg))
             best_img = vmap.get(best.variant, g0)
             cv2.imwrite(str(best_dir / f"blk_{block_id:03d}_{best.engine}_{best.variant}_{best.rotation}.png"), best_img)

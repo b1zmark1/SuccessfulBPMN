@@ -47,7 +47,6 @@ def finalize_edges(
     if isinstance(existing_warnings, list):
         warnings.extend([str(x) for x in existing_warnings])
 
-    # Stage 1: validate + score filtering
     valid: List[Dict[str, Any]] = []
     dropped_low_score = 0
     dropped_invalid = 0
@@ -72,7 +71,6 @@ def finalize_edges(
             continue
         valid.append(c)
 
-    # Stage 2: cap fan-out per source
     grouped: Dict[str, List[Dict[str, Any]]] = {}
     for c in valid:
         grouped.setdefault(c["from"], []).append(c)
@@ -98,22 +96,29 @@ def finalize_edges(
     if dropped_invalid > 0:
         warnings.append(f"edge_finalize: dropped {dropped_invalid} invalid/self-loop candidates")
 
-    # Stage 3: convert to final edge types
     edges_raw: List[Dict[str, Any]] = []
     for c in capped:
         src = c["from"]
         dst = c["to"]
         src_node = node_by_id.get(src, {})
         edge_type = _infer_edge_type(src_node, c)
-        edges_raw.append({"from": src, "to": dst, "type": edge_type})
 
-    # Stage 4: dedup policy (respect parallel-edge requirement)
+        flow_hint = c.get("flow_hint")
+        label = None
+        if isinstance(flow_hint, dict):
+            t = flow_hint.get("flow_text")
+            if isinstance(t, str) and t.strip():
+                label = t.strip()
+
+        e = {"from": src, "to": dst, "type": edge_type}
+        if label is not None:
+            e["label"] = label  # ДОБАВЛЕНО
+
+        edges_raw.append(e)
+
     if cfg.keep_parallel_edges:
-        # Keep duplicates with same from/to but different types.
-        # Remove only exact duplicates.
         edges = _dedup_exact(edges_raw)
     else:
-        # keep only one best structural edge per (from,to) by priority
         edges = _dedup_by_pair(edges_raw)
 
     edges.sort(key=lambda e: (str(e["from"]), str(e["to"]), str(e["type"])))
@@ -135,19 +140,17 @@ def finalize_edges(
 
 def _infer_edge_type(src_node: Dict[str, Any], cand: Dict[str, Any]) -> str:
     src_role = str(src_node.get("role", "unknown"))
-    hint = str(cand.get("type_hint", "unknown"))
+    # ИЗМЕНЕНО: дефолт для BPMN — sequential, а conditional только от gateway
     if src_role == "decision":
         return "conditional"
-    if hint == "sequential":
-        return "sequential"
-    return "unknown"
+    return "sequential"
 
 
 def _dedup_exact(edges: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     seen = set()
     out = []
     for e in edges:
-        k = (e["from"], e["to"], e["type"])
+        k = (e.get("from"), e.get("to"), e.get("type"), e.get("label"))
         if k in seen:
             continue
         seen.add(k)
@@ -159,11 +162,11 @@ def _dedup_by_pair(edges: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     priority = {"conditional": 3, "sequential": 2, "unknown": 1}
     best: Dict[Tuple[str, str], Dict[str, Any]] = {}
     for e in edges:
-        k = (e["from"], e["to"])
+        k = (str(e.get("from", "")), str(e.get("to", "")))
         old = best.get(k)
         if old is None:
             best[k] = e
             continue
-        if priority.get(e["type"], 0) > priority.get(old["type"], 0):
+        if priority.get(str(e.get("type")), 0) > priority.get(str(old.get("type")), 0):
             best[k] = e
     return list(best.values())

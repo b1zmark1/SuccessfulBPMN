@@ -15,6 +15,7 @@ from narrator.policies import build_narrator_meta, resolve_narrator_policy
 from narrator.postprocess import postprocess_narration_text
 from narrator.prompts import NarratorPromptConfig, build_narrator_prompts
 from narrator.runtime import run_single_llm_call
+from narrator.table_renderer import render_table_from_semantic
 
 
 class NarratorOrchestrationError(RuntimeError):
@@ -111,10 +112,136 @@ def run_narration(
             total_duration_ms=int((time.perf_counter() - started_at) * 1000),
         )
 
-    trace.append({"stage": "prompt_build", "status": "started"})
+    # Роли считаем один раз (нужно и для таблицы, и для narrative).
+    trace.append({"stage": "role_hints", "status": "started"})
     stage_started = time.perf_counter()
     try:
         role_hints = _infer_step_role_hints_from_graph(graph_payload, semantic_payload)
+        stage_durations_ms["role_hints"] = int((time.perf_counter() - stage_started) * 1000)
+        trace.append({"stage": "role_hints", "status": "completed"})
+    except Exception:
+        # role_hints не должен валить пайплайн
+        role_hints = {}
+        stage_durations_ms["role_hints"] = int((time.perf_counter() - stage_started) * 1000)
+        trace.append({"stage": "role_hints", "status": "completed"})
+
+    # КЛЮЧЕВОЕ: если нужен table — НЕ ЗОВЕМ LLM. Это решает "20 секунд" и стабильный формат.
+    if policy.output_format == "table":
+        trace.append({"stage": "table_render", "status": "started"})
+        stage_started = time.perf_counter()
+        try:
+            node_meta_by_id = {
+                str(n.get("id")): n
+                for n in graph_payload.get("nodes", [])
+                if isinstance(n, dict) and isinstance(n.get("id"), str)
+            }
+
+            table_text = render_table_from_semantic(
+                semantic_payload=semantic_payload,
+                policy=policy,
+                role_hints=role_hints,
+                node_meta_by_id=node_meta_by_id,
+            )
+
+            table_text = render_table_from_semantic(
+                semantic_payload=semantic_payload,
+                policy=policy,
+                role_hints=role_hints,
+            )
+            stage_durations_ms["table_render"] = int((time.perf_counter() - stage_started) * 1000)
+            trace.append({"stage": "table_render", "status": "completed"})
+        except Exception as exc:
+            trace.append({"stage": "table_render", "status": "failed"})
+            return _degraded_response(
+                trace=trace,
+                errors=errors,
+                code="TABLE_RENDER_ERROR",
+                exc=exc,
+                projection_meta=projection_meta,
+                policy_meta=policy_meta,
+                trace_id=trace_id,
+                stage_durations_ms=stage_durations_ms,
+                total_duration_ms=int((time.perf_counter() - started_at) * 1000),
+            )
+
+        trace.append({"stage": "postprocess", "status": "started"})
+        stage_started = time.perf_counter()
+        try:
+            postprocess = postprocess_narration_text(table_text)
+            stage_durations_ms["postprocess"] = int((time.perf_counter() - stage_started) * 1000)
+            if postprocess["hard_violation"]:
+                trace.append({"stage": "postprocess", "status": "failed"})
+                return _degraded_response(
+                    trace=trace,
+                    errors=errors,
+                    code="OUTPUT_GUARDRAIL_VIOLATION",
+                    exc=RuntimeError(
+                        f"{postprocess['violation_code']}: {postprocess['violation_message']}"
+                    ),
+                    projection_meta=projection_meta,
+                    policy_meta={
+                        **policy_meta,
+                        "postprocess": {
+                            "normalized": postprocess["normalized"],
+                            "normalization_warnings": postprocess["normalization_warnings"],
+                            "violation_code": postprocess["violation_code"],
+                        },
+                    },
+                    trace_id=trace_id,
+                    stage_durations_ms=stage_durations_ms,
+                    total_duration_ms=int((time.perf_counter() - started_at) * 1000),
+                )
+            trace.append({"stage": "postprocess", "status": "completed"})
+        except Exception as exc:
+            trace.append({"stage": "postprocess", "status": "failed"})
+            return _degraded_response(
+                trace=trace,
+                errors=errors,
+                code="POSTPROCESS_ERROR",
+                exc=exc,
+                projection_meta=projection_meta,
+                policy_meta=policy_meta,
+                trace_id=trace_id,
+                stage_durations_ms=stage_durations_ms,
+                total_duration_ms=int((time.perf_counter() - started_at) * 1000),
+            )
+
+        narrator_meta = {
+            **policy_meta,
+            "provider": "deterministic",
+            "prompt_version": "table-renderer.v1",
+            "single_call": False,
+            "postprocess": {
+                "normalized": postprocess["normalized"],
+                "normalization_warnings": postprocess["normalization_warnings"],
+            },
+        }
+        total_duration_ms = int((time.perf_counter() - started_at) * 1000)
+        return {
+            "text": postprocess["text"],
+            "status": "ok",
+            "errors": errors,
+            "meta": {
+                "projection": projection_meta,
+                "narrator": narrator_meta,
+                "trace": trace,
+                "observability": build_observability_meta(
+                    trace_id=trace_id,
+                    status="ok",
+                    stage_durations_ms=stage_durations_ms,
+                    total_duration_ms=total_duration_ms,
+                    projection_meta=projection_meta,
+                    narrator_meta=narrator_meta,
+                    errors=errors,
+                ),
+            },
+        }
+
+    # ===== narrative режим: оставляем как было (LLM) =====
+
+    trace.append({"stage": "prompt_build", "status": "started"})
+    stage_started = time.perf_counter()
+    try:
         prompt_pack = build_narrator_prompts(
             semantic_payload,
             policy=policy,
@@ -333,6 +460,8 @@ def _classify_llm_error_code(exc: Exception) -> str:
     return "LLM_RUNTIME_ERROR"
 
 
+# ====== ВНИЗУ: роль-хинты без изменений (как у тебя) ======
+
 def _infer_step_role_hints_from_graph(
     graph_payload: Dict[str, Any],
     semantic_payload: Dict[str, Any],
@@ -402,7 +531,6 @@ def _infer_step_role_hints_from_graph(
                 if role:
                     step_role_hints[sid] = role
 
-    # Fallback: infer role bands from left-edge vertical text even without lane/pool detections.
     if not step_role_hints:
         step_role_hints = _infer_role_hints_from_left_edge_text(nodes, steps, node_by_id)
     return step_role_hints
@@ -501,7 +629,7 @@ def _infer_role_hints_from_left_edge_text(
         if cx > img_x1 + 0.10 * img_w:
             continue
         if float(bb[3]) <= img_y1 + 0.08 * img_h:
-            continue  # likely diagram title in top stripe
+            continue
         if not _is_vertical(bb, 1.6):
             continue
         candidates.append({"label": label, "bbox": bb})

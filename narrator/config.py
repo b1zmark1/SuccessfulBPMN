@@ -45,6 +45,8 @@ def resolve_runtime_config(overrides: Optional[Dict[str, Any]] = None) -> Narrat
     model_path = merged.get("model_path")
     if not isinstance(model_path, str) or not model_path.strip():
         raise NarratorRuntimeConfigError("'model_path' must be a non-empty string")
+    if not Path(model_path).expanduser().resolve().exists():
+        raise NarratorRuntimeConfigError(f"model file not found: {model_path}")
 
     n_ctx = merged.get("n_ctx")
     if not isinstance(n_ctx, int) or n_ctx < 256:
@@ -76,7 +78,7 @@ def resolve_runtime_config(overrides: Optional[Dict[str, Any]] = None) -> Narrat
 
     return NarratorRuntimeConfig(
         provider=provider,
-        model_path=model_path,
+        model_path=str(Path(model_path).expanduser().resolve()),
         n_ctx=n_ctx,
         n_threads=n_threads,
         n_batch=n_batch,
@@ -106,9 +108,24 @@ def build_runtime_meta(cfg: NarratorRuntimeConfig, duration_ms: int) -> Dict[str
 
 
 def _default_model_path() -> str:
+    env_path = os.getenv("NARRATOR_MODEL_PATH")
+    if isinstance(env_path, str) and env_path.strip():
+        p = Path(env_path).expanduser().resolve()
+        if p.exists():
+            return str(p)
+
     base = Path(__file__).resolve().parent
+    models_dir = base / "models"
+    if models_dir.exists():
+        candidates = sorted(models_dir.glob("*.gguf"))
+        if candidates:
+            return str(candidates[0].resolve())
+
     preferred = base / "qwen2.5-7b-instruct-q5_k_m-00001-of-00002.gguf"
     if preferred.exists():
-        return str(preferred)
-    return str(preferred)
+        return str(preferred.resolve())
 
+    raise NarratorRuntimeConfigError(
+        "default model not found. Put a .gguf model into narrator/models "
+        "or set NARRATOR_MODEL_PATH environment variable."
+    )

@@ -17,7 +17,7 @@ class EdgeCandidateConfig:
     direction_axis_weight: float = 0.45
     distance_weight: float = 0.35
     flow_support_weight: float = 0.20
-    min_flow_support_iou: float = 0.05
+    min_flow_support_iou: float = 0.05  # оставлено имя, но метрика чуть меняется (см. _flow_support)
 
 
 def build_edge_candidates(
@@ -42,7 +42,16 @@ def build_edge_candidates(
     if direction not in {"LR", "TB"}:
         direction = "LR"
 
-    shape_nodes = [n for n in nodes if isinstance(n, dict) and n.get("type") == "shape"]
+    # ИЗМЕНЕНО: берём только shape-узлы с понятными ролями, исключая annotation
+    allowed_roles = {"start", "event", "action", "decision", "end"}
+    shape_nodes = [
+        n
+        for n in nodes
+        if isinstance(n, dict)
+        and n.get("type") == "shape"
+        and str(n.get("role", "unknown")) in allowed_roles
+        and str(n.get("role", "unknown")) != "annotation"
+    ]
     flow_nodes = [n for n in nodes if isinstance(n, dict) and n.get("type") == "flow"]
 
     warnings: List[str] = []
@@ -59,6 +68,10 @@ def build_edge_candidates(
 
     for src in shape_nodes:
         src_id = src.get("id")
+        src_role = str(src.get("role", "unknown"))
+        if src_role == "end":
+            continue  # ИЗМЕНЕНО: end не может иметь исходящих sequence-flow
+
         src_center = _center(src.get("center"))
         src_box = _bbox(src.get("bbox"))
         if not (isinstance(src_id, str) and src_center and src_box):
@@ -69,6 +82,11 @@ def build_edge_candidates(
             dst_id = dst.get("id")
             if not isinstance(dst_id, str) or dst_id == src_id:
                 continue
+
+            dst_role = str(dst.get("role", "unknown"))
+            if dst_role == "start":
+                continue  # ИЗМЕНЕНО: start не может иметь входящих sequence-flow
+
             dst_center = _center(dst.get("center"))
             dst_box = _bbox(dst.get("bbox"))
             if not (dst_center and dst_box):
@@ -83,7 +101,15 @@ def build_edge_candidates(
                 continue
             dist_score = max(0.0, 1.0 - (eu / max_dist))
 
-            flow_support = _flow_support(src_box, dst_box, flow_nodes, cfg.min_flow_support_iou)
+            flow_support, best_flow_id, best_flow_text = _flow_support(
+                src_box,
+                src_center,
+                dst_box,
+                dst_center,
+                direction,
+                flow_nodes,
+                cfg.min_flow_support_iou,
+            )
 
             score = (
                 cfg.direction_axis_weight * axis_score
@@ -104,6 +130,11 @@ def build_edge_candidates(
                     "distance": eu,
                 },
                 "type_hint": "sequential" if flow_support > 0.0 else "unknown",
+                # ДОБАВЛЕНО: чтобы перенести label в финальное ребро
+                "flow_hint": {
+                    "flow_node_id": best_flow_id,
+                    "flow_text": best_flow_text,
+                },
             }
             per_src.append((score, cand))
 
@@ -111,7 +142,6 @@ def build_edge_candidates(
         for _, cand in per_src[: cfg.max_neighbors_per_node]:
             candidates.append(cand)
 
-    # deterministic order for debug/reproducibility
     candidates.sort(key=lambda c: (-float(c["score"]), str(c["from"]), str(c["to"])))
 
     out_meta = dict(meta)
@@ -144,7 +174,6 @@ def _direction_axis_score(
         if denom <= 1e-9:
             return False, 0.0
         return True, abs(dx) / denom
-    # TB
     if dy <= 0:
         return False, 0.0
     denom = abs(dx) + abs(dy)
@@ -169,38 +198,91 @@ def _average_node_diagonal(shape_nodes: List[Dict[str, Any]]) -> float:
 
 def _flow_support(
     src_box: Tuple[float, float, float, float],
+    src_center: Tuple[float, float],
     dst_box: Tuple[float, float, float, float],
+    dst_center: Tuple[float, float],
+    direction: str,
     flow_nodes: List[Dict[str, Any]],
-    min_iou: float,
-) -> float:
-    corridor = _corridor_box(src_box, dst_box)
+    min_support: float,
+) -> Tuple[float, Optional[str], Optional[str]]:
+    """
+    Return (support_score, best_flow_id, best_flow_text).
+
+    ВАЖНО: вместо IoU(corridor, flow_bbox) используем coverage:
+    inter_area(corridor, flow_bbox) / area(flow_bbox).
+    Это устойчивее при "широком" corridor.
+    """
+    corridor = _corridor_box(src_box, src_center, dst_box, dst_center, direction)
     if corridor is None:
-        return 0.0
+        return 0.0, None, None
 
     best = 0.0
+    best_id: Optional[str] = None
+    best_text: Optional[str] = None
+
     for f in flow_nodes:
         fb = _bbox(f.get("bbox"))
         if not fb:
             continue
-        ov = _iou(corridor, fb)
-        if ov > best:
-            best = ov
-    if best < min_iou:
-        return 0.0
-    # clamp to [0,1]
-    return max(0.0, min(1.0, best / max(min_iou, 1e-9)))
+        inter = _intersection_area(corridor, fb)
+        if inter <= 0.0:
+            continue
+        cov = inter / max(_area(fb), 1e-9)
+        if cov > best:
+            best = cov
+            best_id = str(f.get("id")) if isinstance(f.get("id"), str) else None
+            t = f.get("text")
+            best_text = str(t).strip() if isinstance(t, str) and t.strip() else None
+
+    if best < min_support:
+        return 0.0, None, None
+    return max(0.0, min(1.0, best)), best_id, best_text
 
 
 def _corridor_box(
     a: Tuple[float, float, float, float],
+    ac: Tuple[float, float],
     b: Tuple[float, float, float, float],
+    bc: Tuple[float, float],
+    direction: str,
 ) -> Optional[Tuple[float, float, float, float]]:
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
-    x1 = min(ax1, bx1)
-    y1 = min(ay1, by1)
-    x2 = max(ax2, bx2)
-    y2 = max(ay2, by2)
+    aw = ax2 - ax1
+    ah = ay2 - ay1
+    bw = bx2 - bx1
+    bh = by2 - by1
+
+    if direction == "LR":
+        x1 = ax2
+        x2 = bx1
+        if x2 <= x1:
+            return _union_box(a, b)
+        ymid = (ac[1] + bc[1]) / 2.0
+        thickness = max(6.0, 0.25 * ((ah + bh) / 2.0))
+        y1 = ymid - thickness
+        y2 = ymid + thickness
+        return (x1, y1, x2, y2)
+
+    y1 = ay2
+    y2 = by1
+    if y2 <= y1:
+        return _union_box(a, b)
+    xmid = (ac[0] + bc[0]) / 2.0
+    thickness = max(6.0, 0.25 * ((aw + bw) / 2.0))
+    x1 = xmid - thickness
+    x2 = xmid + thickness
+    return (x1, y1, x2, y2)
+
+
+def _union_box(
+    a: Tuple[float, float, float, float],
+    b: Tuple[float, float, float, float],
+) -> Optional[Tuple[float, float, float, float]]:
+    x1 = min(a[0], b[0])
+    y1 = min(a[1], b[1])
+    x2 = max(a[2], b[2])
+    y2 = max(a[3], b[3])
     if x2 <= x1 or y2 <= y1:
         return None
     return (x1, y1, x2, y2)
@@ -245,13 +327,3 @@ def _intersection_area(a: Tuple[float, float, float, float], b: Tuple[float, flo
 
 def _area(b: Tuple[float, float, float, float]) -> float:
     return max(0.0, b[2] - b[0]) * max(0.0, b[3] - b[1])
-
-
-def _iou(a: Tuple[float, float, float, float], b: Tuple[float, float, float, float]) -> float:
-    inter = _intersection_area(a, b)
-    if inter <= 0.0:
-        return 0.0
-    ua = _area(a) + _area(b) - inter
-    if ua <= 0.0:
-        return 0.0
-    return inter / ua
