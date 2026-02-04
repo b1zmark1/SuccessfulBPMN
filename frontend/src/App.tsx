@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import logo from "../logo.png";
 import { useJobLifecycle } from "./state/useJobLifecycle";
 import type { SupportedJobType } from "./shared/jobTypes";
 import { SCENARIO_REGISTRY } from "./ui/jobRegistry";
@@ -25,37 +26,42 @@ export function App() {
   return (
     <main className="app-shell">
       <header className="app-header">
-        <h1>SuccessfulBPMN</h1>
+        <div className="app-header__brand">
+          <img className="app-header__logo" src={logo} alt="SuccessfulBPMN logo" />
+          <h1 className="app-header__title">
+            SUCCESSFUL<span className="app-header__brand-accent">BPMN</span>
+          </h1>
+        </div>
       </header>
 
-      <ScenarioSelection selected={selectedScenario} onSelect={setSelectedScenario} />
+      <ScenarioSelection selected={selectedScenario} onSelect={setSelectedScenario}>
+        {selectedScenario ? (
+          <section className="workspace">
+            <div className="workspace__header">
+              <button type="button" className="back-button" onClick={onBack}>
+                Назад
+              </button>
+              <h2>{scenarioLabel}</h2>
+            </div>
 
-      {selectedScenario ? (
-        <section className="workspace">
-          <div className="workspace__header">
-            <button type="button" className="back-button" onClick={onBack}>
-              Назад
-            </button>
-            <h2>{scenarioLabel}</h2>
-          </div>
+            <ScenarioInputForm
+              scenario={selectedScenario}
+              disabled={!canSubmit}
+              onSubmit={(meta) => lifecycle.submitJob({ jobType: selectedScenario, meta })}
+            />
 
-          <ScenarioInputForm
-            scenario={selectedScenario}
-            disabled={!canSubmit}
-            onSubmit={(meta) => lifecycle.submitJob({ jobType: selectedScenario, meta })}
-          />
+            <JobStatusView
+              jobId={lifecycle.jobId}
+              job={lifecycle.job}
+              isCreating={lifecycle.isCreating}
+              isPolling={lifecycle.isPolling}
+              requestError={lifecycle.requestError}
+            />
 
-          <JobStatusView
-            jobId={lifecycle.jobId}
-            job={lifecycle.job}
-            isCreating={lifecycle.isCreating}
-            isPolling={lifecycle.isPolling}
-            requestError={lifecycle.requestError}
-          />
-
-          <JobResultView scenario={selectedScenario} job={lifecycle.job} />
-        </section>
-      ) : null}
+            <JobResultView scenario={selectedScenario} job={lifecycle.job} />
+          </section>
+        ) : null}
+      </ScenarioSelection>
     </main>
   );
 }

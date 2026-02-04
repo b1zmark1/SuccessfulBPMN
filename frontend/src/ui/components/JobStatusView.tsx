@@ -16,8 +16,8 @@ interface JobStatusViewProps {
   requestError: string | null;
 }
 
-export function JobStatusView({ jobId, job, isCreating, isPolling, requestError }: JobStatusViewProps) {
-  if (!jobId && !isCreating && !requestError) {
+export function JobStatusView({ job, isCreating, isPolling, requestError }: JobStatusViewProps) {
+  if (!job && !isCreating && !requestError) {
     return <p className="state-text">Отправьте данные, чтобы создать задачу.</p>;
   }
 
@@ -27,9 +27,6 @@ export function JobStatusView({ jobId, job, isCreating, isPolling, requestError 
 
   return (
     <section className="status-panel" aria-live="polite">
-      <p>
-        <strong>Job ID:</strong> {jobId ?? "n/a"}
-      </p>
       <p>
         <strong>Статус:</strong> {statusLabel}
       </p>

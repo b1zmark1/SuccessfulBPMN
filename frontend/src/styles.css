@@ -1,15 +1,15 @@
 :root {
-  --bg-page: #f8f8f6;
+  --bg-page: #f36523;
   --bg-panel: #ffffff;
-  --bg-muted: #f1f1ee;
-  --text-main: #1e2125;
-  --text-subtle: #5f6670;
-  --border: #d8d9d4;
-  --accent: #e37b2f;
-  --accent-soft: #f8e8da;
+  --bg-muted: #f0eee8;
+  --text-main: #171a1f;
+  --text-subtle: #59616d;
+  --border: #d7d5ce;
+  --accent: #f36523;
+  --accent-soft: #ffe4d8;
   --danger: #b33a2f;
-  --radius: 16px;
-  --shadow: 0 14px 38px rgba(13, 22, 34, 0.08);
+  --radius: 18px;
+  --shadow: 0 14px 28px rgba(13, 22, 34, 0.1);
 }
 
 *,
@@ -21,79 +21,179 @@
 html,
 body,
 #root {
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
   margin: 0;
   font-family: "Roboto", "Segoe UI", sans-serif;
   color: var(--text-main);
-  background:
-    radial-gradient(1200px 500px at 5% -10%, #ffe9d5 0, rgba(255, 233, 213, 0) 70%),
-    radial-gradient(800px 380px at 100% 0%, #fff4eb 0, rgba(255, 244, 235, 0) 70%),
-    var(--bg-page);
+  background: var(--bg-page);
 }
 
 .app-shell {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 28px 24px 40px;
+  height: 100vh;
+  padding: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0;
 }
 
-.app-header h1 {
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 20px;
+  background: #ffffff;
+}
+
+.app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.app-header__logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.app-header__title {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.8rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(-10px);
+  display: flex;
+  align-items: center;
+  height: 96px;
 }
 
-.app-header p {
-  margin: 10px 0 0;
-  color: var(--text-subtle);
+.app-header__brand-accent {
+  font-size: 2.2rem;
 }
 
 .scenario-grid {
-  margin-top: 28px;
-  display: flex;
-  gap: 16px;
-  min-height: 250px;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px;
+  align-items: stretch;
+  transition: grid-template-columns 0.45s ease;
+}
+
+.scenario-grid--selected-image_to_text {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+}
+
+.scenario-grid--selected-text_to_image {
+  grid-template-columns: minmax(0, 0fr) minmax(0, 1fr);
 }
 
 .scenario-card {
-  flex: 1 1 50%;
-  text-align: left;
-  border: 1px solid var(--border);
+  min-width: 0;
+  min-height: 100%;
+  height: 100%;
+  border: 0;
   border-radius: var(--radius);
-  background: var(--bg-panel);
-  box-shadow: var(--shadow);
-  padding: 28px;
-  cursor: pointer;
-  transition: flex-basis 0.35s ease, transform 0.2s ease, opacity 0.3s ease;
-}
-
-.scenario-card:hover {
-  transform: translateY(-2px);
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.35s ease;
 }
 
 .scenario-card--selected {
-  border-color: var(--accent);
-  background: linear-gradient(150deg, #fff, var(--accent-soft));
+  background: #ffffff;
 }
 
 .scenario-card--collapsed {
-  flex: 0 0 0;
   opacity: 0;
-  padding-left: 0;
-  padding-right: 0;
-  overflow: hidden;
-  border-width: 0;
+  pointer-events: none;
+}
+
+.scenario-card__trigger {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  text-align: center;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: #ffffff;
+  border-radius: var(--radius);
+  padding: 28px;
+  cursor: pointer;
+  color: inherit;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.scenario-card__trigger h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  max-width: 18ch;
+}
+
+.scenario-card__trigger p {
+  display: none;
+}
+
+.scenario-card__trigger:hover {
+  background: #fff7f2;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .scenario-card__trigger:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 20px 34px rgba(13, 22, 34, 0.18);
+  }
+}
+
+.scenario-card--selected .scenario-card__trigger {
+  background: var(--accent-soft);
+  border-bottom: 1px solid #e6b197;
+  min-height: 120px;
+  flex: 0 0 auto;
+  place-items: start center;
+}
+
+.scenario-card__workspace {
+  min-height: 0;
+  overflow: auto;
+  animation: workspace-enter 0.35s ease;
+}
+
+@keyframes workspace-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .workspace {
-  margin-top: 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  height: 100%;
   padding: 20px;
+  display: grid;
+  align-content: start;
+  gap: 16px;
 }
 
 .workspace__header {
@@ -104,6 +204,7 @@ body {
 
 .workspace__header h2 {
   margin: 0;
+  font-size: 1.25rem;
 }
 
 .back-button {
@@ -116,7 +217,6 @@ body {
 }
 
 .input-form {
-  margin-top: 16px;
   display: grid;
   gap: 12px;
 }
@@ -138,6 +238,38 @@ body {
 
 .input-form__control--textarea {
   resize: vertical;
+}
+
+.input-form__native-file {
+  display: none;
+}
+
+.dropzone {
+  display: grid;
+  gap: 6px;
+  place-items: center;
+  min-height: 140px;
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  background: #fcfcfb;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  padding: 14px;
+  text-align: center;
+}
+
+.dropzone--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.dropzone--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dropzone span {
+  color: var(--text-subtle);
 }
 
 .action-button {
@@ -166,7 +298,6 @@ body {
 
 .status-panel,
 .result-panel {
-  margin-top: 18px;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px;
@@ -184,6 +315,18 @@ body {
 
 .state-text--error {
   color: var(--danger);
+}
+
+.info-note {
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fbfbfa;
+  padding: 12px;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
 }
 
 .text-result {
@@ -215,20 +358,14 @@ body {
 
 @media (max-width: 900px) {
   .app-shell {
-    padding: 18px 14px 28px;
+    min-height: auto;
+    padding: 16px;
   }
 
-  .scenario-grid {
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  .scenario-card,
-  .scenario-card--collapsed {
-    flex: 1 1 auto;
-    opacity: 1;
-    border-width: 1px;
-    padding: 20px;
+  .scenario-grid,
+  .scenario-grid--selected-image_to_text,
+  .scenario-grid--selected-text_to_image {
+    grid-template-columns: 1fr;
   }
 
   .scenario-card--collapsed {

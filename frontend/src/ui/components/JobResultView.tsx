@@ -1,6 +1,6 @@
 import type { JobResponse, SupportedJobType } from "../../shared/jobTypes";
 
-function asStringRecord(value: unknown): Record<string, unknown> | null {
+function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
 }
 
@@ -8,16 +8,17 @@ function extractImageSrc(result: Record<string, unknown> | null): string | null 
   if (!result) {
     return null;
   }
-
-  const candidates = ["image_url", "url", "download_url", "file_url", "image"];
-  for (const key of candidates) {
-    const candidate = result[key];
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate;
+  for (const key of ["image_url", "url", "download_url", "file_url", "image"]) {
+    const value = result[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value;
     }
   }
-
   return null;
+}
+
+function textDownloadHref(content: string, mime: string): string {
+  return `data:${mime};charset=utf-8,${encodeURIComponent(content)}`;
 }
 
 function ResultAsJson({ result }: { result: Record<string, unknown> | null }) {
@@ -33,7 +34,6 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
   if (!job) {
     return null;
   }
-
   if (job.status === "error") {
     return (
       <section className="result-panel">
@@ -42,13 +42,11 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
       </section>
     );
   }
-
   if (job.status !== "done") {
     return null;
   }
 
-  const result = asStringRecord(job.result);
-
+  const result = asRecord(job.result);
   if (scenario === "image_to_text") {
     const textValue = typeof result?.text === "string" ? result.text : null;
     return (
@@ -60,6 +58,10 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
   }
 
   const imageSrc = extractImageSrc(result);
+  const bpmnXml = typeof result?.bpmn_xml === "string" ? result.bpmn_xml : null;
+  const mermaidMmd = typeof result?.mermaid_mmd === "string" ? result.mermaid_mmd : null;
+  const plantumlPuml = typeof result?.plantuml_puml === "string" ? result.plantuml_puml : null;
+
   return (
     <section className="result-panel">
       <h3>Сгенерированное изображение</h3>
@@ -69,6 +71,33 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
           <a className="action-button action-button--secondary" href={imageSrc} download>
             Скачать изображение
           </a>
+          {bpmnXml ? (
+            <a
+              className="action-button action-button--secondary"
+              href={textDownloadHref(bpmnXml, "application/xml")}
+              download="diagram.bpmn"
+            >
+              Скачать .bpmn
+            </a>
+          ) : null}
+          {mermaidMmd ? (
+            <a
+              className="action-button action-button--secondary"
+              href={textDownloadHref(mermaidMmd, "text/plain")}
+              download="diagram.mmd"
+            >
+              Скачать .mmd
+            </a>
+          ) : null}
+          {plantumlPuml ? (
+            <a
+              className="action-button action-button--secondary"
+              href={textDownloadHref(plantumlPuml, "text/plain")}
+              download="diagram.puml"
+            >
+              Скачать .puml
+            </a>
+          ) : null}
         </>
       ) : (
         <ResultAsJson result={result} />

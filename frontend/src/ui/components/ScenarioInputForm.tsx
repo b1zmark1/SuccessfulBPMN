@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import type { SupportedJobType } from "../../shared/jobTypes";
 import { SCENARIO_REGISTRY } from "../jobRegistry";
 
@@ -8,39 +8,94 @@ interface ScenarioInputFormProps {
   onSubmit: (meta: Record<string, unknown>) => Promise<void>;
 }
 
+interface ImageInfo {
+  width: number;
+  height: number;
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(new Error("Не удалось прочитать файл"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function readImageInfo(file: File): Promise<ImageInfo | null> {
+  return new Promise<ImageInfo | null>((resolve) => {
+    const imageUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const result = { width: img.naturalWidth, height: img.naturalHeight };
+      URL.revokeObjectURL(imageUrl);
+      resolve(result);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(imageUrl);
+      resolve(null);
+    };
+    img.src = imageUrl;
+  });
+}
+
 export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInputFormProps) {
   const config = SCENARIO_REGISTRY[scenario];
   const [value, setValue] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileDataUrl, setFileDataUrl] = useState<string | null>(null);
+  const [fileInfo, setFileInfo] = useState<ImageInfo | null>(null);
   const [narratorMode, setNarratorMode] = useState<"text" | "table">("text");
+  const [isDragActive, setIsDragActive] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
+  const applyFile = async (file: File | null) => {
     setFormError(null);
-
     if (!file) {
       setFileName(null);
       setFileDataUrl(null);
+      setFileInfo(null);
       return;
     }
 
     setFileName(file.name);
-
     try {
-      const reader = new FileReader();
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(String(reader.result ?? ""));
-        reader.onerror = () => reject(new Error("Не удалось прочитать файл"));
-        reader.readAsDataURL(file);
-      });
+      // Keep original bytes as-is; no frontend resize/compression.
+      const [dataUrl, info] = await Promise.all([readFileAsDataUrl(file), readImageInfo(file)]);
       setFileDataUrl(dataUrl);
+      setFileInfo(info);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Не удалось прочитать файл";
       setFormError(message);
       setFileDataUrl(null);
+      setFileInfo(null);
     }
+  };
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    await applyFile(event.target.files?.[0] ?? null);
+  };
+
+  const handleDrop = async (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    setIsDragActive(false);
+    if (disabled) {
+      return;
+    }
+    const file = event.dataTransfer.files?.[0] ?? null;
+    await applyFile(file);
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    if (!disabled) {
+      setIsDragActive(true);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setIsDragActive(false);
   };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -48,12 +103,23 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
     setFormError(null);
 
     try {
-      const meta = config.buildMeta({
+      const baseMeta = config.buildMeta({
         textValue: value,
         fileName,
         fileDataUrl,
         narratorMode,
       });
+      const meta =
+        scenario === "image_to_text"
+          ? {
+              ...baseMeta,
+              image_meta: {
+                file_name: fileName,
+                width: fileInfo?.width ?? null,
+                height: fileInfo?.height ?? null,
+              },
+            }
+          : baseMeta;
       await onSubmit(meta);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Некорректный ввод";
@@ -77,25 +143,42 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
         ) : config.inputKind === "file" ? (
           <>
             <input
-              className="input-form__control"
+              ref={fileInputRef}
+              className="input-form__native-file"
               type="file"
               accept="image/*"
               onChange={handleFileChange}
               disabled={disabled}
             />
+            <label
+              className={`dropzone ${isDragActive ? "dropzone--active" : ""} ${disabled ? "dropzone--disabled" : ""}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <strong>Перетащите изображение сюда</strong>
+              <span>или нажмите, чтобы выбрать файл</span>
+            </label>
             <label className="input-form__label">
-              Режим Narrator
               <select
                 className="input-form__control"
                 value={narratorMode}
                 onChange={(event) => setNarratorMode(event.target.value as "text" | "table")}
                 disabled={disabled}
               >
-                <option value="text">text</option>
-                <option value="table">table</option>
+                <option value="text">Преобразовать в текстовое описание</option>
+                <option value="table">Преобразовать в таблицу</option>
               </select>
             </label>
-            {fileName ? <small>Выбран файл: {fileName}</small> : <small>Поддерживаются изображения PNG/JPG/WebP.</small>}
+            {fileName ? (
+              <small>
+                Выбран файл: {fileName}
+                {fileInfo ? ` (${fileInfo.width}x${fileInfo.height})` : ""}
+              </small>
+            ) : (
+              <small>PNG/JPG/WebP.</small>
+            )}
           </>
         ) : (
           <input
@@ -108,7 +191,10 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
           />
         )}
       </label>
+
+      {config.infoNote ? <pre className="info-note">{config.infoNote}</pre> : null}
       {formError ? <p className="state-text state-text--error">{formError}</p> : null}
+
       <button className="action-button" type="submit" disabled={disabled}>
         {config.submitLabel}
       </button>
