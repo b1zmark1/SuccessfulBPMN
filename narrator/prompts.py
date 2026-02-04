@@ -48,15 +48,16 @@ def build_prompt_meta(prompt_version: str) -> Dict[str, str]:
 
 def _build_system_prompt() -> str:
     return (
-        "Ты Narrator-модуль. Твоя задача: по semantic JSON написать понятное человеку "
-        "описание процесса на русском языке.\n"
+        "Ты Narrator-модуль. Твоя задача: по semantic JSON сформировать понятный человеку результат "
+        "на русском языке.\n"
         "Строго следуй правилам:\n"
         "1) Используй только данные из JSON, ничего не придумывай.\n"
         "2) Соблюдай порядок шагов по полю order и связи next_step_ids.\n"
-        "3) Для decision и parallel покрывай все ветви.\n"
+        "3) Для decision и parallel не пропускай ветви (учитывай все шаги, которые есть в JSON).\n"
         "4) Не используй термины BPMN/UML и технический жаргон.\n"
         "5) Выводи только финальный текст в формате, который задан в пользовательских инструкциях, "
-        "без JSON/markdown и служебных комментариев."
+        "без JSON/markdown и служебных комментариев.\n"
+        "6) Роли не угадывай: роль можно брать только из входных данных (поля шага и подсказки role_hints)."
     )
 
 
@@ -65,29 +66,48 @@ def _build_user_prompt(
     policy: NarratorPolicyConfig,
     role_hints: Optional[Dict[str, str]] = None,
 ) -> str:
-    payload_text = json.dumps(semantic_payload, ensure_ascii=False, indent=2, sort_keys=True)
+    payload_text = json.dumps(
+        semantic_payload,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=False,
+    )
+
     if policy.output_format == "table":
         output_rules = (
             "Формат вывода: table.\n"
             "Верни только таблицу в plain text (не markdown).\n"
+            "Разделитель колонок: символ '|'.\n"
             "Строка заголовка: Шаг | Роль\n"
-            "Далее строки строго по шагам order:\n"
-            "<номер>. <краткое название шага> | <роль>\n"
-            "Для роли сначала используй lane/owner/participants, если эти поля есть во входе.\n"
-            "Если роль не указана, попробуй аккуратно вывести ее по контексту шага и соседних шагов.\n"
-            "Если определить нельзя, укажи: Не указано."
+            "Далее строки строго по шагам в порядке order.\n"
+            "В колонке 'Шаг' укажи: <номер>. <краткое название шага>.\n"
+            "Считай задачами шаги, у которых есть непустое поле text. "
+            "Шаги без текста в таблицу не включай.\n"
+            "Правила для 'Роль':\n"
+            "- Если у шага есть явная роль во входе (например lane/owner/participants или аналогичные поля), "
+            "используй ее.\n"
+            "- Иначе используй role_hints (mapping step_id -> роль), если для этого step_id есть значение.\n"
+            "- Если роли нет, укажи ровно: Не указано.\n"
+            "Запрещено выводить роль по догадке, контексту или соседним шагам."
         )
     else:
         output_rules = (
             "Формат вывода: narrative.\n"
-            "Верни связный человеко-читаемый текст."
+            "Верни связный человеко-читаемый текст.\n"
+            "Не добавляй списки, заголовки и разметку markdown.\n"
+            "Если у шага нет текста, действуй по policy.missing_text_policy, не выдумывая содержание."
         )
 
     role_hints_payload = role_hints if isinstance(role_hints, dict) else {}
-    role_hints_text = json.dumps(role_hints_payload, ensure_ascii=False, indent=2, sort_keys=True)
+    role_hints_text = json.dumps(
+        role_hints_payload,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=False,
+    )
 
     return (
-        "Сгенерируй итоговое описание процесса для пользователя, не знакомого с нотациями.\n"
+        "Сгенерируй итоговый результат для пользователя, не знакомого с нотациями.\n"
         "Применяй политики генерации:\n"
         f"- max_sentences: {policy.max_sentences}\n"
         f"- missing_text_policy: {policy.missing_text_policy}\n"

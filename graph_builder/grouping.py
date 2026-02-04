@@ -88,13 +88,24 @@ def group_normalized_detections(
         source = str(det.get("source", "")).strip().lower()
         item = _to_group_item(det, class_name, source, cfg)
 
-        if class_name in cfg.process_shape_classes:
+        has_text = isinstance(det.get("text"), str) and bool(det.get("text").strip())
+        is_known_shape = class_name in cfg.process_shape_classes
+        is_flow = class_name in cfg.flow_classes
+        is_container = class_name in cfg.container_classes
+
+        # Treat as text if explicitly marked as text OR came from easyocr OR it has text content
+        # and it is not a known BPMN/flow/container class.
+        is_text_like = (class_name in cfg.text_classes) or (source == "easyocr") or (
+            has_text and not (is_known_shape or is_flow or is_container)
+        )
+
+        if is_known_shape:
             grouped["process_shapes"].append(item)
-        elif class_name in cfg.flow_classes:
+        elif is_flow:
             grouped["flows"].append(item)
-        elif class_name in cfg.container_classes:
+        elif is_container:
             grouped["containers"].append(item)
-        elif class_name in cfg.text_classes or source == "easyocr":
+        elif is_text_like:
             grouped["texts"].append(item)
         else:
             grouped["unknown"].append(item)
