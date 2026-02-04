@@ -2,6 +2,7 @@ import { requestJson } from "./httpClient";
 import type { CreateJobRequest, CreateJobResponse, JobResponse } from "../shared/jobTypes";
 
 const UUID_REGEXP = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_EXTRACT_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -48,7 +49,13 @@ export async function createJob(payload: CreateJobRequest): Promise<CreateJobRes
 }
 
 export async function getJob(jobId: string): Promise<JobResponse> {
-  const data = await requestJson<unknown>(`/jobs/${jobId}`, {
+  const match = jobId.match(UUID_EXTRACT_REGEXP);
+  if (!match) {
+    throw new TypeError("Invalid job id format");
+  }
+
+  const normalizedJobId = match[0];
+  const data = await requestJson<unknown>(`/jobs/${normalizedJobId}`, {
     method: "GET",
     expectedStatus: 200,
   });

@@ -93,6 +93,11 @@ def _narrator_output_format(mode: str) -> str:
     return "narrative"
 
 
+def _prefer_detect_gpu() -> bool:
+    raw = os.getenv("DETECT_RES_GPU", "1").strip().lower()
+    return raw not in {"0", "false", "no", "off"}
+
+
 async def run_image_to_text_pipeline(
     image_url: str,
     *,
@@ -111,21 +116,21 @@ async def run_image_to_text_pipeline(
 
         ensemble_cmd = [
             "python",
-            _repo_path("preprocanddetect", "ensemble_infer_openvino.py"),
+            _repo_path("preprocanddetect", "ensemble_infer.py"),
             "--images",
             str(input_image),
             "--out",
             str(out_yolox),
             "--exp-file",
             _repo_path("results", "yolox_tiny_bpmn.py"),
-            "--openvino-xml",
-            _repo_path("results", "yolox_tiny_bpmn_openvino.xml"),
-            "--dataset-root",
-            _repo_path("datasets", "bpmn_full"),
+            "--ckpt",
+            _repo_path("results", "best_ckpt.pth"),
+            "--fp16",
             "--conf",
             "0.4",
-            "--nms",
-            "0.65",
+            "--lang",
+            "ru",
+            "--no-text",
         ]
         await _run_subprocess(ensemble_cmd, cwd=REPO_ROOT)
 
@@ -136,8 +141,20 @@ async def run_image_to_text_pipeline(
             str(input_image),
             "--outdir",
             str(out_text),
+            "--lang",
+            "ru",
+            "--download-enabled",
         ]
-        await _run_subprocess(detect_cmd, cwd=REPO_ROOT)
+        if _prefer_detect_gpu():
+            detect_cmd.append("--gpu")
+        try:
+            await _run_subprocess(detect_cmd, cwd=REPO_ROOT)
+        except RuntimeError:
+            if "--gpu" not in detect_cmd:
+                raise
+            # Keep behavior close to teammate's flow, but do a safe CPU fallback for non-GPU workers.
+            detect_cmd_no_gpu = [arg for arg in detect_cmd if arg != "--gpu"]
+            await _run_subprocess(detect_cmd_no_gpu, cwd=REPO_ROOT)
 
         model_image_path = out_text / "00_model.png"
         blocks_path = out_text / "text_blocks.json"
@@ -148,11 +165,13 @@ async def run_image_to_text_pipeline(
             "python",
             _repo_path("preprocanddetect", "ocr_tesseract_fast.py"),
             "--input",
-            str(model_image_path),
+            str(input_image),
             "--blocks",
             str(blocks_path),
             "--outdir",
             str(out_ocr),
+            "--lang",
+            "rus",
             "--max-side",
             "4096",
             "--upscale-factor",
@@ -211,7 +230,10 @@ async def run_image_to_text_pipeline(
         graph_payload = build_graph_from_ensemble(ensemble_payload)
         narration = run_narration(
             graph_payload=graph_payload,
-            policy_overrides={"output_format": _narrator_output_format(narrator_mode)},
+            policy_overrides={
+                "output_format": _narrator_output_format(narrator_mode),
+                "missing_text_policy": "explicit_placeholder",
+            },
             runtime_overrides={
                 "model_path": os.getenv(
                     "NARRATOR_MODEL_PATH",

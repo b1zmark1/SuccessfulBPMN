@@ -39,6 +39,17 @@ function readImageInfo(file: File): Promise<ImageInfo | null> {
   });
 }
 
+function triggerDownload(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInputFormProps) {
   const config = SCENARIO_REGISTRY[scenario];
   const [value, setValue] = useState("");
@@ -96,6 +107,29 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
 
   const handleDragLeave = () => {
     setIsDragActive(false);
+  };
+
+  const handleUseSampleImage = async () => {
+    if (!config.sampleImageUrl || disabled) {
+      return;
+    }
+
+    try {
+      setFormError(null);
+      const response = await fetch(config.sampleImageUrl);
+      if (!response.ok) {
+        throw new Error(`Не удалось загрузить пример диаграммы (${response.status})`);
+      }
+
+      const blob = await response.blob();
+      const sampleFileName = config.sampleImageUrl.split("/").pop() || "diagram1.jpg";
+      const sampleFile = new File([blob], sampleFileName, { type: blob.type || "image/jpeg" });
+      await applyFile(sampleFile);
+      triggerDownload(blob, sampleFileName);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Не удалось загрузить пример диаграммы";
+      setFormError(message);
+    }
   };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -160,6 +194,16 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
               <strong>Перетащите изображение сюда</strong>
               <span>или нажмите, чтобы выбрать файл</span>
             </label>
+            {config.sampleImageUrl ? (
+              <button
+                className="action-button action-button--secondary"
+                type="button"
+                onClick={handleUseSampleImage}
+                disabled={disabled}
+              >
+                Пример диаграммы для запуска модели
+              </button>
+            ) : null}
             <label className="input-form__label">
               <select
                 className="input-form__control"

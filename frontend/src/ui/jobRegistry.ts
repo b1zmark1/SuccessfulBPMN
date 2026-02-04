@@ -5,6 +5,7 @@ export interface ScenarioConfig {
   title: string;
   description: string;
   infoNote?: string;
+  sampleImageUrl?: string;
   inputLabel: string;
   inputPlaceholder: string;
   inputKind: "url" | "textarea" | "file";
@@ -60,6 +61,7 @@ export const SCENARIO_REGISTRY: Record<SupportedJobType, ScenarioConfig> = {
     jobType: "image_to_text",
     title: "Изображение в текст",
     description: "Загрузите изображение, сервис извлечет текст.",
+    sampleImageUrl: "/preprocanddetect/diagram1.jpg",
     inputLabel: "Файл изображения",
     inputPlaceholder: "",
     inputKind: "file",
