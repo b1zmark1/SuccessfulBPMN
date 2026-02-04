@@ -20,12 +20,6 @@ def attach_text_placeholders_and_hooks(
     payload: Dict[str, Any],
     cfg: Optional[TextHookConfig] = None,
 ) -> Dict[str, Any]:
-    """
-    Step 9:
-    - enforce text placeholder (node.text = null if missing)
-    - link nearby text nodes as anchors for future OCR merge
-    - expose lightweight OCR hook structure without changing graph contract
-    """
     if cfg is None:
         cfg = TextHookConfig()
 

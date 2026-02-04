@@ -1,0 +1,16 @@
+fastapi<1.0.0,>=0.115.0
+uvicorn[standard]<1.0.0,>=0.30.0
+sqlalchemy[asyncio]<3.0.0,>=2.0.32
+asyncpg<1.0.0,>=0.29.0
+alembic<2.0.0,>=1.13.2
+redis<6.0.0,>=5.0.8
+pydantic<3.0.0,>=2.8.2
+pydantic-settings<3.0.0,>=2.4.0
+python-json-logger<3.0.0,>=2.0.7
+
+[test]
+pytest<9.0.0,>=8.3.2
+pytest-asyncio<1.0.0,>=0.24.0
+httpx<1.0.0,>=0.27.0
+testcontainers[postgresql,redis]<5.0.0,>=4.8.2
+asgi-lifespan<3.0.0,>=2.1.0

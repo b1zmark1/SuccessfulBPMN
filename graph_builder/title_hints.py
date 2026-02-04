@@ -23,10 +23,6 @@ def assign_title_hints(
     payload: Dict[str, Any],
     cfg: Optional[TitleHintConfig] = None,
 ) -> Dict[str, Any]:
-    """
-    Step 9.2:
-    Detect pool/lane/diagram title candidates from geometry and store hints on text nodes.
-    """
     if cfg is None:
         cfg = TitleHintConfig()
 

@@ -18,11 +18,6 @@ def merge_adjacent_text_nodes(
     payload: Dict[str, Any],
     cfg: Optional[TextMergeConfig] = None,
 ) -> Dict[str, Any]:
-    """
-    Step 9.1:
-    Merge adjacent text boxes that likely belong to one phrase.
-    Deterministic, direction-aware (LR/TB), contract-safe.
-    """
     if cfg is None:
         cfg = TextMergeConfig()
 

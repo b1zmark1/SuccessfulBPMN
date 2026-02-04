@@ -1,0 +1,89 @@
+Metadata-Version: 2.4
+Name: ml-job-backend
+Version: 0.1.0
+Summary: Async job backend for ML services
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0.0,>=0.115.0
+Requires-Dist: uvicorn[standard]<1.0.0,>=0.30.0
+Requires-Dist: sqlalchemy[asyncio]<3.0.0,>=2.0.32
+Requires-Dist: asyncpg<1.0.0,>=0.29.0
+Requires-Dist: alembic<2.0.0,>=1.13.2
+Requires-Dist: redis<6.0.0,>=5.0.8
+Requires-Dist: pydantic<3.0.0,>=2.8.2
+Requires-Dist: pydantic-settings<3.0.0,>=2.4.0
+Requires-Dist: python-json-logger<3.0.0,>=2.0.7
+Provides-Extra: test
+Requires-Dist: pytest<9.0.0,>=8.3.2; extra == "test"
+Requires-Dist: pytest-asyncio<1.0.0,>=0.24.0; extra == "test"
+Requires-Dist: httpx<1.0.0,>=0.27.0; extra == "test"
+Requires-Dist: testcontainers[postgresql,redis]<5.0.0,>=4.8.2; extra == "test"
+Requires-Dist: asgi-lifespan<3.0.0,>=2.1.0; extra == "test"
+
+﻿# ML Job Backend (`backend`)
+
+Production-ready backend for asynchronous ML jobs with a job-based architecture.
+Backend does not execute ML logic; external workers consume Redis and write results to PostgreSQL.
+
+## Purpose
+- Accept frontend requests as jobs.
+- Persist job state in PostgreSQL (single source of truth).
+- Publish job events to Redis Streams for worker processing.
+- Expose stable REST API for polling status and results.
+
+## Architecture
+- FastAPI: HTTP contracts and orchestration layer.
+- PostgreSQL: tables `jobs` and `outbox_messages`.
+- Redis Streams: delivery channel only (no job state storage).
+- Outbox dispatcher: reliable publish with retry/backoff.
+
+## Main Flows
+1. `POST /api/v1/jobs` creates `jobs(status=pending)` + outbox event in one transaction.
+2. Dispatcher publishes event to Redis Stream and moves job to `queued`.
+3. Worker processes job and updates PostgreSQL (`running -> done|error`).
+4. Frontend polls `GET /api/v1/jobs/{job_id}`.
+
+## Documentation Map
+- Plan: `tasklist.md`
+- FastAPI contracts/flow: `fastapi/README.md`
+- PostgreSQL schema/migrations: `postgres/README.md`
+- Redis message contract/guarantees: `redis/README.md`
+
+## Local Run (Without Docker)
+```bash
+cd backend
+python -m pip install -e .[test]
+alembic upgrade head
+uvicorn ml_backend.main:app --reload
+```
+
+## Docker Run (Recommended)
+From repository root:
+```bash
+docker compose up --build
+```
+
+API endpoint:
+- `http://localhost:8000/api/v1/jobs`
+
+## Test Execution
+Unit tests:
+```bash
+pytest backend/tests/unit -q
+```
+
+Integration tests (require running Docker daemon + Testcontainers):
+```bash
+pytest backend/tests/integration -q
+```
+
+All backend tests:
+```bash
+pytest backend/tests -q
+```
+
+## Backend Structure
+- Service code: `backend/src/ml_backend`
+- Migrations: `backend/alembic`
+- Tests: `backend/tests`
+- Backend image build file: `backend/Dockerfile`
