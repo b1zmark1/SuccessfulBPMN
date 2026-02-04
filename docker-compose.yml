@@ -41,5 +41,24 @@ services:
       redis:
         condition: service_healthy
 
+  worker:
+    build:
+      context: ./workers
+    environment:
+      POSTGRES_DSN: postgresql+asyncpg://postgres:postgres@postgres:5432/ml_jobs
+      REDIS_DSN: redis://redis:6379/0
+      REDIS_STREAM_NAME: jobs:stream
+      WORKER_START_ID: 0-0
+    command: ["python", "workers/job_worker.py", "--start-id", "0-0"]
+    volumes:
+      - ./:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_started
+
 volumes:
   postgres_data:

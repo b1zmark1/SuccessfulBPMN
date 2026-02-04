@@ -57,6 +57,7 @@ def _pick_model(model_arg: str | None) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Запуск text->diagram пайплайна с готовым промптом.")
+    parser.add_argument("--prompt", type=str, default=None, help="????? ??????? ??? ?????????")
     parser.add_argument("--model-path", type=str, default=None, help="Путь к GGUF модели")
     parser.add_argument("--artifact-type", type=str, default="bpmn", choices=["mermaid", "bpmn", "plantuml"])
     parser.add_argument("--image-format", type=str, default="png", choices=["png", "jpg"])
@@ -65,11 +66,12 @@ def main() -> None:
     args = parser.parse_args()
 
     model_path = _pick_model(args.model_path)
+    prompt = args.prompt.strip() if isinstance(args.prompt, str) and args.prompt.strip() else DEFAULT_PROMPT_RU
     save_dir = Path(args.output_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
 
     out = run_text_to_diagram_use_case(
-        source_text=DEFAULT_PROMPT_RU,
+        source_text=prompt,
         runtime_overrides={
             "model_path": model_path,
             "n_threads": args.threads,

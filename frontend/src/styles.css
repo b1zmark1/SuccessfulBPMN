@@ -1,0 +1,237 @@
+:root {
+  --bg-page: #f8f8f6;
+  --bg-panel: #ffffff;
+  --bg-muted: #f1f1ee;
+  --text-main: #1e2125;
+  --text-subtle: #5f6670;
+  --border: #d8d9d4;
+  --accent: #e37b2f;
+  --accent-soft: #f8e8da;
+  --danger: #b33a2f;
+  --radius: 16px;
+  --shadow: 0 14px 38px rgba(13, 22, 34, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Roboto", "Segoe UI", sans-serif;
+  color: var(--text-main);
+  background:
+    radial-gradient(1200px 500px at 5% -10%, #ffe9d5 0, rgba(255, 233, 213, 0) 70%),
+    radial-gradient(800px 380px at 100% 0%, #fff4eb 0, rgba(255, 244, 235, 0) 70%),
+    var(--bg-page);
+}
+
+.app-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.app-header p {
+  margin: 10px 0 0;
+  color: var(--text-subtle);
+}
+
+.scenario-grid {
+  margin-top: 28px;
+  display: flex;
+  gap: 16px;
+  min-height: 250px;
+}
+
+.scenario-card {
+  flex: 1 1 50%;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  cursor: pointer;
+  transition: flex-basis 0.35s ease, transform 0.2s ease, opacity 0.3s ease;
+}
+
+.scenario-card:hover {
+  transform: translateY(-2px);
+}
+
+.scenario-card--selected {
+  border-color: var(--accent);
+  background: linear-gradient(150deg, #fff, var(--accent-soft));
+}
+
+.scenario-card--collapsed {
+  flex: 0 0 0;
+  opacity: 0;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+  border-width: 0;
+}
+
+.workspace {
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.workspace__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.workspace__header h2 {
+  margin: 0;
+}
+
+.back-button {
+  border: 1px solid var(--border);
+  background: var(--bg-muted);
+  color: var(--text-main);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.input-form {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.input-form__label {
+  display: grid;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.input-form__control {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.input-form__control--textarea {
+  resize: vertical;
+}
+
+.action-button {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.action-button--secondary {
+  background: var(--bg-muted);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  text-decoration: none;
+}
+
+.status-panel,
+.result-panel {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+
+.status-panel p,
+.result-panel p {
+  margin: 0 0 8px;
+}
+
+.state-text {
+  color: var(--text-subtle);
+}
+
+.state-text--error {
+  color: var(--danger);
+}
+
+.text-result {
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 12px;
+  background: #fbfbfa;
+  white-space: pre-wrap;
+}
+
+.image-preview {
+  display: block;
+  max-width: min(100%, 680px);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.result-json {
+  margin: 0;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fbfbfa;
+  padding: 12px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    padding: 18px 14px 28px;
+  }
+
+  .scenario-grid {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .scenario-card,
+  .scenario-card--collapsed {
+    flex: 1 1 auto;
+    opacity: 1;
+    border-width: 1px;
+    padding: 20px;
+  }
+
+  .scenario-card--collapsed {
+    display: none;
+  }
+}
