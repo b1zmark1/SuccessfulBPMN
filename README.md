@@ -1,37 +1,64 @@
 ﻿# SuccessfulBPMN
 
-SuccessfulBPMN — ML-сервис для преобразования:
-- `image_to_text`: BPMN-диаграмма -> структурированное текстовое описание/таблица;
-- `text_to_image`: текстовое описание процесса -> диаграмма.
+SuccessfulBPMN — асинхронный ML-сервис с job-based архитектурой:
 
-Проект построен как job-based система: frontend создает job, backend кладет событие в очередь, worker обрабатывает, frontend опрашивает статус.
+- `image_to_text`: BPMN-изображение -> текст/таблица;
+- `text_to_image`: текст -> BPMN/mermaid/plantuml артефакты + изображение.
 
-## Архитектура проекта
+Frontend создает job, backend пишет статус в PostgreSQL и публикует событие в Redis Stream, worker обрабатывает job.
 
-- `frontend/` — SPA на React + TypeScript.
-  - UI сценариев, создание job (`POST /jobs`), polling статуса (`GET /jobs/{job_id}`), отображение результатов.
-- `backend/` — FastAPI API.
-  - Контракты REST, хранение состояния job, outbox-публикация в Redis Stream.
-- `workers/` — воркер обработки job.
-  - `image_to_text`: detect/ensemble/ocr/label/graph/narrator pipeline.
-  - `text_to_image`: генерация диаграмм и артефактов.
-- `preprocanddetect/` — детекция, OCR, merge-разметка.
-- `narrator/` — генерация итогового текста/таблицы по графу.
-- `graph_builder/` — построение графа процесса из merged ensemble.
-- `docker-compose.yml` — единый запуск инфраструктуры (postgres, redis, backend, worker).
+## 1) Состав проекта
 
-## Поток данных (job lifecycle)
+- `frontend/` — React + TypeScript SPA (создание job, polling, результат).
+- `backend/` — FastAPI API (`POST /jobs`, `GET /jobs/{job_id}`).
+- `workers/` — обработчик очереди (image_to_text/text_to_image pipelines).
+- `preprocanddetect/`, `graph_builder/`, `narrator/`, `text_to_diagram/`, `tools/` — ML/рендер пайплайны.
+- `docker-compose.yml` — запуск всего стека.
 
-1. Frontend отправляет `POST /api/v1/jobs` с `job_type` и `meta`.
-2. Backend создает запись job в Postgres и публикует событие в Redis Stream.
-3. Worker читает stream, ставит job в `running`, выполняет pipeline.
-4. Worker пишет `done`/`error` + `result` в Postgres.
-5. Frontend опрашивает `GET /api/v1/jobs/{job_id}` до терминального статуса.
+## 2) Требования
 
-## Быстрый старт в Docker (backend + infra + worker)
+Минимум:
 
-Требования:
-- Docker Desktop (или Docker Engine + Compose v2).
+- Docker Desktop (или Docker Engine + Compose v2)
+- 20+ GB свободного места (образы и зависимости тяжелые)
+- 16+ GB RAM желательно
+
+Для GPU (опционально):
+
+- NVIDIA GPU + драйверы
+- NVIDIA Container Toolkit (если хотите CUDA в контейнере)
+
+## 3) Запуск проекта в Docker
+
+Есть 2 варианта.
+
+### Быстрый автозапуск через PowerShell (рекомендуется для Windows)
+
+Скрипт проверяет Docker daemon и поднимает сервисы автоматически:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start-successfulbpmn.ps1
+```
+
+По умолчанию:
+- `backend` и `worker` берутся из опубликованных образов Docker Hub;
+- `postgres` и `redis` берутся из официальных image;
+- выполняется `pull` + `up -d`.
+
+Полезные флаги:
+
+```powershell
+# Собирать backend/worker локально вместо published image
+powershell -ExecutionPolicy Bypass -File .\scripts\start-successfulbpmn.ps1 -BuildLocal
+
+# Не делать docker pull перед запуском
+powershell -ExecutionPolicy Bypass -File .\scripts\start-successfulbpmn.ps1 -NoPull
+
+# После старта сразу смотреть backend/worker логи
+powershell -ExecutionPolicy Bypass -File .\scripts\start-successfulbpmn.ps1 -FollowLogs
+```
+
+### Вариант A — собрать локально
 
 Из корня проекта:
 
@@ -47,28 +74,26 @@ docker compose logs -f backend
 docker compose logs -f worker
 ```
 
-API backend:
-- `http://localhost:8000/api/v1`
-
 Сервисы:
-- Postgres: `localhost:5432`
-- Redis: `localhost:6379`
 
-Остановка:
+- backend API: `http://localhost:8000/api/v1`
+- postgres: `localhost:5432`
+- redis: `localhost:6379`
 
-```bash
-docker compose down
-```
+### Вариант B — запуск из готовых образов (без сборки, вручную)
 
-С удалением volumes (полная очистка БД/кэшей):
+1. Запуск:
 
 ```bash
-docker compose down -v
+docker compose -f docker-compose.yml -f docker-compose.published.yml pull
+docker compose -f docker-compose.yml -f docker-compose.published.yml up -d
 ```
 
-## Запуск frontend
+> Первый pull/push может идти долго из-за большого слоя моделей/зависимостей.
 
-Frontend запускается отдельно (Vite dev server).
+## 4) Запуск frontend
+
+В отдельном терминале:
 
 ```bash
 cd frontend
@@ -76,44 +101,89 @@ npm install
 npm run dev
 ```
 
-По умолчанию фронт доступен на:
+Открыть:
+
 - `http://localhost:5173`
 
-### Переменные окружения frontend
-
-Создайте `frontend/.env` (если нужно переопределить):
+### `frontend/.env`
 
 ```env
 VITE_API_BASE_URL=
 VITE_API_PREFIX=/api/v1
 ```
 
-Если `VITE_API_BASE_URL` пустой, в dev-режиме используется proxy Vite на `http://localhost:8000`.
+Если `VITE_API_BASE_URL` пустой, Vite proxy отправляет API-запросы на `http://localhost:8000`.
 
-## Полезные команды
+## 5) Проверка работоспособности
 
-Проверить Redis:
+### Проверка Redis/Postgres
 
 ```bash
 docker compose exec redis redis-cli ping
+docker compose exec postgres pg_isready -U postgres -d ml_jobs
 ```
 
-Проверить Postgres:
-
-```bash
-docker compose exec postgres pg_isready -U postgres
-```
-
-Посмотреть job в БД:
+### Посмотреть последние job
 
 ```bash
 docker compose exec postgres psql -U postgres -d ml_jobs -c "SELECT created_at, job_type, status FROM jobs ORDER BY created_at DESC LIMIT 20;"
 ```
 
-## Где смотреть подробнее
+### Проверка text_to_image внутри worker
 
-- `frontend/README.md` — frontend архитектура и запуск.
-- `frontend/ui/README.md` — структура экранов и UX flow.
-- `frontend/api/README.md` — API layer frontend.
-- `backend/README.md` — backend детали.
-- `workers/dependencies.md` — зависимости worker и runtime нюансы.
+```bash
+docker compose exec worker python -c "from workers.text_to_image_pipeline import run_text_to_image_pipeline as f; r=f('Простой процесс: старт -> проверка -> завершение'); print(r.keys()); print('has_mmd=', bool(r.get('mermaid_mmd'))); print('has_img=', bool(r.get('image_url'))); print('warn=', r.get('render_warning'))"
+```
+
+Ожидаемо:
+
+- `has_mmd=True`
+- `has_img=True` (или `False`, если рендер недоступен, но тогда будет `render_warning`)
+
+## 6) Остановка и очистка
+
+Остановить сервисы:
+
+```bash
+docker compose down
+```
+
+Полная очистка (включая БД/кэш volumes):
+
+```bash
+docker compose down -v
+```
+
+Удалить dangling-образы/кэш:
+
+```bash
+docker system prune -f
+```
+
+## 7) Частые проблемы
+
+### 1. Worker "обрабатывает снова"
+
+Проверьте, что `WORKER_START_ID` = `$` (а не `0-0`) в `docker-compose.yml`.
+
+### 2. `text_to_image` падает с `node/mmdc/plantuml not installed`
+
+Проверьте в контейнере:
+
+```bash
+docker compose exec worker node -v
+docker compose exec worker mmdc -V
+docker compose exec worker plantuml -version
+```
+
+### 3. В браузере ошибка `tainted canvas` при экспорте PNG из Mermaid
+
+Это ограничение браузера. В UI настроен fallback: автоматически скачивается `SVG`
+
+## 8) Дополнительная документация
+
+- `frontend/README.md` — frontend архитектура и запуск
+- `frontend/ui/README.md` — UX flow
+- `frontend/api/README.md` — API layer фронта
+- `backend/README.md` — backend детали
+- `workers/dependencies.md` — зависимости worker

@@ -1,0 +1,8 @@
+services:
+  backend:
+    image: b1zmark/successfulbpmn-backend:latest
+    build: null
+
+  worker:
+    image: b1zmark/successfulbpmn-worker:latest
+    build: null
