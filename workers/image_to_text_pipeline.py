@@ -5,6 +5,7 @@ import asyncio
 import base64
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -15,6 +16,7 @@ from graph_builder.pipeline import build_graph_from_ensemble
 from narrator.orchestrator import run_narration
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+PYTHON_EXECUTABLE = sys.executable
 
 
 def _repo_path(*parts: str) -> str:
@@ -110,7 +112,7 @@ def _cuda_available() -> bool:
 async def run_image_to_text_pipeline(
     image_url: str,
     *,
-    narrator_mode: str = "text",
+    narrator_mode: str = "table",
 ) -> dict[str, Any]:
     if not isinstance(image_url, str) or not image_url.strip():
         raise ValueError("image_url is required")
@@ -125,7 +127,7 @@ async def run_image_to_text_pipeline(
         out_labeled = tmp_dir / "out_labeled"
 
         ensemble_cmd = [
-            "python",
+            PYTHON_EXECUTABLE,
             _repo_path("preprocanddetect", "ensemble_infer.py"),
             "--images",
             str(input_image),
@@ -148,7 +150,7 @@ async def run_image_to_text_pipeline(
         await _run_subprocess(ensemble_cmd, cwd=REPO_ROOT)
 
         detect_cmd = [
-            "python",
+            PYTHON_EXECUTABLE,
             _repo_path("preprocanddetect", "detect_res.py"),
             "--input",
             str(input_image),
@@ -175,7 +177,7 @@ async def run_image_to_text_pipeline(
             raise FileNotFoundError("Text detection artifacts not found after detect_res.py")
 
         ocr_cmd = [
-            "python",
+            PYTHON_EXECUTABLE,
             _repo_path("preprocanddetect", "ocr_tesseract_fast.py"),
             "--input",
             str(input_image),
@@ -220,7 +222,7 @@ async def run_image_to_text_pipeline(
             raise FileNotFoundError(f"Ensemble file not found: {ensemble_json_path}")
 
         label_cmd = [
-            "python",
+            PYTHON_EXECUTABLE,
             _repo_path("preprocanddetect", "label_res.py"),
             "--ensemble",
             str(ensemble_json_path),
@@ -269,7 +271,7 @@ async def run_image_to_text_pipeline(
 async def _main() -> None:
     parser = argparse.ArgumentParser(description="Image-to-text pipeline worker entry.")
     parser.add_argument("--image-url", required=True, help="image URL, data URL, or local file path")
-    parser.add_argument("--narrator-mode", choices=["text", "table"], default="text")
+    parser.add_argument("--narrator-mode", choices=["text", "table"], default="table")
     args = parser.parse_args()
     result = await run_image_to_text_pipeline(args.image_url, narrator_mode=args.narrator_mode)
     print(json.dumps(result, ensure_ascii=False, indent=2))

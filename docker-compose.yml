@@ -48,10 +48,10 @@ services:
       POSTGRES_DSN: postgresql+asyncpg://postgres:postgres@postgres:5432/ml_jobs
       REDIS_DSN: redis://redis:6379/0
       REDIS_STREAM_NAME: jobs:stream
-      WORKER_START_ID: "$"
+      WORKER_START_ID: "0-0"
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       NVIDIA_DRIVER_CAPABILITIES: ${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
-      WARMUP_ENABLED: "1"
+      WARMUP_ENABLED: "0"
       WARMUP_SAMPLE_IMAGE: /app/preprocanddetect/diagram1.jpg
       WARMUP_NARRATOR_MODE: table
     command:

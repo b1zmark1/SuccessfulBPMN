@@ -98,7 +98,7 @@ class JobWorker:
                 raise ValueError("meta.image_url is required for image_to_text")
             narrator_mode = meta.get("narrator_mode")
             if narrator_mode not in {"text", "table"}:
-                narrator_mode = "text"
+                narrator_mode = "table"
             return await run_image_to_text_pipeline(image_url, narrator_mode=narrator_mode)
         if job_type == JobType.TEXT_TO_IMAGE.value:
             prompt = meta.get("prompt") or meta.get("promt")
