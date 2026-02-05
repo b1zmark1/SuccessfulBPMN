@@ -49,9 +49,20 @@ services:
       REDIS_DSN: redis://redis:6379/0
       REDIS_STREAM_NAME: jobs:stream
       WORKER_START_ID: 0-0
-    command: ["python", "workers/job_worker.py", "--start-id", "0-0"]
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      NVIDIA_DRIVER_CAPABILITIES: ${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
+      WARMUP_ENABLED: "1"
+      WARMUP_SAMPLE_IMAGE: /app/preprocanddetect/diagram1.jpg
+      WARMUP_NARRATOR_MODE: table
+    command:
+      [
+        "sh",
+        "-lc",
+        "if [ \"${WARMUP_ENABLED:-1}\" = \"1\" ]; then python workers/warmup.py --sample-image \"${WARMUP_SAMPLE_IMAGE:-/app/preprocanddetect/diagram1.jpg}\" --narrator-mode \"${WARMUP_NARRATOR_MODE:-table}\"; fi; python workers/job_worker.py --start-id \"${WORKER_START_ID:-0-0}\"",
+      ]
     volumes:
       - ./:/app
+      - worker_cache:/root/.cache
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,3 +73,4 @@ services:
 
 volumes:
   postgres_data:
+  worker_cache:

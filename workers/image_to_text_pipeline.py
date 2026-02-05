@@ -98,6 +98,15 @@ def _prefer_detect_gpu() -> bool:
     return raw not in {"0", "false", "no", "off"}
 
 
+def _cuda_available() -> bool:
+    try:
+        import torch  # type: ignore
+
+        return bool(torch.cuda.is_available())
+    except Exception:
+        return False
+
+
 async def run_image_to_text_pipeline(
     image_url: str,
     *,
@@ -107,6 +116,7 @@ async def run_image_to_text_pipeline(
         raise ValueError("image_url is required")
 
     with tempfile.TemporaryDirectory(prefix="job_image_to_text_") as tmp:
+        use_gpu = _cuda_available()
         tmp_dir = Path(tmp)
         input_image = _read_image_from_url(image_url, tmp_dir)
         out_yolox = tmp_dir / "out_yolox"
@@ -125,13 +135,16 @@ async def run_image_to_text_pipeline(
             _repo_path("results", "yolox_tiny_bpmn.py"),
             "--ckpt",
             _repo_path("results", "best_ckpt.pth"),
-            "--fp16",
+            "--device",
+            "gpu" if use_gpu else "cpu",
             "--conf",
             "0.4",
             "--lang",
             "ru",
             "--no-text",
         ]
+        if use_gpu:
+            ensemble_cmd.append("--fp16")
         await _run_subprocess(ensemble_cmd, cwd=REPO_ROOT)
 
         detect_cmd = [
@@ -145,7 +158,7 @@ async def run_image_to_text_pipeline(
             "ru",
             "--download-enabled",
         ]
-        if _prefer_detect_gpu():
+        if _prefer_detect_gpu() and use_gpu:
             detect_cmd.append("--gpu")
         try:
             await _run_subprocess(detect_cmd, cwd=REPO_ROOT)
@@ -248,6 +261,7 @@ async def run_image_to_text_pipeline(
             "text": str(narration.get("text", "")),
             "narrator_mode": narrator_mode,
             "narrator_status": str(narration.get("status", "unknown")),
+            "ocr_engine": "tesseract",
             "ocr_text": _extract_text_from_ocr_json(ocr_json_path),
         }
 
