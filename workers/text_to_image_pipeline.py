@@ -58,12 +58,13 @@ def run_text_to_image_pipeline(prompt: str) -> dict[str, Any]:
     mermaid_mmd = artifacts.get("mermaid_mmd") if isinstance(artifacts.get("mermaid_mmd"), str) else None
     plantuml_puml = artifacts.get("plantuml_puml") if isinstance(artifacts.get("plantuml_puml"), str) else None
 
-    def _with_sources(image_url: str) -> dict[str, Any]:
+    def _with_sources(image_url: str | None, *, render_warning: str | None = None) -> dict[str, Any]:
         return {
             "image_url": image_url,
             "bpmn_xml": bpmn_xml,
             "mermaid_mmd": mermaid_mmd,
             "plantuml_puml": plantuml_puml,
+            "render_warning": render_warning,
         }
 
     # Primary path: orchestrator render output.
@@ -95,12 +96,18 @@ def run_text_to_image_pipeline(prompt: str) -> dict[str, Any]:
 
     first_issue = _first_issue(issues)
     rerender_part = "; ".join(rerender_errors) if rerender_errors else "rerender_not_attempted"
-    raise RuntimeError(
+    warning = (
         "Text-to-image pipeline did not return image output. "
         f"orchestrator_status={out.get('status', 'unknown')}; "
         f"orchestrator_issue={first_issue}; "
         f"rerender={rerender_part}"
     )
+
+    # If textual artifacts are available, keep job successful so frontend can show/edit Mermaid preview.
+    if any(isinstance(v, str) and v.strip() for v in (mermaid_mmd, bpmn_xml, plantuml_puml)):
+        return _with_sources(None, render_warning=warning)
+
+    raise RuntimeError(warning)
 
 
 def _main() -> None:

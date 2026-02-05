@@ -12,6 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     nodejs \
     npm \
+    chromium \
+    default-jre-headless \
+    graphviz \
+    plantuml \
     tesseract-ocr \
     tesseract-ocr-rus \
     libgl1 \
@@ -19,9 +23,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
 WORKDIR /app
 
 COPY requirements-worker.txt /tmp/requirements-worker.txt
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r /tmp/requirements-worker.txt
+
+# Render toolchain for text->image pipelines.
+RUN npm install -g @mermaid-js/mermaid-cli
 
 CMD ["python", "workers/job_worker.py", "--start-id", "0-0"]

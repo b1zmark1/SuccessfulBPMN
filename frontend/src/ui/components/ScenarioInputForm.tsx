@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
+﻿import { useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import type { SupportedJobType } from "../../shared/jobTypes";
 import { SCENARIO_REGISTRY } from "../jobRegistry";
 
@@ -72,7 +72,6 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
 
     setFileName(file.name);
     try {
-      // Keep original bytes as-is; no frontend resize/compression.
       const [dataUrl, info] = await Promise.all([readFileAsDataUrl(file), readImageInfo(file)]);
       setFileDataUrl(dataUrl);
       setFileInfo(info);
@@ -91,35 +90,25 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
   const handleDrop = async (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setIsDragActive(false);
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
     const file = event.dataTransfer.files?.[0] ?? null;
     await applyFile(file);
   };
 
   const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
-    if (!disabled) {
-      setIsDragActive(true);
-    }
+    if (!disabled) setIsDragActive(true);
   };
 
-  const handleDragLeave = () => {
-    setIsDragActive(false);
-  };
+  const handleDragLeave = () => setIsDragActive(false);
 
   const handleUseSampleImage = async () => {
-    if (!config.sampleImageUrl || disabled) {
-      return;
-    }
+    if (!config.sampleImageUrl || disabled) return;
 
     try {
       setFormError(null);
       const response = await fetch(config.sampleImageUrl);
-      if (!response.ok) {
-        throw new Error(`Не удалось загрузить пример диаграммы (${response.status})`);
-      }
+      if (!response.ok) throw new Error(`Не удалось загрузить пример диаграммы (${response.status})`);
 
       const blob = await response.blob();
       const sampleFileName = config.sampleImageUrl.split("/").pop() || "diagram1.jpg";
@@ -137,12 +126,7 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
     setFormError(null);
 
     try {
-      const baseMeta = config.buildMeta({
-        textValue: value,
-        fileName,
-        fileDataUrl,
-        narratorMode,
-      });
+      const baseMeta = config.buildMeta({ textValue: value, fileName, fileDataUrl, narratorMode });
       const meta =
         scenario === "image_to_text"
           ? {
@@ -211,8 +195,8 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
                 onChange={(event) => setNarratorMode(event.target.value as "text" | "table")}
                 disabled={disabled}
               >
-                <option value="text">Преобразовать в текстовое описание</option>
-                <option value="table">Преобразовать в таблицу</option>
+                <option value="table">Режим отображения: таблица</option>
+                <option value="text">Режим отображения: текст</option>
               </select>
             </label>
             {fileName ? (

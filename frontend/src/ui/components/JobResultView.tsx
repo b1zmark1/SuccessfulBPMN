@@ -1,24 +1,33 @@
-import type { JobResponse, SupportedJobType } from "../../shared/jobTypes";
+﻿import type { JobResponse, SupportedJobType } from "../../shared/jobTypes";
+import { MermaidEditorPreview } from "./MermaidEditorPreview";
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
 }
 
 function extractImageSrc(result: Record<string, unknown> | null): string | null {
-  if (!result) {
-    return null;
-  }
+  if (!result) return null;
   for (const key of ["image_url", "url", "download_url", "file_url", "image"]) {
     const value = result[key];
-    if (typeof value === "string" && value.trim().length > 0) {
-      return value;
-    }
+    if (typeof value === "string" && value.trim().length > 0) return value;
   }
   return null;
 }
 
 function textDownloadHref(content: string, mime: string): string {
   return `data:${mime};charset=utf-8,${encodeURIComponent(content)}`;
+}
+
+function maybeFixMojibake(value: string): string {
+  try {
+    const bytes = Uint8Array.from(value, (char) => char.charCodeAt(0) & 0xff);
+    const decoded = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    const sourceCyr = (value.match(/[А-Яа-яЁё]/g) ?? []).length;
+    const decodedCyr = (decoded.match(/[А-Яа-яЁё]/g) ?? []).length;
+    return decodedCyr > sourceCyr ? decoded : value;
+  } catch {
+    return value;
+  }
 }
 
 function ResultAsJson({ result }: { result: Record<string, unknown> | null }) {
@@ -31,9 +40,8 @@ interface JobResultViewProps {
 }
 
 export function JobResultView({ scenario, job }: JobResultViewProps) {
-  if (!job) {
-    return null;
-  }
+  if (!job) return null;
+
   if (job.status === "error") {
     return (
       <section className="result-panel">
@@ -42,13 +50,12 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
       </section>
     );
   }
-  if (job.status !== "done") {
-    return null;
-  }
+
+  if (job.status !== "done") return null;
 
   const result = asRecord(job.result);
   if (scenario === "image_to_text") {
-    const textValue = typeof result?.text === "string" ? result.text : null;
+    const textValue = typeof result?.text === "string" ? maybeFixMojibake(result.text) : null;
     return (
       <section className="result-panel">
         <h3>Распознанный текст</h3>
@@ -57,51 +64,46 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
     );
   }
 
+  const bpmnXml = typeof result?.bpmn_xml === "string" ? maybeFixMojibake(result.bpmn_xml) : null;
+  const mermaidMmd = typeof result?.mermaid_mmd === "string" ? maybeFixMojibake(result.mermaid_mmd) : null;
+  const plantumlPuml = typeof result?.plantuml_puml === "string" ? maybeFixMojibake(result.plantuml_puml) : null;
+  const renderWarning = typeof result?.render_warning === "string" ? maybeFixMojibake(result.render_warning) : null;
   const imageSrc = extractImageSrc(result);
-  const bpmnXml = typeof result?.bpmn_xml === "string" ? result.bpmn_xml : null;
-  const mermaidMmd = typeof result?.mermaid_mmd === "string" ? result.mermaid_mmd : null;
-  const plantumlPuml = typeof result?.plantuml_puml === "string" ? result.plantuml_puml : null;
 
   return (
     <section className="result-panel">
-      <h3>Сгенерированное изображение</h3>
-      {imageSrc ? (
-        <>
-          <img className="image-preview" src={imageSrc} alt="Сгенерированное изображение" />
+      <h3>Результат text-to-image</h3>
+      {renderWarning ? <p className="state-text state-text--error">{renderWarning}</p> : null}
+      {mermaidMmd ? <MermaidEditorPreview initialValue={mermaidMmd} /> : null}
+
+      <div className="result-actions">
+        {imageSrc ? (
           <a className="action-button action-button--secondary" href={imageSrc} download>
-            Скачать изображение
+            Скачать PNG BPMN
           </a>
-          {bpmnXml ? (
-            <a
-              className="action-button action-button--secondary"
-              href={textDownloadHref(bpmnXml, "application/xml")}
-              download="diagram.bpmn"
-            >
-              Скачать .bpmn
-            </a>
-          ) : null}
-          {mermaidMmd ? (
-            <a
-              className="action-button action-button--secondary"
-              href={textDownloadHref(mermaidMmd, "text/plain")}
-              download="diagram.mmd"
-            >
-              Скачать .mmd
-            </a>
-          ) : null}
-          {plantumlPuml ? (
-            <a
-              className="action-button action-button--secondary"
-              href={textDownloadHref(plantumlPuml, "text/plain")}
-              download="diagram.puml"
-            >
-              Скачать .puml
-            </a>
-          ) : null}
-        </>
-      ) : (
-        <ResultAsJson result={result} />
-      )}
+        ) : null}
+        {bpmnXml ? (
+          <a
+            className="action-button action-button--secondary"
+            href={textDownloadHref(bpmnXml, "application/xml")}
+            download="diagram.bpmn"
+          >
+            Скачать .bpmn
+          </a>
+        ) : null}
+        {plantumlPuml ? (
+          <a
+            className="action-button action-button--secondary"
+            href={textDownloadHref(plantumlPuml, "text/plain")}
+            download="diagram.puml"
+          >
+            Скачать .puml
+          </a>
+        ) : null}
+      </div>
+
+      {!mermaidMmd && imageSrc ? <img className="image-preview" src={imageSrc} alt="Сгенерированное изображение" /> : null}
+      {!mermaidMmd && !imageSrc ? <ResultAsJson result={result} /> : null}
     </section>
   );
 }

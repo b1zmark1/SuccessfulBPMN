@@ -258,7 +258,7 @@ async def run_image_to_text_pipeline(
         )
 
         return {
-            "text": str(narration.get("text", "")),
+            "text": _fix_mojibake(str(narration.get("text", ""))),
             "narrator_mode": narrator_mode,
             "narrator_status": str(narration.get("status", "unknown")),
             "ocr_engine": "tesseract",

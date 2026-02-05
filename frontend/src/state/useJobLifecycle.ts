@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { createJob, getJob } from "../api/jobsApi";
 import { TERMINAL_STATUSES, type JobResponse, type SupportedJobType } from "../shared/jobTypes";
 
@@ -47,6 +47,7 @@ export function useJobLifecycle(deps: JobLifecycleDeps = {}): JobLifecycleState 
   const [isPolling, setIsPolling] = useState(false);
   const [requestError, setRequestError] = useState<string | null>(null);
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const createInFlightRef = useRef(false);
 
   const clearPollTimer = useCallback(() => {
     if (pollTimeoutRef.current) {
@@ -65,6 +66,10 @@ export function useJobLifecycle(deps: JobLifecycleDeps = {}): JobLifecycleState 
   }, [clearPollTimer]);
 
   const submitJob = useCallback(async (input: JobSubmissionInput) => {
+    if (createInFlightRef.current) {
+      return;
+    }
+    createInFlightRef.current = true;
     clearPollTimer();
     setIsCreating(true);
     setIsPolling(false);
@@ -83,6 +88,7 @@ export function useJobLifecycle(deps: JobLifecycleDeps = {}): JobLifecycleState 
       setRequestError(normalizeError(error));
     } finally {
       setIsCreating(false);
+      createInFlightRef.current = false;
     }
   }, [clearPollTimer, createJobFn]);
 
@@ -134,3 +140,5 @@ export function useJobLifecycle(deps: JobLifecycleDeps = {}): JobLifecycleState 
     reset,
   };
 }
+
+

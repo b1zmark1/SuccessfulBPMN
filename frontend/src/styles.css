@@ -356,6 +356,44 @@ body {
   font-size: 0.85rem;
 }
 
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.mermaid-panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fbfbfa;
+  padding: 12px;
+}
+
+.mermaid-panel h4 {
+  margin: 0 0 8px;
+}
+
+.mermaid-editor {
+  margin-bottom: 8px;
+  min-height: 220px;
+  font-family: "Roboto Mono", "Consolas", monospace;
+}
+
+.mermaid-preview {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  overflow: auto;
+  background: #fff;
+}
+
+.mermaid-preview svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 @media (max-width: 900px) {
   .app-shell {
     min-height: auto;
