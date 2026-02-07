@@ -12,6 +12,7 @@ import torch
 
 from preprocess import PreprocessConfig, preprocess
 from detect import DetectionConfig, detect_text_boxes, draw_text_boxes
+from paddle_ocr_adapter import load_paddle_ocr_blocks, blocks_to_text_detections
 
 
 def _add_yolox_to_path(repo_root: str) -> None:
@@ -170,6 +171,7 @@ def main() -> None:
     ap.add_argument("--gpu-text", action="store_true")
     ap.add_argument("--model-dir", type=str, default=None)
     ap.add_argument("--no-download", action="store_true")
+    ap.add_argument("--paddle-ocr-json", type=str, default=None, help="Use PaddleOCR blocks JSON instead of EasyOCR")
     args = ap.parse_args()
 
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -221,13 +223,15 @@ def main() -> None:
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    download_enabled = not bool(args.no_download)
-    d_cfg = DetectionConfig(
-        lang=args.lang,
-        gpu=bool(args.gpu_text),
-        download_enabled=bool(download_enabled),
-        model_storage_directory=args.model_dir,
-    )
+    d_cfg = None
+    if not args.paddle_ocr_json:
+        download_enabled = not bool(args.no_download)
+        d_cfg = DetectionConfig(
+            lang=args.lang,
+            gpu=bool(args.gpu_text),
+            download_enabled=bool(download_enabled),
+            model_storage_directory=args.model_dir,
+        )
 
     pre_cfg = PreprocessConfig()
     t0 = time.time()
@@ -247,9 +251,29 @@ def main() -> None:
         text_overlay = None
         ensemble_overlay = None
         if not args.no_text:
-            text_det = detect_text_boxes(model_bgr.copy(), d_cfg)
-            text_overlay = draw_text_boxes(model_bgr.copy(), text_det)
-            ensemble_overlay = draw_text_boxes(yolox_overlay.copy(), text_det)
+            if args.paddle_ocr_json:
+                blocks = load_paddle_ocr_blocks(args.paddle_ocr_json)
+                text_dets_from_paddle = blocks_to_text_detections(blocks)
+                text_det = {
+                    "boxes": [
+                        {
+                            "bbox": d["bbox_xyxy"],
+                            "poly": [
+                                [d["bbox_xyxy"][0], d["bbox_xyxy"][1]],
+                                [d["bbox_xyxy"][2], d["bbox_xyxy"][1]],
+                                [d["bbox_xyxy"][2], d["bbox_xyxy"][3]],
+                                [d["bbox_xyxy"][0], d["bbox_xyxy"][3]],
+                            ],
+                        }
+                        for d in text_dets_from_paddle
+                    ]
+                }
+                text_overlay = draw_text_boxes(model_bgr.copy(), text_det)
+                ensemble_overlay = draw_text_boxes(yolox_overlay.copy(), text_det)
+            else:
+                text_det = detect_text_boxes(model_bgr.copy(), d_cfg)
+                text_overlay = draw_text_boxes(model_bgr.copy(), text_det)
+                ensemble_overlay = draw_text_boxes(yolox_overlay.copy(), text_det)
 
         rel = os.path.relpath(img_path, str(images_path)) if images_path.is_dir() else os.path.basename(img_path)
         out_img_dir = out_dir / os.path.dirname(rel)
@@ -263,23 +287,27 @@ def main() -> None:
 
         text_dets = []
         if text_det is not None:
-            for b in text_det.get("boxes", []):
-                bbox = b.get("bbox", None)
-                if not isinstance(bbox, list) or len(bbox) != 4:
-                    continue
-                x1, y1, x2, y2 = [float(x) for x in bbox]
-                score = b.get("score", None)
-                score_out = float(score) if isinstance(score, (int, float)) else None
-                text_dets.append(
-                    {
-                        "class_id": -1,
-                        "class_name": "text",
-                        "score": score_out,
-                        "bbox_xyxy": [x1, y1, x2, y2],
-                        "bbox_xywh": [x1, y1, max(0.0, x2 - x1), max(0.0, y2 - y1)],
-                        "source": "easyocr_detect",
-                    }
-                )
+            if args.paddle_ocr_json:
+                blocks = load_paddle_ocr_blocks(args.paddle_ocr_json)
+                text_dets = blocks_to_text_detections(blocks)
+            else:
+                for b in text_det.get("boxes", []):
+                    bbox = b.get("bbox", None)
+                    if not isinstance(bbox, list) or len(bbox) != 4:
+                        continue
+                    x1, y1, x2, y2 = [float(x) for x in bbox]
+                    score = b.get("score", None)
+                    score_out = float(score) if isinstance(score, (int, float)) else None
+                    text_dets.append(
+                        {
+                            "class_id": -1,
+                            "class_name": "text",
+                            "score": score_out,
+                            "bbox_xyxy": [x1, y1, x2, y2],
+                            "bbox_xywh": [x1, y1, max(0.0, x2 - x1), max(0.0, y2 - y1)],
+                            "source": "easyocr_detect",
+                        }
+                    )
 
         result = {
             "coord_space": "model",

@@ -19,6 +19,9 @@
 - openvino
 - tabulate
 - easyocr
+- rapidocr-onnxruntime
+- onnxruntime
+- huggingface_hub
 - pytesseract
 - llama-cpp-python
 
@@ -57,7 +60,7 @@ docker compose exec worker sh -lc "cd /app/tools/bpmn_dataset && npx puppeteer b
   - `narrator/qwen2.5-7b-instruct-q5_k_m-00001-of-00002.gguf`
 
 ## OCR engine
-- Worker использует `tesseract` для `image_to_text`.
+- Worker использует `rapidocr-onnxruntime` (ONNX PaddleOCR) для `image_to_text`.
 
 ## GPU/CPU auto mode
 - Worker автоматически пытается использовать GPU для этапов детекции, если CUDA доступна.

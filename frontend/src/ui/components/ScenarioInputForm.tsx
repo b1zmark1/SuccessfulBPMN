@@ -56,7 +56,7 @@ export function ScenarioInputForm({ scenario, disabled, onSubmit }: ScenarioInpu
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileDataUrl, setFileDataUrl] = useState<string | null>(null);
   const [fileInfo, setFileInfo] = useState<ImageInfo | null>(null);
-  const [narratorMode, setNarratorMode] = useState<"text" | "table">("text");
+  const [narratorMode, setNarratorMode] = useState<"text" | "table">("table");
   const [isDragActive, setIsDragActive] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);

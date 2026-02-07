@@ -7,13 +7,18 @@ import json
 import os
 import sys
 import tempfile
+import time
+import shutil
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
+import cv2
+
 from graph_builder.pipeline import build_graph_from_ensemble
 from narrator.orchestrator import run_narration
+from preprocanddetect.preprocess import PreprocessConfig, preprocess
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PYTHON_EXECUTABLE = sys.executable
@@ -95,11 +100,6 @@ def _narrator_output_format(mode: str) -> str:
     return "narrative"
 
 
-def _prefer_detect_gpu() -> bool:
-    raw = os.getenv("DETECT_RES_GPU", "1").strip().lower()
-    return raw not in {"0", "false", "no", "off"}
-
-
 def _cuda_available() -> bool:
     try:
         import torch  # type: ignore
@@ -117,7 +117,17 @@ async def run_image_to_text_pipeline(
     if not isinstance(image_url, str) or not image_url.strip():
         raise ValueError("image_url is required")
 
-    with tempfile.TemporaryDirectory(prefix="job_image_to_text_") as tmp:
+    keep_tmp = os.getenv("IMAGE_TO_TEXT_KEEP_TMP", "0").strip().lower() in {"1", "true", "yes", "on"}
+    sleep_sec = float(os.getenv("IMAGE_TO_TEXT_SLEEP_SEC", "0") or 0)
+    persist_dir = os.getenv("IMAGE_TO_TEXT_PERSIST_DIR", "/app/result/last_job").strip()
+    if keep_tmp:
+        tmp = tempfile.mkdtemp(prefix="job_image_to_text_")
+        tmp_ctx = None
+    else:
+        tmp_ctx = tempfile.TemporaryDirectory(prefix="job_image_to_text_")
+        tmp = tmp_ctx.__enter__()
+
+    try:
         use_gpu = _cuda_available()
         tmp_dir = Path(tmp)
         input_image = _read_image_from_url(image_url, tmp_dir)
@@ -149,66 +159,36 @@ async def run_image_to_text_pipeline(
             ensemble_cmd.append("--fp16")
         await _run_subprocess(ensemble_cmd, cwd=REPO_ROOT)
 
-        detect_cmd = [
-            PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "detect_res.py"),
-            "--input",
-            str(input_image),
-            "--outdir",
-            str(out_text),
-            "--lang",
-            "ru",
-            "--download-enabled",
-        ]
-        if _prefer_detect_gpu() and use_gpu:
-            detect_cmd.append("--gpu")
-        try:
-            await _run_subprocess(detect_cmd, cwd=REPO_ROOT)
-        except RuntimeError:
-            if "--gpu" not in detect_cmd:
-                raise
-            # Keep behavior close to teammate's flow, but do a safe CPU fallback for non-GPU workers.
-            detect_cmd_no_gpu = [arg for arg in detect_cmd if arg != "--gpu"]
-            await _run_subprocess(detect_cmd_no_gpu, cwd=REPO_ROOT)
-
+        out_text.mkdir(parents=True, exist_ok=True)
+        pre_cfg = PreprocessConfig()
+        pre = preprocess(str(input_image), pre_cfg)
         model_image_path = out_text / "00_model.png"
-        blocks_path = out_text / "text_blocks.json"
-        if not model_image_path.exists() or not blocks_path.exists():
-            raise FileNotFoundError("Text detection artifacts not found after detect_res.py")
+        ok = cv2.imwrite(str(model_image_path), pre["model_bgr"])
+        if not ok:
+            raise RuntimeError(f"Failed to write model image: {model_image_path}")
 
         ocr_cmd = [
             PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "ocr_tesseract_fast.py"),
+            _repo_path("preprocanddetect", "ocr_paddle_blocks.py"),
             "--input",
-            str(input_image),
-            "--blocks",
-            str(blocks_path),
-            "--outdir",
-            str(out_ocr),
+            str(model_image_path),
+            "--out",
+            str(out_ocr / "ocr.json"),
             "--lang",
-            "rus",
-            "--max-side",
-            "4096",
+            "ru",
+            "--device",
+            "cpu",
+            "--backend",
+            "rapidocr",
             "--upscale-factor",
             "2.0",
-            "--pad-px",
-            "10",
-            "--inner-crop-px",
-            "0",
-            "--psm-block",
-            "6",
-            "--psm-single",
-            "7",
-            "--psm-raw-line",
-            "13",
+            "--max-side-limit",
+            "4000",
+            "--min-line-score",
+            "0.3",
             "--try-rotate-90",
-            "--refine-text-bbox",
-            "--cc-max-area-frac",
-            "0.18",
-            "--cc-min-area-px",
-            "20",
-            "--jobs",
-            "4",
+            "--rapidocr-det",
+            "detection/v3/det.onnx",
         ]
         await _run_subprocess(ocr_cmd, cwd=REPO_ROOT)
 
@@ -221,6 +201,7 @@ async def run_image_to_text_pipeline(
         if not ensemble_json_path.exists():
             raise FileNotFoundError(f"Ensemble file not found: {ensemble_json_path}")
 
+        blocks_path = ocr_json_path
         label_cmd = [
             PYTHON_EXECUTABLE,
             _repo_path("preprocanddetect", "label_res.py"),
@@ -259,13 +240,40 @@ async def run_image_to_text_pipeline(
             },
         )
 
-        return {
+        result = {
             "text": _fix_mojibake(str(narration.get("text", ""))),
             "narrator_mode": narrator_mode,
             "narrator_status": str(narration.get("status", "unknown")),
-            "ocr_engine": "tesseract",
+            "ocr_engine": "rapidocr",
             "ocr_text": _extract_text_from_ocr_json(ocr_json_path),
         }
+        # Persist artifacts for debugging
+        if persist_dir:
+            dst = Path(persist_dir)
+            dst.mkdir(parents=True, exist_ok=True)
+            try:
+                if ocr_json_path.exists():
+                    shutil.copy2(ocr_json_path, dst / "ocr.json")
+                if out_labeled.exists():
+                    dst_labeled = dst / "out_labeled"
+                    if dst_labeled.exists():
+                        shutil.rmtree(dst_labeled)
+                    shutil.copytree(out_labeled, dst_labeled)
+                if model_image_path.exists():
+                    shutil.copy2(model_image_path, dst / "00_model.png")
+            except Exception:
+                # Non-fatal: keep pipeline running even if persistence fails
+                pass
+
+        if keep_tmp:
+            result["debug_tmp_dir"] = str(tmp_dir)
+
+        if sleep_sec > 0:
+            time.sleep(sleep_sec)
+        return result
+    finally:
+        if tmp_ctx is not None:
+            tmp_ctx.__exit__(None, None, None)
 
 
 async def _main() -> None:

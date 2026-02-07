@@ -160,6 +160,13 @@ def _merge_cluster_nodes(
     node_ids = [str(n.get("id", "")) for n in cluster_nodes]
     det_ids = [str(n.get("det_id", "")) for n in cluster_nodes]
     original_idx = min(int(n.get("original_index", 10**12)) for n in cluster_nodes)
+    ordered_nodes = sorted(cluster_nodes, key=lambda n: int(n.get("original_index", 10**12)))
+    texts = []
+    for n in ordered_nodes:
+        t = n.get("text")
+        if isinstance(t, str) and t.strip():
+            texts.append(t.strip())
+    merged_text = " ".join(texts) if texts else None
     source = str(cluster_nodes[0].get("source", "easyocr"))
     score = max(float(n.get("score", 0.0)) for n in cluster_nodes)
 
@@ -186,7 +193,7 @@ def _merge_cluster_nodes(
         "center": center,
         "role": "unknown",
         "container_id": container_id,
-        "text": None,
+        "text": merged_text,
         "class_name": "text",
         "source": source,
         "score": score,

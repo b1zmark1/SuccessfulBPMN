@@ -1,1060 +1,2538 @@
 {
   "coord_space": "auto",
-  "engine": "tesseract_fast",
+  "engine": "rapidocr_fullimage_detect_v1",
   "ocr_config": {
-    "lang": "rus",
-    "pad_px": 10,
-    "inner_crop_px": 0,
-    "upscale_factor": 2.0,
+    "lang": "ru",
+    "device": "cpu",
+    "backend": "rapidocr",
+    "upscale_factor": 3.0,
     "try_rotate_90": true,
-    "psm_block": 6,
-    "psm_single": 7,
-    "psm_raw_line": 13,
-    "conf_ok": 0.4,
-    "jobs": 4,
-    "max_side": 4096,
-    "refine_text_bbox": true,
-    "cc_max_area_frac": 0.18,
-    "cc_min_area_px": 20,
-    "use_whitelist": false
+    "min_line_score": 0.3,
+    "use_doc_orientation_classify": false,
+    "use_doc_unwarping": false,
+    "use_textline_orientation": false,
+    "text_rec_score_thresh": 0.0
   },
   "blocks": [
     {
       "block_id": 1,
-      "seg_ids": [
-        1
-      ],
-      "word_ids": [
-        40
-      ],
-      "bbox": [
-        1757,
-        0,
-        1799,
-        16
-      ],
       "bbox_xyxy": [
-        1757,
+        1756,
         0,
-        1799,
+        1800,
         16
       ],
-      "text": "эль",
-      "confidence": 0.17,
+      "text": "Зритель",
+      "confidence": 0.8228175863623619,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "invert_adaptive",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.17,
-          "score": 0.29000000000000004
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8228175863623619,
+          "score": 0.8228175863623619,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 2,
-      "seg_ids": [
-        2
-      ],
-      "word_ids": [
-        35
-      ],
-      "bbox": [
-        1538,
-        74,
-        1638,
-        82
-      ],
       "bbox_xyxy": [
-        1538,
-        74,
-        1638,
-        82
+        1758,
+        1,
+        1800,
+        15
       ],
-      "text": "—— Момизитация выключена——",
-      "confidence": 0.4766666666666666,
+      "text": "Зритель",
+      "confidence": 0.8634587675333023,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 7,
-          "conf": 0.4766666666666666,
-          "score": 1.1066666666666667
+          "conf": 0.8634587675333023,
+          "score": 0.8634587675333023,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 3,
-      "seg_ids": [
-        3
-      ],
-      "word_ids": [
-        21
-      ],
-      "bbox": [
-        18,
-        92,
-        28,
-        188
-      ],
       "bbox_xyxy": [
-        18,
-        92,
-        28,
-        188
+        1537,
+        73,
+        1640,
+        84
       ],
-      "text": "2\n5\n=\nЕ\nр-]\n5\n®\nЯ\n8",
-      "confidence": 0.63,
+      "text": "-Монизитация выключена",
+      "confidence": 0.9424786204877107,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.63,
-          "score": 0.9299999999999999
+          "conf": 0.9424786204877107,
+          "score": 0.9424786204877107,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 4,
-      "seg_ids": [
-        4,
-        6,
-        7
-      ],
-      "word_ids": [
-        8,
-        13,
-        29
-      ],
-      "bbox": [
-        342,
-        108,
-        434,
-        144
-      ],
       "bbox_xyxy": [
-        342,
-        108,
-        434,
-        144
+        1536,
+        73,
+        1593,
+        86
       ],
-      "text": "Заполнить все поля\nназвание, описание\nтеги, видимость",
-      "confidence": 0.9328571428571429,
+      "text": "-Монизитация",
+      "confidence": 0.9033075937857995,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.9328571428571429,
-          "score": 2.1228571428571428
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9033075937857995,
+          "score": 0.9033075937857995,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 5,
-      "seg_ids": [
-        5
-      ],
-      "word_ids": [
-        12
-      ],
-      "bbox": [
-        180,
-        118,
-        256,
-        132
-      ],
       "bbox_xyxy": [
-        180,
-        118,
+        1592,
+        75,
+        1639,
+        83
+      ],
+      "text": "быключена",
+      "confidence": 0.8352911353111268,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8352911353111268,
+          "score": 0.8352911353111268,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 6,
+      "bbox_xyxy": [
+        16,
+        90,
+        31,
+        189
+      ],
+      "text": "Создатель контента",
+      "confidence": 0.9294075307093168,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9294075307093168,
+          "score": 0.9294075307093168,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 7,
+      "bbox_xyxy": [
+        17,
+        90,
+        31,
+        188
+      ],
+      "text": "Создатель контента",
+      "confidence": 0.9467130052415949,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9467130052415949,
+          "score": 0.9467130052415949,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 8,
+      "bbox_xyxy": [
+        341,
+        107,
+        433,
+        121
+      ],
+      "text": "Заполнить все поля,",
+      "confidence": 0.9374974519014359,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9374974519014359,
+          "score": 0.9374974519014359,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 9,
+      "bbox_xyxy": [
+        342,
+        107,
+        434,
+        120
+      ],
+      "text": "Заполнить все поля,",
+      "confidence": 0.9271654963493348,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9271654963493348,
+          "score": 0.9271654963493348,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 10,
+      "bbox_xyxy": [
+        178,
+        117,
+        255,
+        133
+      ],
+      "text": "Загрузить видео",
+      "confidence": 0.9169665090739727,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9169665090739727,
+          "score": 0.9169665090739727,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 11,
+      "bbox_xyxy": [
+        179,
+        117,
         256,
         132
       ],
       "text": "Загрузить видео",
-      "confidence": 0.955,
+      "confidence": 0.9349693208932877,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 7,
-          "conf": 0.955,
-          "score": 1.405
+          "conf": 0.9349693208932877,
+          "score": 0.9349693208932877,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
-    },
-    {
-      "block_id": 6,
-      "seg_ids": [
-        8
-      ],
-      "word_ids": [
-        3,
-        43
-      ],
-      "bbox": [
-        778,
-        146,
-        930,
-        162
-      ],
-      "bbox_xyxy": [
-        778,
-        146,
-        930,
-        162
-      ],
-      "text": "Сообщение об ублешной загрузке\n|",
-      "confidence": 0.866,
-      "confidence_available": true,
-      "chosen": [
-        {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.866,
-          "score": 1.6860000000000002
-        }
-      ],
-      "raw": []
-    },
-    {
-      "block_id": 7,
-      "seg_ids": [
-        9
-      ],
-      "word_ids": [
-        20,
-        28,
-        38,
-        47
-      ],
-      "bbox": [
-        1014,
-        146,
-        1334,
-        162
-      ],
-      "bbox_xyxy": [
-        1014,
-        146,
-        1334,
-        162
-      ],
-      "text": "и 24\nСообщение о запрете мометизации и ограмичении 18+ Монизитация включена\n| |\nН",
-      "confidence": 0.7235714285714286,
-      "confidence_available": true,
-      "chosen": [
-        {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.7235714285714286,
-          "score": 1.8435714285714284
-        }
-      ],
-      "raw": []
-    },
-    {
-      "block_id": 8,
-      "seg_ids": [
-        10
-      ],
-      "word_ids": [
-        17
-      ],
-      "bbox": [
-        46,
-        148,
-        118,
-        162
-      ],
-      "bbox_xyxy": [
-        46,
-        148,
-        118,
-        162
-      ],
-      "text": "‚| Событие старта\n|",
-      "confidence": 0.78,
-      "confidence_available": true,
-      "chosen": [
-        {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.78,
-          "score": 1.13
-        }
-      ],
-      "raw": []
-    },
-    {
-      "block_id": 9,
-      "seg_ids": [
-        11,
-        13
-      ],
-      "word_ids": [
-        6,
-        23,
-        31
-      ],
-      "bbox": [
-        1624,
-        186,
-        1718,
-        220
-      ],
-      "bbox_xyxy": [
-        1624,
-        186,
-        1718,
-        220
-      ],
-      "text": "Выбрать время\nикации и нажать\nкнопку опубликовать",
-      "confidence": 0.9414285714285714,
-      "confidence_available": true,
-      "chosen": [
-        {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.9414285714285714,
-          "score": 2.1314285714285712
-        }
-      ],
-      "raw": []
-    },
-    {
-      "block_id": 10,
-      "seg_ids": [
-        12,
-        14
-      ],
-      "word_ids": [
-        14,
-        22
-      ],
-      "bbox": [
-        1456,
-        192,
-        1544,
-        216
-      ],
-      "bbox_xyxy": [
-        1456,
-        192,
-        1544,
-        216
-      ],
-      "text": "Ввод данных своей\nбанковской карты",
-      "confidence": 0.946,
-      "confidence_available": true,
-      "chosen": [
-        {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.946,
-          "score": 1.906
-        }
-      ],
-      "raw": []
-    },
-    {
-      "block_id": 11,
-      "seg_ids": [
-        15
-      ],
-      "word_ids": [
-        51
-      ],
-      "bbox": [
-        688,
-        344,
-        722,
-        356
-      ],
-      "bbox_xyxy": [
-        688,
-        344,
-        722,
-        356
-      ],
-      "text": "<=\nВсё ок",
-      "confidence": 0.65,
-      "confidence_available": true,
-      "chosen": [
-        {
-          "engine": "tesseract",
-          "variant": "invert_adaptive",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.65,
-          "score": 0.81
-        }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 12,
-      "seg_ids": [
-        16,
-        23,
-        29,
-        36,
-        38
-      ],
-      "word_ids": [
-        25,
-        32,
-        36,
-        39,
-        45,
-        56
-      ],
-      "bbox": [
-        920,
-        346,
-        998,
-        414
-      ],
       "bbox_xyxy": [
-        920,
-        346,
-        998,
-        414
+        342,
+        119,
+        434,
+        130
       ],
-      "text": "количество\nпредупреждений,\nесли больше 3,\nзаблокировать\nаккаунт",
-      "confidence": 0.8928571428571429,
+      "text": "название, описание,",
+      "confidence": 0.9191745907068253,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.8928571428571429,
-          "score": 2.1428571428571432
+          "conf": 0.9191745907068253,
+          "score": 0.9191745907068253,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 13,
-      "seg_ids": [
-        17,
-        27,
-        31
-      ],
-      "word_ids": [
-        2,
-        11,
-        41,
-        42
-      ],
-      "bbox": [
-        1626,
-        346,
-        1716,
-        396
-      ],
       "bbox_xyxy": [
-        1626,
-        346,
-        1716,
-        396
+        342,
+        120,
+        433,
+        130
       ],
-      "text": "о Опубликовать\nвидеоролик со\nвсеми параметрами\nв нужное время",
-      "confidence": 0.8655555555555555,
+      "text": "название, описание,",
+      "confidence": 0.9426533043384552,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.8655555555555555,
-          "score": 2.0855555555555556
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9426533043384552,
+          "score": 0.9426533043384552,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 14,
-      "seg_ids": [
-        18,
-        25,
-        33
-      ],
-      "word_ids": [
-        15,
-        33,
-        52
-      ],
-      "bbox": [
-        1314,
-        351,
-        1382,
-        388
-      ],
       "bbox_xyxy": [
-        1314,
         351,
-        1382,
-        388
+        130,
+        425,
+        142
       ],
-      "text": "з\nПодключение\nмонетизации к\nролику",
-      "confidence": 0.764,
+      "text": "теги, видимость",
+      "confidence": 0.9327101483941078,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.764,
-          "score": 1.7839999999999998
+          "conf": 0.9327101483941078,
+          "score": 0.9327101483941078,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 15,
-      "seg_ids": [
-        19
-      ],
-      "word_ids": [
-        1
-      ],
-      "bbox": [
-        460,
-        352,
-        543,
-        376
-      ],
       "bbox_xyxy": [
-        460,
-        352,
-        543,
-        376
+        1235,
+        144,
+        1332,
+        156
       ],
-      "text": "модерация\nвидео, добавление",
-      "confidence": 0.9566666666666667,
+      "text": "Монизитация включена",
+      "confidence": 0.938333585148766,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.9566666666666667,
-          "score": 1.7366666666666666
+          "conf": 0.938333585148766,
+          "score": 0.938333585148766,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 16,
-      "seg_ids": [
-        20,
-        26,
-        34
-      ],
-      "word_ids": [
-        7,
-        18,
-        37
-      ],
-      "bbox": [
-        1458,
-        352,
-        1542,
-        388
-      ],
       "bbox_xyxy": [
-        1458,
-        352,
-        1542,
-        388
+        1234,
+        144,
+        1332,
+        157
       ],
-      "text": "Проверка данных\nкарты, сохранение\nвсех данных",
-      "confidence": 0.9566666666666667,
+      "text": "Монизитация включена",
+      "confidence": 0.9461964084988549,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.9566666666666667,
-          "score": 2.1266666666666665
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9461964084988549,
+          "score": 0.9461964084988549,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 17,
-      "seg_ids": [
-        21,
-        30
-      ],
-      "word_ids": [
-        19,
-        24
-      ],
-      "bbox": [
-        1120,
-        358,
-        1206,
-        382
-      ],
       "bbox_xyxy": [
-        1120,
-        358,
-        1206,
-        382
+        775,
+        146,
+        930,
+        162
       ],
-      "text": "Ограничение 18+ |\nз конкретном видео",
-      "confidence": 0.9283333333333332,
+      "text": "Сообщение об успешной загрузке",
+      "confidence": 0.9260968527486247,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.9283333333333332,
-          "score": 1.7883333333333333
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9260968527486247,
+          "score": 0.9260968527486247,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 18,
-      "seg_ids": [
-        22
-      ],
-      "word_ids": [
-        50,
-        58
-      ],
-      "bbox": [
-        4,
-        360,
-        26,
-        414
-      ],
       "bbox_xyxy": [
-        4,
-        360,
-        26,
-        414
+        44,
+        147,
+        119,
+        162
       ],
-      "text": "е\\915и5\n1 и гудово ди",
-      "confidence": 0.23600000000000002,
+      "text": "Событие старта",
+      "confidence": 0.9288911898930867,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot90",
-          "psm": 6,
-          "conf": 0.23600000000000002,
-          "score": 0.8059999999999999
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9288911898930867,
+          "score": 0.9288911898930867,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 19,
-      "seg_ids": [
-        24,
-        32
-      ],
-      "word_ids": [
-        10,
-        16,
-        53,
-        61
-      ],
-      "bbox": [
-        344,
-        364,
-        434,
-        400
-      ],
       "bbox_xyxy": [
-        344,
-        364,
-        434,
-        400
+        777,
+        147,
+        928,
+        161
       ],
-      "text": "Сообщение о новом\nвидео, загрузка его\nна серзер",
-      "confidence": 0.94375,
+      "text": "Сообщение об уфпешной загрузке",
+      "confidence": 0.9249346679256808,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.94375,
-          "score": 2.1137499999999996
+          "conf": 0.9249346679256808,
+          "score": 0.9249346679256808,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 20,
-      "seg_ids": [
-        28,
-        35
-      ],
-      "word_ids": [
-        30,
-        44,
-        49,
-        60
-      ],
-      "bbox": [
-        462,
-        370,
-        548,
-        404
-      ],
       "bbox_xyxy": [
-        462,
-        370,
-        548,
-        404
+        1011,
+        147,
+        1235,
+        162
       ],
-      "text": "`“Автомодерация\nвидео, добавление\nавтоматических\nсубтитров",
-      "confidence": 0.828,
+      "text": "Сообщение о запрете монетизации и ограничении 18+",
+      "confidence": 0.9666706609725952,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.828,
-          "score": 1.998
+          "conf": 0.9666706609725952,
+          "score": 0.9666706609725952,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 21,
-      "seg_ids": [
-        37
-      ],
-      "word_ids": [
-        5,
-        55,
-        59
-      ],
-      "bbox": [
-        568,
-        396,
-        760,
-        408
-      ],
       "bbox_xyxy": [
-        568,
-        396,
-        760,
-        408
+        45,
+        148,
+        119,
+        161
       ],
-      "text": "ра томат\nаа",
-      "confidence": 0.19,
+      "text": "Событие старта",
+      "confidence": 0.9294147292772929,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "invert_adaptive",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.19,
-          "score": 0.52
+          "conf": 0.9294147292772929,
+          "score": 0.9294147292772929,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 22,
-      "seg_ids": [
-        39
-      ],
-      "word_ids": [
-        54
-      ],
-      "bbox": [
-        838,
-        534,
-        870,
-        546
-      ],
       "bbox_xyxy": [
-        838,
-        534,
-        870,
-        546
+        1011,
+        148,
+        1235,
+        161
       ],
-      "text": "Всё ок |",
-      "confidence": 0.94,
+      "text": "Сообщение о запрете монетизации и ограничении 18+",
+      "confidence": 0.9644856762886047,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 7,
-          "conf": 0.94,
-          "score": 1.07
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9644856762886047,
+          "score": 0.9644856762886047,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 23,
-      "seg_ids": [
-        40,
-        44
-      ],
-      "word_ids": [
-        48,
-        57
-      ],
-      "bbox": [
-        20,
-        558,
-        30,
-        656
-      ],
       "bbox_xyxy": [
-        20,
-        558,
-        30,
-        656
+        1633,
+        182,
+        1706,
+        200
       ],
-      "text": "е1на1ном до1едэгоу",
-      "confidence": 0.255,
+      "text": "Выбрать время",
+      "confidence": 0.8955859158720288,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot90",
-          "psm": 7,
-          "conf": 0.255,
-          "score": 0.845
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8955859158720288,
+          "score": 0.8955859158720288,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 24,
-      "seg_ids": [
-        41,
-        43
-      ],
-      "word_ids": [
-        26,
-        46
-      ],
-      "bbox": [
-        712,
-        572,
-        790,
-        596
-      ],
       "bbox_xyxy": [
-        712,
-        572,
-        790,
-        596
+        1634,
+        183,
+        1706,
+        197
       ],
-      "text": "Модератор\nоценивает ролик",
-      "confidence": 0.9566666666666667,
+      "text": "Выбрать время",
+      "confidence": 0.9253868630954197,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.9566666666666667,
-          "score": 1.7066666666666668
+          "conf": 0.9253868630954197,
+          "score": 0.9253868630954197,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 25,
-      "seg_ids": [
-        42
-      ],
-      "word_ids": [
-        9
-      ],
-      "bbox": [
-        1038,
-        576,
-        1130,
-        588
-      ],
       "bbox_xyxy": [
-        1038,
-        576,
-        1130,
-        588
+        1454,
+        189,
+        1543,
+        204
       ],
-      "text": "——_ запрещенный ---@",
-      "confidence": 0.48,
+      "text": "Ввод данных своей",
+      "confidence": 0.94131138920784,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "otsu",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.48,
-          "score": 0.84
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.94131138920784,
+          "score": 0.94131138920784,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 26,
-      "seg_ids": [
-        45
-      ],
-      "word_ids": [
-        34
-      ],
-      "bbox": [
-        1120,
-        604,
-        1188,
-        616
-      ],
       "bbox_xyxy": [
-        1120,
-        604,
-        1188,
-        616
+        1455,
+        189,
+        1544,
+        203
       ],
-      "text": "Удалить ролик\n7",
-      "confidence": 0.82,
+      "text": "Ввод данных своей",
+      "confidence": 0.9348926213052537,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.82,
-          "score": 1.2600000000000002
+          "conf": 0.9348926213052537,
+          "score": 0.9348926213052537,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 27,
-      "seg_ids": [
-        46
-      ],
-      "word_ids": [
-        4
-      ],
-      "bbox": [
-        904,
-        608,
-        1016,
-        620
-      ],
       "bbox_xyxy": [
-        904,
-        608,
-        1016,
-        620
+        1621,
+        195,
+        1717,
+        209
       ],
-      "text": "Выдать\nУ\nпреду!\nпрежд.\nен\nие",
-      "confidence": 0.5683333333333334,
+      "text": "публикации и нажать",
+      "confidence": 0.9400996625423431,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
-          "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.5683333333333334,
-          "score": 1.3783333333333332
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9400996625423431,
+          "score": 0.9400996625423431,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
-      ],
-      "raw": []
+      ]
     },
     {
       "block_id": 28,
-      "seg_ids": [
-        47
-      ],
-      "word_ids": [
-        27
-      ],
-      "bbox": [
-        1178,
-        666,
-        1256,
-        678
-      ],
       "bbox_xyxy": [
-        1178,
-        666,
-        1256,
-        678
+        1616,
+        196,
+        1718,
+        208
       ],
-      "text": "и\nОграничение 18+",
-      "confidence": 0.86,
+      "text": "публикации и нажать",
+      "confidence": 0.925735405087471,
       "confidence_available": true,
       "chosen": [
         {
-          "engine": "tesseract",
-          "variant": "gray",
+          "engine": "paddleocr_fullimage_detect",
           "rotation": "rot0",
-          "psm": 6,
-          "conf": 0.86,
-          "score": 1.3200000000000003
+          "conf": 0.925735405087471,
+          "score": 0.925735405087471,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
         }
+      ]
+    },
+    {
+      "block_id": 29,
+      "bbox_xyxy": [
+        1458,
+        200,
+        1541,
+        215
       ],
-      "raw": []
+      "text": "банковской карты",
+      "confidence": 0.9201373563093298,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9201373563093298,
+          "score": 0.9201373563093298,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 30,
+      "bbox_xyxy": [
+        1457,
+        201,
+        1540,
+        215
+      ],
+      "text": "банковской карты",
+      "confidence": 0.9296294661129222,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9296294661129222,
+          "score": 0.9296294661129222,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 31,
+      "bbox_xyxy": [
+        1623,
+        206,
+        1718,
+        221
+      ],
+      "text": "кнопку опубликовать",
+      "confidence": 0.9178297698497773,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9178297698497773,
+          "score": 0.9178297698497773,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 32,
+      "bbox_xyxy": [
+        1623,
+        207,
+        1716,
+        220
+      ],
+      "text": "кнопку опубликовать",
+      "confidence": 0.9088448286056519,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9088448286056519,
+          "score": 0.9088448286056519,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 33,
+      "bbox_xyxy": [
+        1,
+        271,
+        15,
+        460
+      ],
+      "text": "Загрузка, проверка и публикация видео",
+      "confidence": 0.96830951696948,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.96830951696948,
+          "score": 0.96830951696948,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 34,
+      "bbox_xyxy": [
+        686,
+        341,
+        721,
+        355
+      ],
+      "text": "Bcë ok",
+      "confidence": 0.6972011114869799,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.6972011114869799,
+          "score": 0.6972011114869799,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 35,
+      "bbox_xyxy": [
+        687,
+        342,
+        721,
+        355
+      ],
+      "text": "Bcё ok",
+      "confidence": 0.635489319052015,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.635489319052015,
+          "score": 0.635489319052015,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 36,
+      "bbox_xyxy": [
+        932,
+        346,
+        985,
+        360
+      ],
+      "text": "Проверить",
+      "confidence": 0.8434570133686066,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8434570133686066,
+          "score": 0.8434570133686066,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 37,
+      "bbox_xyxy": [
+        934,
+        346,
+        985,
+        359
+      ],
+      "text": "Проверить",
+      "confidence": 0.8532486736774445,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8532486736774445,
+          "score": 0.8532486736774445,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 38,
+      "bbox_xyxy": [
+        1637,
+        349,
+        1703,
+        363
+      ],
+      "text": "Опубликовать",
+      "confidence": 0.8907786378493676,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8907786378493676,
+          "score": 0.8907786378493676,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 39,
+      "bbox_xyxy": [
+        1638,
+        349,
+        1704,
+        363
+      ],
+      "text": "Опубликовать",
+      "confidence": 0.9033660384324881,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9033660384324881,
+          "score": 0.9033660384324881,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 40,
+      "bbox_xyxy": [
+        1314,
+        350,
+        1380,
+        367
+      ],
+      "text": "Подключение",
+      "confidence": 0.8951612561941147,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8951612561941147,
+          "score": 0.8951612561941147,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 41,
+      "bbox_xyxy": [
+        1316,
+        350,
+        1380,
+        365
+      ],
+      "text": "Подключение",
+      "confidence": 0.910865435997645,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.910865435997645,
+          "score": 0.910865435997645,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 42,
+      "bbox_xyxy": [
+        1458,
+        351,
+        1540,
+        364
+      ],
+      "text": "Проверка данных",
+      "confidence": 0.9286926090717316,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9286926090717316,
+          "score": 0.9286926090717316,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 43,
+      "bbox_xyxy": [
+        1457,
+        352,
+        1539,
+        365
+      ],
+      "text": "Проверка данных",
+      "confidence": 0.9327004179358482,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9327004179358482,
+          "score": 0.9327004179358482,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 44,
+      "bbox_xyxy": [
+        1116,
+        356,
+        1197,
+        370
+      ],
+      "text": "Ограничение 18+",
+      "confidence": 0.9285742864012718,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9285742864012718,
+          "score": 0.9285742864012718,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 45,
+      "bbox_xyxy": [
+        1117,
+        356,
+        1198,
+        370
+      ],
+      "text": "Ограничение 18+",
+      "confidence": 0.9338534213602543,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9338534213602543,
+          "score": 0.9338534213602543,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 46,
+      "bbox_xyxy": [
+        467,
+        357,
+        541,
+        371
+      ],
+      "text": "Автомодерация",
+      "confidence": 0.9225515382630485,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9225515382630485,
+          "score": 0.9225515382630485,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 47,
+      "bbox_xyxy": [
+        16,
+        358,
+        30,
+        403
+      ],
+      "text": "Система",
+      "confidence": 0.8053973615169525,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8053973615169525,
+          "score": 0.8053973615169525,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 48,
+      "bbox_xyxy": [
+        17,
+        358,
+        30,
+        402
+      ],
+      "text": "Система",
+      "confidence": 0.7760841175913811,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.7760841175913811,
+          "score": 0.7760841175913811,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 49,
+      "bbox_xyxy": [
+        932,
+        358,
+        986,
+        371
+      ],
+      "text": "количество",
+      "confidence": 0.8860946080901406,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8860946080901406,
+          "score": 0.8860946080901406,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 50,
+      "bbox_xyxy": [
+        933,
+        360,
+        986,
+        369
+      ],
+      "text": "количество",
+      "confidence": 0.8663781014355746,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8663781014355746,
+          "score": 0.8663781014355746,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 51,
+      "bbox_xyxy": [
+        1635,
+        362,
+        1704,
+        374
+      ],
+      "text": "видеоролик со",
+      "confidence": 0.9211965160710471,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9211965160710471,
+          "score": 0.9211965160710471,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 52,
+      "bbox_xyxy": [
+        1637,
+        362,
+        1704,
+        373
+      ],
+      "text": "видеоролик со",
+      "confidence": 0.9177836009434291,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9177836009434291,
+          "score": 0.9177836009434291,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 53,
+      "bbox_xyxy": [
+        343,
+        363,
+        434,
+        375
+      ],
+      "text": "Сообщение о новом",
+      "confidence": 0.9428974721166823,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9428974721166823,
+          "score": 0.9428974721166823,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 54,
+      "bbox_xyxy": [
+        1313,
+        363,
+        1382,
+        376
+      ],
+      "text": "монетизации к",
+      "confidence": 0.9133073559829167,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9133073559829167,
+          "score": 0.9133073559829167,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 55,
+      "bbox_xyxy": [
+        1456,
+        363,
+        1542,
+        377
+      ],
+      "text": "карты, сохранение",
+      "confidence": 0.9241158896022372,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9241158896022372,
+          "score": 0.9241158896022372,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 56,
+      "bbox_xyxy": [
+        342,
+        363,
+        434,
+        376
+      ],
+      "text": "Сообщение о новом",
+      "confidence": 0.9344006776809692,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9344006776809692,
+          "score": 0.9344006776809692,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 57,
+      "bbox_xyxy": [
+        1457,
+        363,
+        1542,
+        375
+      ],
+      "text": "карты, сохранение",
+      "confidence": 0.9423956208758884,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9423956208758884,
+          "score": 0.9423956208758884,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 58,
+      "bbox_xyxy": [
+        1315,
+        364,
+        1382,
+        374
+      ],
+      "text": "монетизации к",
+      "confidence": 0.9158687974725451,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9158687974725451,
+          "score": 0.9158687974725451,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 59,
+      "bbox_xyxy": [
+        918,
+        367,
+        999,
+        384
+      ],
+      "text": "предупреждений,",
+      "confidence": 0.9216260947287083,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9216260947287083,
+          "score": 0.9216260947287083,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 60,
+      "bbox_xyxy": [
+        461,
+        368,
+        549,
+        382
+      ],
+      "text": "видео, добавление",
+      "confidence": 0.900429861413108,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.900429861413108,
+          "score": 0.900429861413108,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 61,
+      "bbox_xyxy": [
+        461,
+        369,
+        549,
+        382
+      ],
+      "text": "видео, добавление",
+      "confidence": 0.9027016758918762,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9027016758918762,
+          "score": 0.9027016758918762,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 62,
+      "bbox_xyxy": [
+        920,
+        369,
+        998,
+        382
+      ],
+      "text": "предупреждений,",
+      "confidence": 0.9315424375236034,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9315424375236034,
+          "score": 0.9315424375236034,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 63,
+      "bbox_xyxy": [
+        1110,
+        369,
+        1206,
+        381
+      ],
+      "text": "на конкретном видео",
+      "confidence": 0.9246779829263687,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9246779829263687,
+          "score": 0.9246779829263687,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 64,
+      "bbox_xyxy": [
+        1110,
+        369,
+        1205,
+        383
+      ],
+      "text": "на конкретном видео",
+      "confidence": 0.9207714349031448,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9207714349031448,
+          "score": 0.9207714349031448,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 65,
+      "bbox_xyxy": [
+        1625,
+        373,
+        1715,
+        385
+      ],
+      "text": "всеми параметрами",
+      "confidence": 0.939485083023707,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.939485083023707,
+          "score": 0.939485083023707,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 66,
+      "bbox_xyxy": [
+        1624,
+        373,
+        1715,
+        386
+      ],
+      "text": "всеми параметрами",
+      "confidence": 0.9384892251756456,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9384892251756456,
+          "score": 0.9384892251756456,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 67,
+      "bbox_xyxy": [
+        1329,
+        374,
+        1364,
+        389
+      ],
+      "text": "uod",
+      "confidence": 0.5260093584656715,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.5260093584656715,
+          "score": 0.5260093584656715,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 68,
+      "bbox_xyxy": [
+        343,
+        374,
+        433,
+        388
+      ],
+      "text": "видео, загрузка его",
+      "confidence": 0.94806589782238,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.94806589782238,
+          "score": 0.94806589782238,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 69,
+      "bbox_xyxy": [
+        1469,
+        374,
+        1529,
+        388
+      ],
+      "text": "всех данных",
+      "confidence": 0.8872361729542414,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8872361729542414,
+          "score": 0.8872361729542414,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 70,
+      "bbox_xyxy": [
+        1331,
+        375,
+        1365,
+        387
+      ],
+      "text": "ролику",
+      "confidence": 0.8427126833370754,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8427126833370754,
+          "score": 0.8427126833370754,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 71,
+      "bbox_xyxy": [
+        1471,
+        375,
+        1529,
+        386
+      ],
+      "text": "всех данных",
+      "confidence": 0.8983765741189321,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8983765741189321,
+          "score": 0.8983765741189321,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 72,
+      "bbox_xyxy": [
+        345,
+        375,
+        433,
+        386
+      ],
+      "text": "видео, загрузка его",
+      "confidence": 0.9482634216547012,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9482634216547012,
+          "score": 0.9482634216547012,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 73,
+      "bbox_xyxy": [
+        923,
+        380,
+        994,
+        393
+      ],
+      "text": "если больше 3,",
+      "confidence": 0.9226440231005351,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9226440231005351,
+          "score": 0.9226440231005351,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 74,
+      "bbox_xyxy": [
+        924,
+        380,
+        994,
+        393
+      ],
+      "text": "если больше 3,",
+      "confidence": 0.9310640017191569,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9310640017191569,
+          "score": 0.9310640017191569,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 75,
+      "bbox_xyxy": [
+        468,
+        381,
+        541,
+        393
+      ],
+      "text": "автоматических",
+      "confidence": 0.9027887582778931,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9027887582778931,
+          "score": 0.9027887582778931,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 76,
+      "bbox_xyxy": [
+        469,
+        382,
+        541,
+        391
+      ],
+      "text": "автоматических",
+      "confidence": 0.9137539267539978,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9137539267539978,
+          "score": 0.9137539267539978,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 77,
+      "bbox_xyxy": [
+        1632,
+        383,
+        1707,
+        398
+      ],
+      "text": "в нужное время",
+      "confidence": 0.9053753279149532,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9053753279149532,
+          "score": 0.9053753279149532,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 78,
+      "bbox_xyxy": [
+        1634,
+        384,
+        1707,
+        396
+      ],
+      "text": "в нужное время",
+      "confidence": 0.9004530310630798,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9004530310630798,
+          "score": 0.9004530310630798,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 79,
+      "bbox_xyxy": [
+        364,
+        386,
+        412,
+        399
+      ],
+      "text": "на сервер",
+      "confidence": 0.8908145010471344,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8908145010471344,
+          "score": 0.8908145010471344,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 80,
+      "bbox_xyxy": [
+        363,
+        387,
+        412,
+        400
+      ],
+      "text": "на сервер",
+      "confidence": 0.8659739077091217,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8659739077091217,
+          "score": 0.8659739077091217,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 81,
+      "bbox_xyxy": [
+        478,
+        391,
+        529,
+        406
+      ],
+      "text": "субтитров",
+      "confidence": 0.8927061140537262,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8927061140537262,
+          "score": 0.8927061140537262,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 82,
+      "bbox_xyxy": [
+        924,
+        391,
+        994,
+        405
+      ],
+      "text": "заблокировать",
+      "confidence": 0.904387537922178,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.904387537922178,
+          "score": 0.904387537922178,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 83,
+      "bbox_xyxy": [
+        925,
+        391,
+        993,
+        404
+      ],
+      "text": "заблокировать",
+      "confidence": 0.8979803451469967,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8979803451469967,
+          "score": 0.8979803451469967,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 84,
+      "bbox_xyxy": [
+        480,
+        391,
+        528,
+        404
+      ],
+      "text": "субтитров",
+      "confidence": 0.8952889919281006,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8952889919281006,
+          "score": 0.8952889919281006,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 85,
+      "bbox_xyxy": [
+        567,
+        395,
+        761,
+        407
+      ],
+      "text": "нарушение авторских прав/незаконный контент",
+      "confidence": 0.9701123169877313,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9701123169877313,
+          "score": 0.9701123169877313,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 86,
+      "bbox_xyxy": [
+        613,
+        395,
+        727,
+        407
+      ],
+      "text": "авторских прав/незаконный",
+      "confidence": 0.9584913987379807,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9584913987379807,
+          "score": 0.9584913987379807,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 87,
+      "bbox_xyxy": [
+        567,
+        397,
+        616,
+        407
+      ],
+      "text": "нарушение",
+      "confidence": 0.8993182718753815,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8993182718753815,
+          "score": 0.8993182718753815,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 88,
+      "bbox_xyxy": [
+        726,
+        397,
+        759,
+        406
+      ],
+      "text": "контент",
+      "confidence": 0.8659215420484543,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8659215420484543,
+          "score": 0.8659215420484543,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 89,
+      "bbox_xyxy": [
+        941,
+        403,
+        978,
+        414
+      ],
+      "text": "аккаунт",
+      "confidence": 0.7831494510173798,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.7831494510173798,
+          "score": 0.7831494510173798,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 90,
+      "bbox_xyxy": [
+        941,
+        404,
+        978,
+        414
+      ],
+      "text": "аккаунт",
+      "confidence": 0.7416803762316704,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.7416803762316704,
+          "score": 0.7416803762316704,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 91,
+      "bbox_xyxy": [
+        835,
+        530,
+        870,
+        548
+      ],
+      "text": "Bcë ok",
+      "confidence": 0.6384834476879665,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.6384834476879665,
+          "score": 0.6384834476879665,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 92,
+      "bbox_xyxy": [
+        836,
+        531,
+        870,
+        545
+      ],
+      "text": "Всё ok",
+      "confidence": 0.6736010823931012,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.6736010823931012,
+          "score": 0.6736010823931012,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 93,
+      "bbox_xyxy": [
+        16,
+        555,
+        31,
+        656
+      ],
+      "text": "Модератор юнтента",
+      "confidence": 0.9222219851281908,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9222219851281908,
+          "score": 0.9222219851281908,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 94,
+      "bbox_xyxy": [
+        721,
+        569,
+        777,
+        585
+      ],
+      "text": "Модератор",
+      "confidence": 0.8741617500782013,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.8741617500782013,
+          "score": 0.8741617500782013,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 95,
+      "bbox_xyxy": [
+        723,
+        570,
+        776,
+        584
+      ],
+      "text": "Модератор",
+      "confidence": 0.8766920149326325,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.8766920149326325,
+          "score": 0.8766920149326325,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 96,
+      "bbox_xyxy": [
+        1035,
+        574,
+        1128,
+        589
+      ],
+      "text": "-запрещённый контент",
+      "confidence": 0.9415366450945536,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9415366450945536,
+          "score": 0.9415366450945536,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 97,
+      "bbox_xyxy": [
+        1036,
+        576,
+        1128,
+        587
+      ],
+      "text": "-запрещённый контент",
+      "confidence": 0.9449146758942377,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9449146758942377,
+          "score": 0.9449146758942377,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 98,
+      "bbox_xyxy": [
+        710,
+        582,
+        788,
+        596
+      ],
+      "text": "оценивает ролик",
+      "confidence": 0.929961659014225,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.929961659014225,
+          "score": 0.929961659014225,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 99,
+      "bbox_xyxy": [
+        712,
+        584,
+        788,
+        595
+      ],
+      "text": "оценивает ролик",
+      "confidence": 0.9350696168839931,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9350696168839931,
+          "score": 0.9350696168839931,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 100,
+      "bbox_xyxy": [
+        1117,
+        602,
+        1187,
+        617
+      ],
+      "text": "Удалить ролик",
+      "confidence": 0.9065750241279602,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9065750241279602,
+          "score": 0.9065750241279602,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 101,
+      "bbox_xyxy": [
+        1119,
+        603,
+        1187,
+        615
+      ],
+      "text": "Удалить ролик",
+      "confidence": 0.9229795379298074,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9229795379298074,
+          "score": 0.9229795379298074,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 102,
+      "bbox_xyxy": [
+        903,
+        605,
+        1017,
+        622
+      ],
+      "text": "Выдать предупреждение",
+      "confidence": 0.9532047997821461,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9532047997821461,
+          "score": 0.9532047997821461,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 103,
+      "bbox_xyxy": [
+        904,
+        606,
+        1016,
+        620
+      ],
+      "text": "Выдать предупреждение",
+      "confidence": 0.9487512274221941,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.9487512274221941,
+          "score": 0.9487512274221941,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 104,
+      "bbox_xyxy": [
+        1175,
+        664,
+        1256,
+        678
+      ],
+      "text": "Ограничение 18+",
+      "confidence": 0.9259375594556332,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot90_cw",
+          "conf": 0.9259375594556332,
+          "score": 0.9259375594556332,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
+    },
+    {
+      "block_id": 105,
+      "bbox_xyxy": [
+        1177,
+        665,
+        1256,
+        677
+      ],
+      "text": "Ограничение 18+",
+      "confidence": 0.909926027059555,
+      "confidence_available": true,
+      "chosen": [
+        {
+          "engine": "paddleocr_fullimage_detect",
+          "rotation": "rot0",
+          "conf": 0.909926027059555,
+          "score": 0.909926027059555,
+          "paddle_debug": {
+            "items": 1,
+            "lines": 1
+          }
+        }
+      ]
     }
-  ],
-  "image": {
-    "w": 1800,
-    "h": 731,
-    "path": "result\\run_bpmn_full\\out_text\\00_model.png"
-  }
+  ]
 }

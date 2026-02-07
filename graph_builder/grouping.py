@@ -44,6 +44,7 @@ class GroupingConfig:
         default_factory=lambda: {
             "yolox": 0.85,
             "easyocr": 0.9,
+            "paddleocr": 0.9,
         }
     )
     class_reliability: Dict[str, float] = field(

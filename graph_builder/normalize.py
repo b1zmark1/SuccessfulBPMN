@@ -17,6 +17,7 @@ class NormalizationConfig:
     source_priority: Dict[str, int] = field(
         default_factory=lambda: {
             "easyocr": 2,
+            "paddleocr": 2,
             "yolox": 1,
         }
     )
