@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="static">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/DATASET/bpmn-for-research-master/site/static/04-Self-service-restaurant.zip!/" />
+      <root url="jar://$PROJECT_DIR$/DATASET/bpmn-for-research-master/site/static/02-Recourse.zip!/" />
+      <root url="jar://$PROJECT_DIR$/DATASET/bpmn-for-research-master/site/static/02-Results.zip!/" />
+      <root url="jar://$PROJECT_DIR$/DATASET/bpmn-for-research-master/site/static/01-Dispatch-of-goods.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

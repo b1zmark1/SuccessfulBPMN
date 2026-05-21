@@ -28,7 +28,9 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 WORKDIR /app
 
 COPY requirements-worker.txt /tmp/requirements-worker.txt
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r /tmp/requirements-worker.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch torchvision \
+    && pip install --no-cache-dir -r /tmp/requirements-worker.txt
 
 # Render toolchain for text->image pipelines.
 RUN npm install -g @mermaid-js/mermaid-cli

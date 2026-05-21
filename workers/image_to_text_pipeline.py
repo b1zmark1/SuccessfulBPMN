@@ -61,6 +61,8 @@ def _read_image_from_url(image_url: str, workdir: Path) -> Path:
 
 
 async def _run_subprocess(cmd: list[str], cwd: Path) -> None:
+    tag = Path(cmd[1]).name if len(cmd) > 1 else "subprocess"
+    print(f"[pipeline] >>> {tag}: {' '.join(cmd)}", flush=True)
     proc = await asyncio.create_subprocess_exec(
         *cmd,
         cwd=str(cwd),
@@ -68,9 +70,15 @@ async def _run_subprocess(cmd: list[str], cwd: Path) -> None:
         stderr=asyncio.subprocess.PIPE,
     )
     stdout, stderr = await proc.communicate()
+    out = stdout.decode("utf-8", errors="ignore")
+    err = stderr.decode("utf-8", errors="ignore")
+    if out.strip():
+        for line in out.rstrip().splitlines():
+            print(f"[{tag}] {line}", flush=True)
+    if err.strip():
+        for line in err.rstrip().splitlines():
+            print(f"[{tag}:err] {line}", flush=True)
     if proc.returncode != 0:
-        out = stdout.decode("utf-8", errors="ignore")
-        err = stderr.decode("utf-8", errors="ignore")
         raise RuntimeError(f"Command failed ({proc.returncode}): {' '.join(cmd)}\n{out}\n{err}")
 
 
@@ -215,6 +223,26 @@ async def run_image_to_text_pipeline(
         ocr_json_path = out_ocr / "ocr.json"
         if not ocr_json_path.exists():
             raise FileNotFoundError(f"OCR result not found: {ocr_json_path}")
+
+        heavy_cmd = [
+            PYTHON_EXECUTABLE,
+            _repo_path("preprocanddetect", "ocr_heavy_pass.py"),
+            "--input",
+            str(input_image),
+            "--ocr-json",
+            str(ocr_json_path),
+            "--conf-threshold",
+            os.getenv("OCR_HEAVY_CONF_THRESHOLD", "0.55"),
+            "--lang",
+            os.getenv("OCR_HEAVY_LANG", "ru"),
+            "--upscale",
+            os.getenv("OCR_HEAVY_UPSCALE", "2.0"),
+            "--pad-px",
+            os.getenv("OCR_HEAVY_PAD_PX", "8"),
+            "--accept-margin",
+            os.getenv("OCR_HEAVY_ACCEPT_MARGIN", "0.05"),
+        ]
+        await _run_subprocess(heavy_cmd, cwd=REPO_ROOT)
 
         input_stem = input_image.stem
         ensemble_json_path = out_yolox / f"{input_stem}_ensemble.json"

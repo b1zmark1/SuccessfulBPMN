@@ -42,15 +42,17 @@ def project_graph_to_semantic(
     for sid in ordered_ids:
         n = step_nodes[sid]
         next_ids = adjacency.get(sid, [])
-        steps.append(
-            {
-                "id": sid,
-                "order": order_by_id[sid],
-                "role": _normalize_role(str(n.get("role", "unknown")), len(next_ids)),
-                "text": _as_optional_str(n.get("text")),
-                "next_step_ids": list(next_ids),
-            }
-        )
+        step_obj: Dict[str, Any] = {
+            "id": sid,
+            "order": order_by_id[sid],
+            "role": _normalize_role(str(n.get("role", "unknown")), len(next_ids)),
+            "text": _as_optional_str(n.get("text")),
+            "next_step_ids": list(next_ids),
+        }
+        lane_role = _as_optional_str(n.get("lane_role"))
+        if lane_role:
+            step_obj["lane"] = lane_role
+        steps.append(step_obj)
 
     src_schema = str(meta.get("schema_version", "graph-builder.v1"))
     direction = str(meta.get("direction", "LR")).upper()

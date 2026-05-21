@@ -92,7 +92,50 @@ def attach_text_placeholders_and_hooks(
             anchor_map.setdefault(best_id, []).append(tid)
             reverse_map[tid] = best_id
 
+    # Карта: text_id -> (bbox, text). Нужна для склейки текста по якорям.
+    text_by_id: Dict[str, Tuple[Optional[Tuple[float, float, float, float]], str]] = {}
+    for tnode in text_nodes:
+        tid = tnode.get("id")
+        if not isinstance(tid, str):
+            continue
+        raw_text = tnode.get("text")
+        text_val = raw_text.strip() if isinstance(raw_text, str) else ""
+        text_by_id[tid] = (_bbox(tnode.get("bbox")), text_val)
+
+    def _concat_anchored(target_id: str) -> str:
+        ids = anchor_map.get(target_id, [])
+        items: List[Tuple[float, float, str]] = []
+        for tid in ids:
+            entry = text_by_id.get(tid)
+            if entry is None:
+                continue
+            tbb, ttxt = entry
+            if not ttxt:
+                continue
+            y = tbb[1] if tbb else 0.0
+            x = tbb[0] if tbb else 0.0
+            items.append((y, x, ttxt))
+        items.sort(key=lambda it: (it[0], it[1]))
+        return " ".join(it[2] for it in items).strip()
+
+    # Сначала запишем агрегированный текст для контейнеров — их лейблы пойдут как lane_role.
+    container_label_by_id: Dict[str, str] = {}
+    for n in parsed_nodes:
+        nid = n.get("id")
+        if not isinstance(nid, str):
+            continue
+        if n.get("type") != "container":
+            continue
+        if nid not in anchor_map:
+            continue
+        label = _concat_anchored(nid)
+        if label:
+            container_label_by_id[nid] = label
+
     updated_nodes: List[Dict[str, Any]] = []
+    lane_role_assigned = 0
+    text_merged_into_shape = 0
+
     for n in parsed_nodes:
         out_n = dict(n)
 
@@ -103,11 +146,35 @@ def attach_text_placeholders_and_hooks(
             out_n["text"] = None
 
         nid = out_n.get("id")
+        ntype = out_n.get("type")
+
         if isinstance(nid, str):
             if nid in anchor_map:
                 out_n["text_anchor_ids"] = sorted(anchor_map[nid])
             if nid in reverse_map:
                 out_n["text_anchor_for"] = reverse_map[nid]
+
+            # Сливаем якоренный OCR-текст в text-поле shape/container, если оно пустое
+            # или дополняем его (label_res уже мог положить один фрагмент — добавляем остальные).
+            if ntype in {"shape", "container"} and nid in anchor_map:
+                anchored = _concat_anchored(nid)
+                if anchored:
+                    existing = out_n.get("text")
+                    existing_str = existing.strip() if isinstance(existing, str) else ""
+                    if not existing_str:
+                        out_n["text"] = anchored
+                        text_merged_into_shape += 1
+                    elif existing_str not in anchored and anchored not in existing_str:
+                        # склеиваем без дублирования
+                        out_n["text"] = f"{existing_str} {anchored}".strip()
+                        text_merged_into_shape += 1
+
+            # Пробрасываем lane_role из контейнера во вложенные shape-ноды.
+            if ntype == "shape":
+                cid = out_n.get("container_id")
+                if isinstance(cid, str) and cid in container_label_by_id:
+                    out_n["lane_role"] = container_label_by_id[cid]
+                    lane_role_assigned += 1
 
         updated_nodes.append(out_n)
 
@@ -135,6 +202,9 @@ def attach_text_placeholders_and_hooks(
         "target_nodes": len(target_nodes),
         "anchored_text_nodes": len(reverse_map),
         "max_anchor_distance": max_dist,
+        "text_merged_into_shape": text_merged_into_shape,
+        "lane_roles_assigned": lane_role_assigned,
+        "container_labels_extracted": len(container_label_by_id),
     }
     return out
 

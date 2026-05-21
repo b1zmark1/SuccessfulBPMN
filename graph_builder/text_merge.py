@@ -146,16 +146,31 @@ def _merge_cluster_nodes(
     idxs: List[int],
     reasons_map: Dict[Tuple[int, int], str],
 ) -> Tuple[Dict[str, Any], bool]:
-    bboxes = [_bbox(n.get("bbox")) for n in cluster_nodes]
-    bboxes = [b for b in bboxes if b is not None]
-    if not bboxes:
+    bboxes_with_node = []
+    for n in cluster_nodes:
+        b = _bbox(n.get("bbox"))
+        if b is not None:
+            bboxes_with_node.append((b, n))
+    if not bboxes_with_node:
         raise TextMergeError("cannot merge text cluster without bbox")
 
+    bboxes = [b for b, _ in bboxes_with_node]
     x1 = min(b[0] for b in bboxes)
     y1 = min(b[1] for b in bboxes)
     x2 = max(b[2] for b in bboxes)
     y2 = max(b[3] for b in bboxes)
     center = [(x1 + x2) / 2.0, (y1 + y2) / 2.0]
+
+    # Склеиваем тексты в порядке чтения (сверху вниз, слева направо).
+    bboxes_with_node.sort(key=lambda pair: (pair[0][1], pair[0][0]))
+    text_parts: List[str] = []
+    for _b, n in bboxes_with_node:
+        t = n.get("text")
+        if isinstance(t, str):
+            t_clean = t.strip()
+            if t_clean:
+                text_parts.append(t_clean)
+    merged_text: Optional[str] = " ".join(text_parts) if text_parts else None
 
     node_ids = [str(n.get("id", "")) for n in cluster_nodes]
     det_ids = [str(n.get("det_id", "")) for n in cluster_nodes]
@@ -186,7 +201,7 @@ def _merge_cluster_nodes(
         "center": center,
         "role": "unknown",
         "container_id": container_id,
-        "text": None,
+        "text": merged_text,
         "class_name": "text",
         "source": source,
         "score": score,
