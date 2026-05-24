@@ -9,6 +9,7 @@ from .direction import infer_process_direction
 from .edge_candidates import build_edge_candidates
 from .edges import finalize_edges
 from .grouping import group_normalized_detections
+from .lane_detection import detect_lanes_geometrically
 from .nodes import build_graph_nodes
 from .normalize import normalize_ensemble_input
 from .semantic_projection import (
@@ -41,6 +42,9 @@ def build_graph_from_ensemble(ensemble_payload: Dict[str, Any]) -> Dict[str, Any
     x = merge_adjacent_text_nodes(x)
     x = attach_text_placeholders_and_hooks(x)
     x = assign_title_hints(x)
+    # Геометрическая детекция swim-lanes: кластеризует shapes по Y, левый текст ряда -> lane_role.
+    # Перезаписывает lane_role из text_hooks (там часто мусор от title_hints).
+    x = detect_lanes_geometrically(x)
     x = build_uncertainty_and_diagnostics(x)
     return serialize_graph_output(x)
 

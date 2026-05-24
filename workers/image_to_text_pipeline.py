@@ -130,10 +130,12 @@ async def run_image_to_text_pipeline(
         tmp_dir = Path(tmp)
         input_image = _read_image_from_url(image_url, tmp_dir)
         out_yolox = tmp_dir / "out_yolox"
-        out_text = tmp_dir / "out_text"
         out_ocr = tmp_dir / "out_ocr"
         out_labeled = tmp_dir / "out_labeled"
 
+        # ────────────────────────────────────────────────────────────────────
+        # ШАГ 1/3: YOLOX detection (BPMN objects: tasks, gateways, events, lanes...).
+        # ────────────────────────────────────────────────────────────────────
         ensemble_cmd = [
             PYTHON_EXECUTABLE,
             _repo_path("preprocanddetect", "ensemble_infer.py"),
@@ -148,7 +150,7 @@ async def run_image_to_text_pipeline(
             "--device",
             "gpu" if use_gpu else "cpu",
             "--conf",
-            "0.4",
+            os.getenv("YOLOX_CONF_THRESHOLD", "0.4"),
             "--lang",
             "ru",
             "--no-text",
@@ -157,111 +159,57 @@ async def run_image_to_text_pipeline(
             ensemble_cmd.append("--fp16")
         await _run_subprocess(ensemble_cmd, cwd=REPO_ROOT)
 
-        detect_cmd = [
-            PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "detect_res.py"),
-            "--input",
-            str(input_image),
-            "--outdir",
-            str(out_text),
-            "--lang",
-            "ru",
-            "--download-enabled",
-        ]
-        if _prefer_detect_gpu() and use_gpu:
-            detect_cmd.append("--gpu")
-        try:
-            await _run_subprocess(detect_cmd, cwd=REPO_ROOT)
-        except RuntimeError:
-            if "--gpu" not in detect_cmd:
-                raise
-            # Keep behavior close to teammate's flow, but do a safe CPU fallback for non-GPU workers.
-            detect_cmd_no_gpu = [arg for arg in detect_cmd if arg != "--gpu"]
-            await _run_subprocess(detect_cmd_no_gpu, cwd=REPO_ROOT)
+        input_stem = input_image.stem
+        ensemble_json_path = out_yolox / f"{input_stem}_ensemble.json"
+        if not ensemble_json_path.exists():
+            raise FileNotFoundError(f"Ensemble file not found: {ensemble_json_path}")
 
-        model_image_path = out_text / "00_model.png"
-        blocks_path = out_text / "text_blocks.json"
-        if not model_image_path.exists() or not blocks_path.exists():
-            raise FileNotFoundError("Text detection artifacts not found after detect_res.py")
-
+        # ────────────────────────────────────────────────────────────────────
+        # ШАГ 2/3: ONE OCR pass — EasyOCR на ОРИГИНАЛЬНОЙ картинке (cap 2500).
+        # Coord transform: OCR_capped → ORIGINAL → MODEL (через resize_ratio из ensemble).
+        # Заменяет detect_res.py + ocr_tesseract_fast.py + ocr_heavy_pass.py.
+        # ────────────────────────────────────────────────────────────────────
         ocr_cmd = [
             PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "ocr_tesseract_fast.py"),
+            _repo_path("preprocanddetect", "ocr_full_sweep.py"),
             "--input",
             str(input_image),
-            "--blocks",
-            str(blocks_path),
+            "--ensemble-json",
+            str(ensemble_json_path),
             "--outdir",
             str(out_ocr),
             "--lang",
-            "rus",
-            "--max-side",
-            "4096",
-            "--upscale-factor",
-            "2.0",
-            "--pad-px",
-            "10",
-            "--inner-crop-px",
-            "0",
-            "--psm-block",
-            "6",
-            "--psm-single",
-            "7",
-            "--psm-raw-line",
-            "13",
-            "--try-rotate-90",
-            "--refine-text-bbox",
-            "--cc-max-area-frac",
-            "0.18",
-            "--cc-min-area-px",
-            "20",
-            "--jobs",
-            "4",
+            os.getenv("OCR_LANG", "ru"),
+            "--shape-pad",
+            os.getenv("OCR_SHAPE_PAD", "8"),
+            "--margin-ratio",
+            os.getenv("OCR_MARGIN_RATIO", "0.1"),
         ]
+        if use_gpu:
+            ocr_cmd.append("--gpu")
         await _run_subprocess(ocr_cmd, cwd=REPO_ROOT)
 
         ocr_json_path = out_ocr / "ocr.json"
         if not ocr_json_path.exists():
             raise FileNotFoundError(f"OCR result not found: {ocr_json_path}")
 
-        heavy_cmd = [
-            PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "ocr_heavy_pass.py"),
-            "--input",
-            str(input_image),
-            "--ocr-json",
-            str(ocr_json_path),
-            "--conf-threshold",
-            os.getenv("OCR_HEAVY_CONF_THRESHOLD", "0.55"),
-            "--lang",
-            os.getenv("OCR_HEAVY_LANG", "ru"),
-            "--upscale",
-            os.getenv("OCR_HEAVY_UPSCALE", "2.0"),
-            "--pad-px",
-            os.getenv("OCR_HEAVY_PAD_PX", "8"),
-            "--accept-margin",
-            os.getenv("OCR_HEAVY_ACCEPT_MARGIN", "0.05"),
-        ]
-        await _run_subprocess(heavy_cmd, cwd=REPO_ROOT)
-
-        input_stem = input_image.stem
-        ensemble_json_path = out_yolox / f"{input_stem}_ensemble.json"
-        if not ensemble_json_path.exists():
-            raise FileNotFoundError(f"Ensemble file not found: {ensemble_json_path}")
-
+        # ────────────────────────────────────────────────────────────────────
+        # ШАГ 3/3: Containment-based aggregation OCR-блоков в YOLOX-объекты.
+        # Заменяет label_res.py (1-to-1 матчинг).
+        # ────────────────────────────────────────────────────────────────────
         label_cmd = [
             PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "label_res.py"),
+            _repo_path("preprocanddetect", "label_aggregate.py"),
             "--ensemble",
             str(ensemble_json_path),
-            "--text-blocks",
-            str(blocks_path),
             "--ocr",
             str(ocr_json_path),
-            "--image",
-            str(model_image_path),
             "--outdir",
             str(out_labeled),
+            "--min-overlap-ratio",
+            os.getenv("LABEL_MIN_OVERLAP", "0.5"),
+            "--min-text-conf",
+            os.getenv("LABEL_MIN_TEXT_CONF", "0.3"),
         ]
         await _run_subprocess(label_cmd, cwd=REPO_ROOT)
 

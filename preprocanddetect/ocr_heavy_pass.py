@@ -48,7 +48,14 @@ def _run_easyocr_sweep(
     import easyocr  # type: ignore
 
     reader = easyocr.Reader([lang], gpu=bool(gpu))
-    results = reader.readtext(img_array, detail=1, paragraph=paragraph)
+    # rotation_info=[90,270] — детектор дополнительно прогоняет картинку с поворотом,
+    # чтобы поймать ВЕРТИКАЛЬНО подписанные swim-lane labels (типичный BPMN-кейс).
+    try:
+        results = reader.readtext(
+            img_array, detail=1, paragraph=paragraph, rotation_info=[90, 270]
+        )
+    except TypeError:
+        results = reader.readtext(img_array, detail=1, paragraph=paragraph)
 
     blocks: List[Dict[str, Any]] = []
     for idx, item in enumerate(results):
@@ -134,12 +141,29 @@ def main() -> None:
         print(f"[ocr_heavy] fast backup saved: {fast_backup}")
 
     img = Image.open(args.input).convert("RGB")
+
+    # Сначала apply upscale (если хочется поднять резолюцию для мелкого шрифта),
+    # ПОТОМ ограничиваем длинную сторону max_side, чтобы EasyOCR не задохнулся на CPU.
+    # Для огромных BPMN-диаграмм (5000+ px) это критично — без cap'а легко уходим за 60 сек.
     if args.upscale > 1.0 + 1e-6:
         w, h = img.size
         img = img.resize(
             (max(1, int(w * args.upscale)), max(1, int(h * args.upscale))),
             Image.Resampling.LANCZOS,
         )
+
+    max_side = int(os.getenv("OCR_HEAVY_MAX_SIDE", "2500"))
+    w, h = img.size
+    if max(w, h) > max_side:
+        scale = max_side / float(max(w, h))
+        img = img.resize(
+            (max(1, int(w * scale)), max(1, int(h * scale))),
+            Image.Resampling.LANCZOS,
+        )
+        # Effective upscale изменится — учитываем при reverse-mapping bbox'ов ниже.
+        effective_scale = float(args.upscale) * scale
+    else:
+        effective_scale = float(args.upscale)
 
     img_array = np.array(img)
     print(
@@ -150,13 +174,13 @@ def main() -> None:
 
     new_blocks = _run_easyocr_sweep(img_array, args.lang, args.gpu, args.paragraph)
 
-    # Если был апсемплинг — bbox'ы вернуть в координаты исходной картинки.
-    if args.upscale > 1.0 + 1e-6:
-        scale = 1.0 / float(args.upscale)
+    # Возвращаем bbox'ы в координаты исходной картинки (учитывает и upscale, и max_side resize).
+    if abs(effective_scale - 1.0) > 1e-6:
+        inv = 1.0 / effective_scale
         for b in new_blocks:
             x1, y1, x2, y2 = b["bbox_xyxy"]
-            x1s, y1s = int(round(x1 * scale)), int(round(y1 * scale))
-            x2s, y2s = int(round(x2 * scale)), int(round(y2 * scale))
+            x1s, y1s = int(round(x1 * inv)), int(round(y1 * inv))
+            x2s, y2s = int(round(x2 * inv)), int(round(y2 * inv))
             b["bbox_xyxy"] = [x1s, y1s, x2s, y2s]
             b["bbox_xywh"] = [x1s, y1s, max(0, x2s - x1s), max(0, y2s - y1s)]
 
