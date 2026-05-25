@@ -130,11 +130,38 @@ async def run_image_to_text_pipeline(
         tmp_dir = Path(tmp)
         input_image = _read_image_from_url(image_url, tmp_dir)
         out_yolox = tmp_dir / "out_yolox"
+        out_text = tmp_dir / "out_text"
         out_ocr = tmp_dir / "out_ocr"
         out_labeled = tmp_dir / "out_labeled"
 
+        # Определяем размер картинки заранее — он решает, какой OCR-стек запускать.
+        try:
+            from PIL import Image as _PILImage  # type: ignore
+            with _PILImage.open(str(input_image)) as _img_probe:
+                _img_w, _img_h = _img_probe.size
+        except Exception:
+            _img_w, _img_h = 0, 0
+        _max_side = max(_img_w, _img_h)
+        _size_threshold = int(os.getenv("IMG_PIPELINE_SIZE_THRESHOLD", "2500"))
+        # Маленькая картинка → старый legacy-pipeline (detect_res + tesseract + heavy + label_res),
+        # он на маленьких давал значительно лучше качество чем full-image EasyOCR.
+        # Большая → новый crop-based pipeline (ocr_full_sweep + label_aggregate).
+        use_legacy_small_pipeline = _max_side > 0 and _max_side < _size_threshold
+        forced_mode = os.getenv("IMG_PIPELINE_MODE", "").strip().lower()
+        if forced_mode == "legacy":
+            use_legacy_small_pipeline = True
+        elif forced_mode == "modern":
+            use_legacy_small_pipeline = False
+
+        print(
+            f"[pipeline] image_size={_img_w}x{_img_h} max_side={_max_side} "
+            f"threshold={_size_threshold} -> "
+            f"{'LEGACY (detect_res+tesseract+heavy+label_res)' if use_legacy_small_pipeline else 'MODERN (ocr_full_sweep+label_aggregate)'}",
+            flush=True,
+        )
+
         # ────────────────────────────────────────────────────────────────────
-        # ШАГ 1/3: YOLOX detection (BPMN objects: tasks, gateways, events, lanes...).
+        # ШАГ 1: YOLOX detection — общий для обоих pipeline'ов.
         # ────────────────────────────────────────────────────────────────────
         ensemble_cmd = [
             PYTHON_EXECUTABLE,
@@ -164,61 +191,192 @@ async def run_image_to_text_pipeline(
         if not ensemble_json_path.exists():
             raise FileNotFoundError(f"Ensemble file not found: {ensemble_json_path}")
 
-        # ────────────────────────────────────────────────────────────────────
-        # ШАГ 2/3: ONE OCR pass — EasyOCR на ОРИГИНАЛЬНОЙ картинке (cap 2500).
-        # Coord transform: OCR_capped → ORIGINAL → MODEL (через resize_ratio из ensemble).
-        # Заменяет detect_res.py + ocr_tesseract_fast.py + ocr_heavy_pass.py.
-        # ────────────────────────────────────────────────────────────────────
-        ocr_cmd = [
-            PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "ocr_full_sweep.py"),
-            "--input",
-            str(input_image),
-            "--ensemble-json",
-            str(ensemble_json_path),
-            "--outdir",
-            str(out_ocr),
-            "--lang",
-            os.getenv("OCR_LANG", "ru"),
-            "--shape-pad",
-            os.getenv("OCR_SHAPE_PAD", "8"),
-            "--margin-ratio",
-            os.getenv("OCR_MARGIN_RATIO", "0.1"),
-        ]
-        if use_gpu:
-            ocr_cmd.append("--gpu")
-        await _run_subprocess(ocr_cmd, cwd=REPO_ROOT)
+        if use_legacy_small_pipeline:
+            # ────────────────────────────────────────────────────────────────
+            # LEGACY pipeline для маленьких BPMN-картинок — В ИСХОДНОМ ВИДЕ
+            # до моих правок: detect_res → tesseract_fast → label_res.
+            # БЕЗ heavy_pass (EasyOCR full sweep на маленьких картинках
+            # фрагментирует слова и портит результат Tesseract'а).
+            # ────────────────────────────────────────────────────────────────
+            detect_cmd = [
+                PYTHON_EXECUTABLE,
+                _repo_path("preprocanddetect", "detect_res.py"),
+                "--input",
+                str(input_image),
+                "--outdir",
+                str(out_text),
+                "--lang",
+                "ru",
+                "--download-enabled",
+            ]
+            if _prefer_detect_gpu() and use_gpu:
+                detect_cmd.append("--gpu")
+            try:
+                await _run_subprocess(detect_cmd, cwd=REPO_ROOT)
+            except RuntimeError:
+                if "--gpu" not in detect_cmd:
+                    raise
+                detect_cmd_no_gpu = [arg for arg in detect_cmd if arg != "--gpu"]
+                await _run_subprocess(detect_cmd_no_gpu, cwd=REPO_ROOT)
 
-        ocr_json_path = out_ocr / "ocr.json"
-        if not ocr_json_path.exists():
-            raise FileNotFoundError(f"OCR result not found: {ocr_json_path}")
+            model_image_path = out_text / "00_model.png"
+            blocks_path = out_text / "text_blocks.json"
+            if not model_image_path.exists() or not blocks_path.exists():
+                raise FileNotFoundError("Text detection artifacts not found after detect_res.py")
 
-        # ────────────────────────────────────────────────────────────────────
-        # ШАГ 3/3: Containment-based aggregation OCR-блоков в YOLOX-объекты.
-        # Заменяет label_res.py (1-to-1 матчинг).
-        # ────────────────────────────────────────────────────────────────────
-        label_cmd = [
-            PYTHON_EXECUTABLE,
-            _repo_path("preprocanddetect", "label_aggregate.py"),
-            "--ensemble",
-            str(ensemble_json_path),
-            "--ocr",
-            str(ocr_json_path),
-            "--outdir",
-            str(out_labeled),
-            "--min-overlap-ratio",
-            os.getenv("LABEL_MIN_OVERLAP", "0.5"),
-            "--min-text-conf",
-            os.getenv("LABEL_MIN_TEXT_CONF", "0.3"),
-        ]
-        await _run_subprocess(label_cmd, cwd=REPO_ROOT)
+            tess_cmd = [
+                PYTHON_EXECUTABLE,
+                _repo_path("preprocanddetect", "ocr_tesseract_fast.py"),
+                "--input",
+                str(input_image),
+                "--blocks",
+                str(blocks_path),
+                "--outdir",
+                str(out_ocr),
+                "--lang",
+                "rus",
+                "--max-side",
+                "4096",
+                "--upscale-factor",
+                "2.0",
+                "--pad-px",
+                "10",
+                "--psm-block",
+                "6",
+                "--psm-single",
+                "7",
+                "--psm-raw-line",
+                "13",
+                "--try-rotate-90",
+                "--refine-text-bbox",
+                "--cc-max-area-frac",
+                "0.18",
+                "--cc-min-area-px",
+                "20",
+                "--jobs",
+                "4",
+            ]
+            await _run_subprocess(tess_cmd, cwd=REPO_ROOT)
+
+            ocr_json_path = out_ocr / "ocr.json"
+            if not ocr_json_path.exists():
+                raise FileNotFoundError(f"OCR result not found: {ocr_json_path}")
+
+            label_cmd = [
+                PYTHON_EXECUTABLE,
+                _repo_path("preprocanddetect", "label_res.py"),
+                "--ensemble",
+                str(ensemble_json_path),
+                "--text-blocks",
+                str(blocks_path),
+                "--ocr",
+                str(ocr_json_path),
+                "--image",
+                str(model_image_path),
+                "--outdir",
+                str(out_labeled),
+            ]
+            await _run_subprocess(label_cmd, cwd=REPO_ROOT)
+        else:
+            # ────────────────────────────────────────────────────────────────
+            # MODERN pipeline для больших картинок.
+            # ocr_full_sweep.py (crop-based по YOLOX-shape) + label_aggregate.py (containment).
+            # ────────────────────────────────────────────────────────────────
+            ocr_cmd = [
+                PYTHON_EXECUTABLE,
+                _repo_path("preprocanddetect", "ocr_full_sweep.py"),
+                "--input",
+                str(input_image),
+                "--ensemble-json",
+                str(ensemble_json_path),
+                "--outdir",
+                str(out_ocr),
+                "--lang",
+                os.getenv("OCR_LANG", "ru"),
+                "--mode",
+                os.getenv("OCR_MODE", "crop"),
+                "--shape-pad",
+                os.getenv("OCR_SHAPE_PAD", "8"),
+                "--margin-ratio",
+                os.getenv("OCR_MARGIN_RATIO", "0.1"),
+            ]
+            if use_gpu:
+                ocr_cmd.append("--gpu")
+            await _run_subprocess(ocr_cmd, cwd=REPO_ROOT)
+
+            ocr_json_path = out_ocr / "ocr.json"
+            if not ocr_json_path.exists():
+                raise FileNotFoundError(f"OCR result not found: {ocr_json_path}")
+
+            label_cmd = [
+                PYTHON_EXECUTABLE,
+                _repo_path("preprocanddetect", "label_aggregate.py"),
+                "--ensemble",
+                str(ensemble_json_path),
+                "--ocr",
+                str(ocr_json_path),
+                "--outdir",
+                str(out_labeled),
+                "--min-overlap-ratio",
+                os.getenv("LABEL_MIN_OVERLAP", "0.5"),
+                "--min-text-conf",
+                os.getenv("LABEL_MIN_TEXT_CONF", "0.3"),
+            ]
+            await _run_subprocess(label_cmd, cwd=REPO_ROOT)
 
         merged_ensemble_path = out_labeled / f"{input_stem}_ensemble_merged_labeled.json"
         if not merged_ensemble_path.exists():
             raise FileNotFoundError(f"Merged ensemble file not found: {merged_ensemble_path}")
 
         ensemble_payload = json.loads(merged_ensemble_path.read_text(encoding="utf-8"))
-        graph_payload = build_graph_from_ensemble(ensemble_payload)
+
+        # Запускаем pipeline пошагово (вместо build_graph_from_ensemble) чтобы
+        # вытащить stats для диагностики ролей/лейнов. Сам serialize контракт-чистый.
+        try:
+            from graph_builder.normalize import normalize_ensemble_input
+            from graph_builder.grouping import group_normalized_detections
+            from graph_builder.direction import infer_process_direction
+            from graph_builder.nodes import build_graph_nodes
+            from graph_builder.containers import assign_container_hierarchy
+            from graph_builder.edge_candidates import build_edge_candidates
+            from graph_builder.edges import finalize_edges
+            from graph_builder.text_merge import merge_adjacent_text_nodes
+            from graph_builder.text_hooks import attach_text_placeholders_and_hooks
+            from graph_builder.title_hints import assign_title_hints
+            from graph_builder.lane_detection import detect_lanes_geometrically
+            from graph_builder.diagnostics import build_uncertainty_and_diagnostics
+            from graph_builder.serialize import serialize_graph_output
+
+            _x = normalize_ensemble_input(ensemble_payload)
+            _x = group_normalized_detections(_x)
+            _x = infer_process_direction(_x)
+            _x = build_graph_nodes(_x)
+            _x = assign_container_hierarchy(_x)
+            _x = build_edge_candidates(_x)
+            _x = finalize_edges(_x)
+            _x = merge_adjacent_text_nodes(_x)
+            _x = assign_title_hints(_x)
+            _x = attach_text_placeholders_and_hooks(_x)
+            _x = detect_lanes_geometrically(_x)
+            _x = build_uncertainty_and_diagnostics(_x)
+
+            _ns = _x.get("node_stats", {})
+            _lane = _x.get("lane_detection_stats", {})
+            print(
+                f"[pipeline] graph: total={_ns.get('total','?')} "
+                f"shape={_ns.get('shape','?')} text={_ns.get('text','?')} "
+                f"container={_ns.get('container','?')} | "
+                f"lane: clusters={_lane.get('clusters_total','?')} "
+                f"named={_lane.get('lanes_named','?')} "
+                f"shapes_with_lane={_lane.get('shapes_with_lane','?')} "
+                f"overrides={_lane.get('lane_role_overrides','?')} "
+                f"cleared={_lane.get('lane_role_cleared','?')}",
+                flush=True,
+            )
+            graph_payload = serialize_graph_output(_x)
+        except Exception:
+            # На случай если что-то поменялось в graph_builder — фолбэк на штатный путь.
+            graph_payload = build_graph_from_ensemble(ensemble_payload)
         narration = run_narration(
             graph_payload=graph_payload,
             policy_overrides={

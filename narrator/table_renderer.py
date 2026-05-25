@@ -25,6 +25,7 @@ def render_table_from_semantic(
     lines.append("Шаг | Роль")
 
     idx = 1
+    seen_normalized_texts: set[str] = set()
     for step in ordered_steps:
         if not isinstance(step, dict):
             continue
@@ -40,7 +41,22 @@ def render_table_from_semantic(
         if not _is_task_like(step_text, node_meta):
             continue
 
+        # Пост-чистка: убираем мусор-префиксы и дубль-повторы фраз.
+        step_text = _clean_step_text(step_text)
+        if not step_text or step_text.startswith("["):
+            continue
+
         role = _pick_role(step, sid=sid_str, role_hints=role_hints_map, step_text=step_text, policy=policy)
+
+        # Skip ложных task-нод, чей текст совпадает с именем lane (типа "ИСУ | ИСУ").
+        if isinstance(role, str) and role.strip() and step_text.strip().lower() == role.strip().lower():
+            continue
+
+        # Дедуп шагов с одинаковым нормализованным текстом (накопительно по всей таблице).
+        normalized = re.sub(r"\s+", " ", step_text.strip().lower())
+        if normalized in seen_normalized_texts:
+            continue
+        seen_normalized_texts.add(normalized)
 
         step_text = _sanitize_cell(step_text)
         role = _sanitize_cell(role)
@@ -155,6 +171,95 @@ def _heuristic_role_from_text(step_text: str) -> str:
         return "Система"
 
     return ""
+
+
+# Префиксы-мусор от OCR на маленьких картинках: кусочки стрелок/границ
+# вроде "Ё5—4", "2 =" о /", "/ Передача" перед нормальным текстом.
+# Стратегия: убрать всё ДО первой настоящей кириллической/латинской буквы,
+# если этого "мусора" не больше 8 символов и за ним идёт буква.
+_LETTER_RE = re.compile(r"[A-Za-zА-Яа-яЁё]", re.UNICODE)
+_DIGIT_OR_PUNCT_IN_TOKEN_RE = re.compile(r"[\d/\\—–\-=\"`'\*]")
+
+
+def _looks_like_junk_token(tok: str) -> bool:
+    """Токен — мусор если содержит цифры/дефисы при короткой длине,
+    либо состоит из 1-2 букв (типичные ошибки OCR на стрелках/границах)."""
+    if not tok:
+        return True
+    if len(tok) <= 8 and _DIGIT_OR_PUNCT_IN_TOKEN_RE.search(tok):
+        return True
+    letters = _LETTER_RE.findall(tok)
+    if not letters:
+        return True
+    if len(tok) <= 2 and len(letters) <= 2:
+        return True
+    return False
+
+
+def _strip_junk_prefix(text: str) -> str:
+    """Срезаем мусорные токены в начале строки до первого нормального слова."""
+    words = text.split()
+    while len(words) > 2 and _looks_like_junk_token(words[0]):
+        words.pop(0)
+    return " ".join(words)
+
+
+def _dedup_repeat(text: str) -> str:
+    """
+    Ищет самый длинный префикс из K слов, который повторяется позже в строке.
+    Лечит "X Y X Y", "X Y X Y Z", "X Y я Z X Y Z" и подобные OCR-повторы.
+
+    Выбор между двумя копиями:
+      1) Если у одной "хвост" пустой, а у другой есть — берём ту что с содержимым
+         (это случай типа "Передача отчёта Передача отчёта об исполнении" — второй полный).
+      2) Если у обеих есть хвост — берём ту, где меньше коротких 1-2 буквенных слов
+         (типичный OCR-шум типа лишнего "я" между нормальными словами).
+      3) Иначе — первую.
+    """
+    words = text.split()
+    n = len(words)
+    if n < 4:
+        return text
+    max_k = min(n // 2, 10)
+    for k in range(max_k, 1, -1):
+        prefix = words[:k]
+        for m in range(k, n - k + 1):
+            if words[m : m + k] == prefix:
+                first = words[:m]
+                second = words[m:]
+                first_extra = first[k:]
+                second_extra = second[k:]
+
+                # Один пустой — второй полный
+                if not first_extra and second_extra:
+                    return " ".join(second)
+                if first_extra and not second_extra:
+                    return " ".join(first)
+
+                # Обе непусты — выбираем по количеству коротких слов (1-2 буквы)
+                first_noise = sum(1 for w in first_extra if len(w) <= 2)
+                second_noise = sum(1 for w in second_extra if len(w) <= 2)
+                if first_noise > second_noise:
+                    return " ".join(second)
+                if second_noise > first_noise:
+                    return " ".join(first)
+
+                # Равны — берём первую (детерминированный выбор)
+                return " ".join(first)
+    return text
+
+
+def _clean_step_text(text: str) -> str:
+    """Пост-чистка OCR-результата перед выводом в таблицу."""
+    if not isinstance(text, str):
+        return text
+    s = text.strip()
+    if not s:
+        return s
+    s = _strip_junk_prefix(s)
+    s = _dedup_repeat(s)
+    s = _strip_junk_prefix(s)  # повторно — dedup мог открыть новый мусор слева
+    return s.strip()
 
 
 def _sanitize_cell(value: str) -> str:
