@@ -37,9 +37,10 @@ function ResultAsJson({ result }: { result: Record<string, unknown> | null }) {
 interface JobResultViewProps {
   scenario: SupportedJobType;
   job: JobResponse | null;
+  uploadedImageSrc?: string | null;
 }
 
-export function JobResultView({ scenario, job }: JobResultViewProps) {
+export function JobResultView({ scenario, job, uploadedImageSrc }: JobResultViewProps) {
   if (!job) return null;
 
   if (job.status === "error") {
@@ -58,6 +59,16 @@ export function JobResultView({ scenario, job }: JobResultViewProps) {
     const textValue = typeof result?.text === "string" ? maybeFixMojibake(result.text) : null;
     return (
       <section className="result-panel">
+        {uploadedImageSrc ? (
+          <div className="source-preview">
+            <h3>Исходное изображение</h3>
+            <img
+              className="source-preview__image"
+              src={uploadedImageSrc}
+              alt="Загруженная BPMN-диаграмма"
+            />
+          </div>
+        ) : null}
         <h3>Распознанный текст</h3>
         {textValue ? <article className="text-result">{textValue}</article> : <ResultAsJson result={result} />}
       </section>

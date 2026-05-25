@@ -10,6 +10,7 @@ import { JobResultView } from "./ui/components/JobResultView";
 
 export function App() {
   const [selectedScenario, setSelectedScenario] = useState<SupportedJobType | null>(null);
+  const [uploadedImageSrc, setUploadedImageSrc] = useState<string | null>(null);
   const lifecycle = useJobLifecycle();
 
   const canSubmit = !lifecycle.isCreating && !lifecycle.isPolling;
@@ -20,7 +21,20 @@ export function App() {
 
   const onBack = () => {
     setSelectedScenario(null);
+    setUploadedImageSrc(null);
     lifecycle.reset();
+  };
+
+  const handleSubmit = async (meta: Record<string, unknown>) => {
+    if (!selectedScenario) return;
+    // Сохраняем src загруженной картинки, чтобы показать рядом с результатом.
+    const possibleImage = meta["image_url"];
+    if (typeof possibleImage === "string" && possibleImage.startsWith("data:image")) {
+      setUploadedImageSrc(possibleImage);
+    } else {
+      setUploadedImageSrc(null);
+    }
+    await lifecycle.submitJob({ jobType: selectedScenario, meta });
   };
 
   return (
@@ -47,7 +61,7 @@ export function App() {
             <ScenarioInputForm
               scenario={selectedScenario}
               disabled={!canSubmit}
-              onSubmit={(meta) => lifecycle.submitJob({ jobType: selectedScenario, meta })}
+              onSubmit={handleSubmit}
             />
 
             <JobStatusView
@@ -58,7 +72,11 @@ export function App() {
               requestError={lifecycle.requestError}
             />
 
-            <JobResultView scenario={selectedScenario} job={lifecycle.job} />
+            <JobResultView
+              scenario={selectedScenario}
+              job={lifecycle.job}
+              uploadedImageSrc={uploadedImageSrc}
+            />
           </section>
         ) : null}
       </ScenarioSelection>
