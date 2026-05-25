@@ -1,17 +1,24 @@
 """
-OCR-шаг pipeline'а: гибридный режим (full-image для маленьких / crop-based для больших).
+MODERN OCR-шаг pipeline'а для больших BPMN-картинок.
 
-Стратегия:
-  - Маленькая картинка (max_side < threshold ≈ 2500): один EasyOCR-проход
-    по всей картинке. Быстро (~15 сек), отличное качество, нет фрагментации.
-  - Большая картинка (max_side ≥ threshold): crop-based — режем по YOLOX
-    shape-bbox'ам и OCR'им каждый кроп отдельно. EasyOCR на full-image для 5000+px
-    картинок на CPU занимает 120+ сек и не лезет в бюджет.
+Используется в `workers/image_to_text_pipeline.py` для картинок с
+max_side >= IMG_PIPELINE_SIZE_THRESHOLD (≈ 2500 px по умолчанию). Для маленьких
+картинок задействуется legacy-цепочка (detect_res + ocr_tesseract_fast + label_res),
+которая на мелких диаграммах даёт лучшее качество.
 
-Все bbox'ы OCR-результата переводятся в MODEL-space (через resize_ratio из ensemble.json),
-чтобы соответствовать YOLOX-координатам.
+Поддерживаемые режимы (--mode):
+  - `crop` (дефолт для большой картинки): режем оригинал по YOLOX shape-bbox'ам
+    и OCR'им каждый кроп отдельно. EasyOCR на полной картинке 5000+ px на CPU
+    занимает 120+ сек — не лезет в бюджет.
+  - `full`: один EasyOCR-проход по всей картинке (с опциональным cap по длинной
+    стороне). Полезно для тестов / fallback'а.
+  - `auto`: full если max_side < `--full-image-threshold`, иначе crop.
 
-Заменяет: detect_res.py + ocr_tesseract_fast.py + ocr_heavy_pass.py + label_res(1-to-1).
+Дополнительно (в crop-режиме): отдельное сканирование левой полосы (~10% ширины)
+с rotation_info=[90,270] — это ловит вертикально написанные lane-заголовки.
+
+Все bbox'ы OCR-результата переводятся в MODEL-space (через resize_ratio из
+ensemble.json), чтобы попадать в ту же систему координат что и YOLOX-детекты.
 """
 
 from __future__ import annotations

@@ -143,9 +143,10 @@ async def run_image_to_text_pipeline(
             _img_w, _img_h = 0, 0
         _max_side = max(_img_w, _img_h)
         _size_threshold = int(os.getenv("IMG_PIPELINE_SIZE_THRESHOLD", "2500"))
-        # Маленькая картинка → старый legacy-pipeline (detect_res + tesseract + heavy + label_res),
-        # он на маленьких давал значительно лучше качество чем full-image EasyOCR.
-        # Большая → новый crop-based pipeline (ocr_full_sweep + label_aggregate).
+        # Маленькая картинка → legacy-pipeline (detect_res + ocr_tesseract_fast + label_res),
+        # он на маленьких диаграммах даёт значительно лучшее качество текста
+        # чем full-image EasyOCR-проход. Большая → modern crop-based pipeline
+        # (ocr_full_sweep + label_aggregate).
         use_legacy_small_pipeline = _max_side > 0 and _max_side < _size_threshold
         forced_mode = os.getenv("IMG_PIPELINE_MODE", "").strip().lower()
         if forced_mode == "legacy":
@@ -156,7 +157,7 @@ async def run_image_to_text_pipeline(
         print(
             f"[pipeline] image_size={_img_w}x{_img_h} max_side={_max_side} "
             f"threshold={_size_threshold} -> "
-            f"{'LEGACY (detect_res+tesseract+heavy+label_res)' if use_legacy_small_pipeline else 'MODERN (ocr_full_sweep+label_aggregate)'}",
+            f"{'LEGACY (detect_res+ocr_tesseract_fast+label_res)' if use_legacy_small_pipeline else 'MODERN (ocr_full_sweep+label_aggregate)'}",
             flush=True,
         )
 
@@ -193,10 +194,12 @@ async def run_image_to_text_pipeline(
 
         if use_legacy_small_pipeline:
             # ────────────────────────────────────────────────────────────────
-            # LEGACY pipeline для маленьких BPMN-картинок — В ИСХОДНОМ ВИДЕ
-            # до моих правок: detect_res → tesseract_fast → label_res.
-            # БЕЗ heavy_pass (EasyOCR full sweep на маленьких картинках
-            # фрагментирует слова и портит результат Tesseract'а).
+            # LEGACY pipeline для маленьких BPMN-картинок:
+            #   detect_res.py        — EasyOCR detect → bbox'ы текста
+            #   ocr_tesseract_fast.py — Tesseract OCR по этим bbox'ам (×2 upscale)
+            #   label_res.py         — 1-to-1 присвоение текста YOLOX-объектам
+            # Эта цепочка лучше всего работает на мелких диаграммах: Tesseract
+            # на чистых маленьких кропах надёжнее чем EasyOCR full-image sweep.
             # ────────────────────────────────────────────────────────────────
             detect_cmd = [
                 PYTHON_EXECUTABLE,
