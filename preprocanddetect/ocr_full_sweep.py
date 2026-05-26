@@ -26,30 +26,23 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
 import numpy as np
 from PIL import Image
 
+_THIS_DIR = Path(__file__).resolve().parent
+if str(_THIS_DIR) not in sys.path:
+    sys.path.insert(0, str(_THIS_DIR))
 
-# Какие YOLOX-классы нарезаем в crop-режиме.
-# ИСКЛЮЧЕНЫ pool/lane/subprocess: это большие контейнеры, физически содержащие
-# мелкие task'и/gateway'и. Если OCR'ить и контейнер, и его содержимое — текст
-# дублируется в N копий.
-SHAPE_CLASSES_FOR_OCR: Set[str] = {
-    "start_event",
-    "intermediate_event",
-    "end_event",
-    "task",
-    "gateway_exclusive",
-    "gateway_parallel",
-    "gateway_inclusive",
-    "data_object",
-    "text_annotation",
-}
+# Подробное обоснование набора — см. preprocanddetect/bpmn_classes.py.
+# pool/lane/subprocess исключены: это контейнеры, чей текст и так захватится
+# crop'ами вложенных узлов, иначе OCR-результат удваивается.
+from bpmn_classes import SHAPE_CLASSES_FOR_OCR  # noqa: E402,F401
 
 
 def _polygon_to_xyxy(poly: Any) -> Optional[Tuple[int, int, int, int]]:

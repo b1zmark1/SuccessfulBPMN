@@ -15,29 +15,10 @@ if str(_THIS_DIR) not in sys.path:
     sys.path.insert(0, str(_THIS_DIR))
 
 import label_assign as la  # noqa: E402
+from bpmn_classes import EDGE_CLASSES, NODE_CLASSES  # noqa: E402
 
 
 BBox = Tuple[float, float, float, float]
-
-
-NODE_CLASSES = {
-    "start_event",
-    "intermediate_event",
-    "end_event",
-    "task",
-    "gateway_exclusive",
-    "gateway_parallel",
-    "gateway_inclusive",
-    "subprocess",
-    "pool",
-    "lane",
-    "data_object",
-    "text_annotation",
-}
-
-EDGE_CLASSES = {
-    "sequence_flow",
-}
 
 
 @dataclass(frozen=True)

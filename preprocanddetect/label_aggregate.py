@@ -21,8 +21,15 @@ import argparse
 import json
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
+
+_THIS_DIR = Path(__file__).resolve().parent
+if str(_THIS_DIR) not in sys.path:
+    sys.path.insert(0, str(_THIS_DIR))
+
+from bpmn_classes import EDGE_CLASSES, NODE_CLASSES  # noqa: E402
 
 
 # Регулярки для отсева мусорных OCR-токенов: одиночные символы, чистые числа,
@@ -50,24 +57,6 @@ def _is_junk_text(text: str, min_letters: int = 2) -> bool:
     if len(letters) < min_letters:
         return True
     return False
-
-
-NODE_CLASSES: Set[str] = {
-    "start_event",
-    "intermediate_event",
-    "end_event",
-    "task",
-    "gateway_exclusive",
-    "gateway_parallel",
-    "gateway_inclusive",
-    "subprocess",
-    "pool",
-    "lane",
-    "data_object",
-    "text_annotation",
-}
-
-EDGE_CLASSES: Set[str] = {"sequence_flow"}
 
 
 def _read_json(path: str) -> Dict[str, Any]:
